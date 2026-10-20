@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#fff7f9">
+<meta name="description" content="A sweet, minimal study and break interval timer, made with love.">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Study Tracker">
+<link rel="manifest" href="/manifest.webmanifest"><link rel="icon" type="image/svg+xml" href="/icon.svg">
+<title>Study Tracker ♡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{font-family:"DM Sans",system-ui,sans-serif;--accent:#cf7494;--accent-dark:#a85072;--soft:#ffe7ef;--bg:#fffaf9;--ink:#5b4c56;--muted:#9b8993;--border:#f3e6e9;--panel:#fff; color:var(--ink)}
+body[data-theme=lavender]{--accent:#987bc5;--accent-dark:#7659a3;--soft:#f0e7fb;--bg:#fcfaff;--border:#ece5f4}
+body[data-theme=sage]{--accent:#78ac96;--accent-dark:#4d806e;--soft:#e4f4ec;--bg:#fafffa;--border:#e3ede5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 0 0,var(--soft),transparent 35%),radial-gradient(circle at 100% 100%,#f8edf7,transparent 36%),var(--bg);min-height:100dvh}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}h1,h2,h3{font-family:Quicksand,system-ui,sans-serif;margin:0}.wrap{max-width:1060px;margin:auto;padding:25px 22px 16px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;background:var(--soft);color:var(--accent-dark);display:grid;place-items:center;border-radius:16px;font-size:29px}.brand strong{display:block;font-family:Quicksand;font-size:23px;letter-spacing:-.8px}.brand strong span{color:var(--accent)}.brand small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-top:3px}
+.pill{border:1px solid var(--border);background:white;border-radius:999px;padding:11px 17px;color:var(--accent-dark);font-size:12px;font-weight:700}
+.grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(310px,.82fr);gap:22px}.panel{background:var(--panel);border:1px solid var(--border);border-radius:30px;box-shadow:0 16px 65px #bd839313}
+.clock-panel{display:flex;flex-direction:column;align-items:center;text-align:center;padding:35px 22px 25px;min-height:618px}.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:10px;color:var(--accent);font-weight:700;margin:0 0 11px}.clock-panel h1{font-size:28px;letter-spacing:-.7px}.subtitle,.hint{font-size:12px;color:var(--muted);line-height:1.65}.subtitle{margin:11px 0 20px}
+.tabs{display:flex;align-items:center;gap:5px;border:1px solid var(--border);background:#fff8fa;padding:5px;border-radius:100px}.tabs button{border:0;background:transparent;border-radius:99px;color:var(--muted);font-size:12px;font-weight:700;padding:10px 17px}.tabs button[aria-selected=true]{color:var(--accent-dark);background:white;box-shadow:0 2px 12px #0000000a}
+.dial{width:min(310px,88%);aspect-ratio:1;position:relative;margin:13px 0}.dial svg{width:100%;height:100%;transform:rotate(-90deg)}.dial circle{fill:none;stroke-width:10}.dial .track{stroke:var(--soft)}.dial .progress{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:879.646;stroke-dashoffset:0;transition:stroke-dashoffset .25s linear}
+.dial-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.dial-emoji{font-size:28px}.digits{font-family:Quicksand,sans-serif;font-weight:700;letter-spacing:-4px;font-variant-numeric:tabular-nums;font-size:72px;line-height:1.32}.dial-caption{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.2em;font-weight:700}
+.encourage{margin:3px 0 18px;color:var(--muted);font-size:12px;min-height:18px}.actions{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}.main-btn{border:0;background:var(--accent);border-radius:15px;padding:15px 30px;color:white;font-weight:700;min-width:140px;box-shadow:0 8px 24px #d8759632}.light-btn{border:1px solid var(--border);background:white;color:var(--accent-dark);border-radius:14px;padding:14px 16px;font-weight:700}.main-btn:hover{filter:brightness(.96);transform:translateY(-1px)}.light-btn:hover{background:var(--soft)}
+.streak{width:min(370px,100%);margin-top:auto;padding-top:30px}.streak-head{display:flex;justify-content:space-between;gap:5px;color:var(--muted);font-weight:700;font-size:11px;margin-bottom:12px}.dots{display:flex;gap:7px}.dot{height:7px;background:var(--soft);border-radius:9px;flex:1}.dot.done{background:var(--accent)}
+.sidebar{display:flex;flex-direction:column;gap:18px}.controls{padding:26px}.controls h2{font-size:21px}.controls .hint{margin:8px 0 23px}.control{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:19px}.control-left{display:flex;align-items:center;gap:10px}.icon-tile{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--soft);font-size:19px}.control-label{font-size:12px;font-weight:700}.control-note{font-size:10px;color:var(--muted);margin-top:3px}.stepper{display:flex;align-items:center;padding:3px;border-radius:12px;border:1px solid var(--border);background:#fffafb}.stepper button{border:0;background:transparent;color:var(--accent-dark);width:28px;height:32px;font-size:18px}.stepper button:hover{background:var(--soft);border-radius:8px}.stepper input{width:38px;border:0;background:transparent;outline:none;text-align:center;font-size:14px;font-weight:700;color:var(--ink);-moz-appearance:textfield}.stepper input::-webkit-inner-spin-button,.stepper input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.unit{font-size:10px;color:var(--muted);padding-right:4px}
+.setting{border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:9px;padding:15px 0}.setting:last-child{padding-bottom:0}.toggle{width:43px;height:25px;position:relative;flex:none}.toggle input{opacity:0;width:0;height:0}.toggle i{position:absolute;inset:0;background:#e8e2e6;border-radius:22px;transition:background .2s}.toggle i:before{content:"";position:absolute;left:4px;top:4px;width:17px;height:17px;background:white;border-radius:50%;transition:transform .2s}.toggle input:checked+i{background:var(--accent)}.toggle input:checked+i:before{transform:translateX(18px)}.palette{display:flex;gap:9px}.swatch{width:28px;height:28px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 1px #ede3e7}.swatch.active{box-shadow:0 0 0 2px var(--accent)}.swatch[data-t=rose]{background:#cf7494}.swatch[data-t=lavender]{background:#987bc5}.swatch[data-t=sage]{background:#78ac96}
+.letter{background:linear-gradient(130deg,var(--soft),#fffdfd);border:1px solid var(--border);border-radius:28px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;flex:1;min-height:210px}.letter .symbol{font-size:27px}.letter h3{font-size:19px;line-height:1.55;margin:10px 0}.letter p{font-size:11px;color:var(--muted)}.letter strong{color:var(--accent-dark);font-size:11px}
+footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer span{color:var(--accent)}dialog{border:1px solid var(--border);border-radius:23px;width:min(420px,calc(100vw - 26px));padding:27px;box-shadow:0 32px 100px #0003;color:var(--ink)}dialog::backdrop{background:#48344185}dialog h2{font-size:22px;margin-bottom:10px}dialog p{color:var(--muted);line-height:1.6;font-size:12px}dialog input[type=email]{width:100%;margin:10px 0;border:1px solid var(--border);padding:14px;border-radius:11px}.dlg-actions{display:flex;flex-wrap:wrap;gap:8px}.dlg-actions button{flex:1}.hidden{display:none!important}.status{font-size:12px;color:var(--accent-dark)!important;min-height:10px}.toast{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:13px 19px;border-radius:12px;background:var(--ink);color:white;font-size:12px;max-width:90vw;text-align:center}.toast.show{display:block}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:1fr 1fr}.clock-panel{min-height:585px}}
+@media(max-width:600px){.wrap{padding:16px 13px}.brand strong{font-size:20px}.brand small{font-size:9px}.clock-panel{min-height:unset;padding:25px 15px}.clock-panel h1{font-size:25px}.dial{width:min(285px,90%)}.digits{font-size:65px}.streak{padding-top:27px}.sidebar{display:flex}.controls{padding:23px}.letter{min-height:195px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+
+/* Study Tracker floating timer */
+.pip-btn{width:49px;height:49px;min-width:49px;padding:0;display:inline-grid;place-items:center}
+.pip-btn svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;fill:none}
+.pip-btn[aria-pressed="true"]{background:var(--soft);border-color:var(--accent)}
+.pip-help{font-size:11px;color:var(--muted);margin:13px 0 0}
+.mini-float:not([hidden]){display:flex}
+.mini-float{position:fixed;right:16px;bottom:18px;width:240px;max-width:calc(100vw - 30px);z-index:1000;display:none;flex-direction:column;background:var(--panel);border:1px solid var(--border);box-shadow:0 18px 60px #60475a38;border-radius:22px;padding:13px 15px 15px;touch-action:auto}
+.mini-head{display:flex;align-items:center;justify-content:space-between;font-weight:700;color:var(--accent-dark);font-size:11px;cursor:move;touch-action:none;user-select:none}
+.mini-head button{border:0;background:var(--soft);border-radius:50%;width:24px;height:24px;color:var(--accent-dark);font-size:17px;cursor:pointer}
+.mini-clock{font-family:Quicksand,system-ui,sans-serif;font-size:46px;font-weight:700;letter-spacing:-1px;text-align:center;font-variant-numeric:tabular-nums;margin:5px 0}
+.mini-actions{display:flex;gap:6px;justify-content:center}
+.mini-actions button{background:var(--soft);color:var(--accent-dark);border:0;border-radius:10px;padding:9px 11px;font-weight:700;font-size:11px;flex:1}
+.mini-actions button:first-child{background:var(--accent);color:white}
+
+/* Gentle encouragement welcome pop-up */
+.letter .quote-eyebrow{color:var(--accent-dark);font-size:11px;font-weight:700;letter-spacing:.05em}
+#welcome-dialog{padding:0;border:1px solid var(--border);border-radius:30px;width:min(435px,calc(100vw - 28px));overflow:hidden}
+#welcome-dialog::backdrop{background:#51405095;backdrop-filter:blur(3px)}
+.welcome-hero{background:linear-gradient(135deg,var(--soft),#fffafc);text-align:center;padding:30px 29px 22px}
+.welcome-flower{width:65px;height:65px;border-radius:22px;background:#fff8;display:grid;place-items:center;margin:0 auto 14px;font-size:37px}
+.welcome-kicker{margin:0 0 7px!important;color:var(--accent-dark)!important;text-transform:uppercase;letter-spacing:.16em;font-size:10px!important;font-weight:700}
+#welcome-title{font-size:24px;line-height:1.24}
+.welcome-content{padding:24px 29px 28px;text-align:center}
+.welcome-quote{font-family:Quicksand,system-ui,sans-serif;font-size:20px;font-weight:700;line-height:1.5;margin:0 0 12px;color:var(--ink)}
+.welcome-subtitle{margin:0 0 20px!important;font-size:12px!important;color:var(--muted)}
+.welcome-optout{display:flex;align-items:center;justify-content:center;gap:9px;color:var(--muted);font-size:12px;cursor:pointer;margin-bottom:20px}
+.welcome-optout input{width:17px;height:17px;accent-color:var(--accent);cursor:pointer}
+.welcome-accept{width:100%;min-height:47px}
+@media(max-width:600px){.welcome-hero{padding:25px 23px 19px}.welcome-content{padding:21px 23px 25px}.welcome-quote{font-size:18px}}
+
+/* Two independent, always-visible inspiration cards */
+.quote-stack{display:flex;flex-direction:column;gap:16px;flex:1;min-width:0}
+.quote-stack .letter{flex:1;min-height:165px;gap:13px}
+.quote-stack .quote-icon{font-size:27px;margin-bottom:6px}
+.quote-stack .letter h3{font-size:17px;line-height:1.52;margin:8px 0 12px}
+.quote-stack .gospel-card{background:linear-gradient(145deg,#fffdfb,var(--soft));}
+.quote-stack .gospel-card .quote-eyebrow{color:var(--accent-dark)}
+.quote-stack .gospel-card h3{font-style:italic}
+.quote-stack .verse-reference{font-weight:700;color:var(--accent-dark);font-size:11px;margin:6px 0}
+#welcome-dialog{max-height:calc(100dvh - 28px);overflow-y:auto;overscroll-behavior:contain}
+.welcome-message{border-radius:18px;padding:15px 15px 10px;margin:0 0 13px;background:var(--bg);border:1px solid var(--border);text-align:left}
+.welcome-message .welcome-section-label{font-size:11px!important;font-weight:700;color:var(--accent-dark)!important;margin:0 0 9px!important;letter-spacing:.015em}
+.welcome-message .welcome-quote{font-size:16px;margin:0 0 8px;line-height:1.55}
+.welcome-scripture{background:linear-gradient(130deg,var(--bg),var(--soft))}
+.welcome-scripture .welcome-quote{font-style:italic}
+.welcome-message .verse-reference{font-size:11px;color:var(--accent-dark);font-weight:700;margin:0 0 4px!important}
+@media (max-width:600px){.quote-stack .letter{min-height:155px}.quote-stack .letter h3{font-size:17px}.welcome-message{padding:12px 13px 9px}.welcome-message .welcome-quote{font-size:15px}}
+
+/* Separate onboarding guide, stacked above the quote welcome dialog. */
+#timer-guide{border:1px solid var(--border);border-radius:30px;max-width:calc(100vw - 26px);width:440px;padding:0;overflow-y:auto;max-height:calc(100dvh - 30px);box-shadow:0 28px 95px #46323c52;color:var(--ink);}
+#timer-guide::backdrop{background:#43313e80;backdrop-filter:blur(3px);}
+.guide-hero{background:linear-gradient(132deg,var(--soft),#fff9fc);padding:27px 27px 17px;text-align:center}
+.guide-hero .guide-icon{font-size:33px;margin-bottom:9px}
+.guide-hero .guide-kicker{font-size:10px;color:var(--accent-dark);font-weight:700;text-transform:uppercase;letter-spacing:.15em;margin:0 0 7px}
+.guide-hero h2{font-size:24px;line-height:1.3}
+.guide-hero p:last-child{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.5}
+.guide-body{padding:20px 25px 26px}
+.guide-list{list-style:none;margin:0 0 19px;padding:0;display:grid;gap:13px}
+.guide-list li{display:flex;gap:12px;align-items:flex-start}
+.guide-list .guide-emoji{background:var(--soft);width:39px;height:39px;flex:none;display:grid;place-items:center;border-radius:13px;font-size:20px}
+.guide-list strong{display:block;font-size:13px;margin:1px 0 3px;color:var(--ink)}
+.guide-list span.guide-desc{display:block;font-size:11px;line-height:1.52;color:var(--muted)}
+.guide-body .welcome-optout{margin-bottom:16px}
+.guide-body .main-btn{width:100%}
+@media(max-width:600px){.guide-hero{padding:22px 20px 13px}.guide-hero h2{font-size:22px}.guide-body{padding:17px 20px 22px}.guide-list{gap:11px}}
+
+/* Dedicated settings page / panel */
+.settings-trigger{min-width:106px;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+#settings-dialog{width:min(480px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow-y:auto;border-radius:28px;padding:24px 25px;background:var(--panel)}
+#settings-dialog::backdrop{background:#4834418a;backdrop-filter:blur(3px)}
+.settings-top{display:flex;align-items:start;justify-content:space-between;gap:10px}
+.settings-top .eyebrow{margin-bottom:5px}
+.settings-top h2{font-size:26px}
+.settings-x{border:1px solid var(--border);border-radius:50%;height:36px;width:36px;background:var(--bg);color:var(--accent-dark);font-size:24px;display:grid;place-items:center}
+.settings-intro{margin:7px 0 19px!important}
+.settings-group{background:var(--bg);border:1px solid var(--border);border-radius:19px;padding:15px 17px;margin-bottom:15px}
+.settings-group h3{font-size:15px;margin:0 0 6px}
+.settings-group .setting{padding:13px 0}
+.settings-group .setting:first-of-type{border-top:0}
+.settings-copy{min-width:0;flex:1}
+.settings-hint{font-size:11px!important;line-height:1.58!important;color:var(--muted)!important;margin:5px 0 12px!important}
+.settings-test{padding:11px 14px;font-size:12px;width:100%;margin-bottom:3px}
+.settings-test[hidden]{display:none}
+.settings-sync-row{display:flex;align-items:center;justify-content:space-between;gap:11px;flex-wrap:wrap}
+.settings-sync-row .light-btn{padding:11px 13px;font-size:12px}
+.settings-sync-state{font-size:11px;color:var(--accent-dark);font-weight:700;overflow-wrap:anywhere}
+.settings-done{width:100%;margin-top:3px}
+@media(max-width:600px){#settings-dialog{padding:21px 18px}.settings-group{padding:13px 13px}.settings-sync-row .light-btn{width:100%}}
+</style>
+</head>
+<body data-theme="rose">
+<div class="wrap">
+<header><div class="brand"><div class="logo" aria-hidden="true">✿</div><div><strong>study tracker<span>.</span></strong><small>a cozy little focus space</small></div></div><button id="settings-btn" class="pill settings-trigger" type="button" aria-haspopup="dialog" aria-controls="settings-dialog">⚙ Settings</button></header>
+<main class="grid">
+<section class="panel clock-panel">
+<p class="eyebrow">one little step at a time</p><h1 id="headline">You've got this, love! ♡</h1>
+<p class="subtitle" id="subtitle">A little focus now, a little rest after.</p>
+<div class="tabs" role="tablist" aria-label="Timer type"><button id="focus-tab" role="tab" type="button" aria-selected="true">✿ Study time</button><button id="break-tab" role="tab" type="button" aria-selected="false">☕ Break time</button></div>
+<div class="dial" role="timer" aria-label="Time remaining"><svg viewBox="0 0 320 320" aria-hidden="true"><circle class="track" cx="160" cy="160" r="140"/><circle id="progress" class="progress" cx="160" cy="160" r="140"/></svg><div class="dial-content"><div id="dial-emoji" class="dial-emoji">🌷</div><div id="clock" class="digits">25:00</div><div id="dial-caption" class="dial-caption">time to focus</div></div></div>
+<p id="encourage" class="encourage">You can do hard things. One minute at a time ✨</p>
+<div class="actions"><button id="reset" type="button" class="light-btn">↺ Reset</button><button id="play" type="button" class="main-btn">▶ Start</button><button id="skip" type="button" class="light-btn">Next →</button><button id="pip" type="button" class="light-btn pip-btn" title="Floating timer (Picture-in-Picture)" aria-label="Open floating Picture-in-Picture timer" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.2" y="3.5" width="19.6" height="16.5" rx="3"></rect><rect x="11.5" y="11.5" width="10.3" height="8.5" rx="1.8" fill="currentColor" stroke="var(--panel)"></rect></svg></button></div><p class="pip-help">Tap the little screen to keep your timer close ♡</p>
+<div class="streak"><div class="streak-head"><span>Today's little wins ✨</span><span id="count">0 done today</span></div><div id="dots" class="dots"></div></div>
+</section>
+<div class="sidebar">
+<section class="panel controls"><h2>Make it your own ✿</h2><p class="hint">Choose what feels right for your study flow. Change your minutes anytime.</p>
+<div class="control"><div class="control-left"><div class="icon-tile">📚</div><div><div class="control-label">Study session</div><div class="control-note">Deep focus, no pressure</div></div></div><div class="stepper"><button type="button" data-step="focus:-1" aria-label="Shorter study timer">−</button><input type="number" id="focus-min" min="1" max="240" value="25" aria-label="Study duration in minutes"><span class="unit">min</span><button type="button" data-step="focus:1" aria-label="Longer study timer">+</button></div></div>
+<div class="control"><div class="control-left"><div class="icon-tile">🧸</div><div><div class="control-label">Break session</div><div class="control-note">Rest is productive, too</div></div></div><div class="stepper"><button type="button" data-step="break:-1" aria-label="Shorter break timer">−</button><input type="number" id="break-min" min="1" max="120" value="5" aria-label="Break duration in minutes"><span class="unit">min</span><button type="button" data-step="break:1" aria-label="Longer break timer">+</button></div></div>
+<div class="control"><div class="control-left"><div class="icon-tile">🪄</div><div><div class="control-label">Study rounds</div><div class="control-note">Set your little goal</div></div></div><div class="stepper"><button type="button" data-step="rounds:-1" aria-label="Fewer rounds">−</button><input type="number" id="rounds" min="1" max="20" value="4" aria-label="Study rounds"><span class="unit">x</span><button type="button" data-step="rounds:1" aria-label="More rounds">+</button></div></div>
+<div class="setting"><div><div class="control-label">Auto-start next timer</div><div class="control-note">Study, rest, repeat</div></div><label class="toggle"><input id="auto" type="checkbox" checked aria-label="Automatically start next timer"><i></i></label></div>
+<div class="setting"><div><div class="control-label">Gentle chime</div><div class="control-note">A little ding when time is up</div></div><label class="toggle"><input id="chime" type="checkbox" checked aria-label="Sound notifications"><i></i></label></div>
+<div class="setting"><div><div class="control-label">Little color mood</div><div class="control-note">Pick a happy color</div></div><div class="palette"><button class="swatch active" title="Rose" aria-label="Rose theme" data-t="rose"></button><button class="swatch" title="Lavender" aria-label="Lavender theme" data-t="lavender"></button><button class="swatch" title="Sage" aria-label="Sage theme" data-t="sage"></button></div></div>
+
+</section>
+<div class="quote-stack" aria-label="Daily inspiration">
+<section class="letter motivation-card" aria-labelledby="motivation-title"><div><div class="quote-icon" aria-hidden="true">💌</div><p class="quote-eyebrow" id="motivation-title">✨ Motivational quote</p><h3 id="home-quote">A little progress today is still progress worth celebrating.</h3></div><div><p>Keep going at your own pace.</p><strong>made just for you, with ♡</strong></div></section>
+<section class="letter gospel-card" aria-labelledby="gospel-title"><div><div class="quote-icon" aria-hidden="true">🕊️</div><p class="quote-eyebrow" id="gospel-title">✝ Gospel encouragement</p><h3 id="home-gospel">For with God nothing shall be impossible.</h3></div><div><p id="home-gospel-ref" class="verse-reference">Luke 1:37 · KJV</p><strong>Faith over fear ♡</strong></div></section>
+</div>
+</div>
+</main><footer>Breathe in. Focus gently. Bloom beautifully. <span>♥</span></footer>
+</div>
+<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div><div class="mini-clock" id="mini-clock">25:00</div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
+<dialog id="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-quote welcome-gospel">
+  <div class="welcome-hero"><div class="welcome-flower" aria-hidden="true">🌷</div><p class="welcome-kicker">a little love for your study time</p><h2 id="welcome-title">You've got this, love! ♡</h2></div>
+  <div class="welcome-content">
+    <section class="welcome-message welcome-motivation" aria-label="Motivational quote">
+      <p class="welcome-section-label">💌 A little motivation</p>
+      <p id="welcome-quote" class="welcome-quote">You've got this.</p>
+    </section>
+    <section class="welcome-message welcome-scripture" aria-label="Gospel verse">
+      <p class="welcome-section-label">🕊️ A Gospel reminder</p>
+      <p id="welcome-gospel" class="welcome-quote">For with God nothing shall be impossible.</p>
+      <p id="welcome-gospel-ref" class="verse-reference">Luke 1:37 · KJV</p>
+    </section>
+    <p class="welcome-subtitle">One little step at a time. I'm cheering you on! ✨</p>
+    <label class="welcome-optout"><input id="welcome-hide" type="checkbox"> Don't show this again</label>
+    <button id="welcome-close" class="main-btn welcome-accept" type="button">Let's study! ♡</button>
+  </div>
+</dialog>
+<dialog id="timer-guide" aria-labelledby="guide-title" aria-describedby="guide-summary">
+  <div class="guide-hero">
+    <div class="guide-icon" aria-hidden="true">🌷⏰</div>
+    <p class="guide-kicker">Your cozy little study companion</p>
+    <h2 id="guide-title">Welcome to Study Tracker ♡</h2>
+    <p id="guide-summary">A gentle study-and-break timer to help you focus without forgetting to rest.</p>
+  </div>
+  <div class="guide-body">
+    <ul class="guide-list">
+      <li><div class="guide-emoji" aria-hidden="true">📚</div><div><strong>Choose your study time</strong><span class="guide-desc">Set how many minutes you want to study, and tap Start when you're ready.</span></div></li>
+      <li><div class="guide-emoji" aria-hidden="true">☕</div><div><strong>Enjoy a little break</strong><span class="guide-desc">Set a separate break timer. The app alternates between study and rest; turn on auto-start for hands-free sessions.</span></div></li>
+      <li><div class="guide-emoji" aria-hidden="true">✨</div><div><strong>Celebrate your little wins</strong><span class="guide-desc">Choose a round goal, see how many study sessions you finish, and enjoy a gentle chime when it's time to switch.</span></div></li>
+      <li><div class="guide-emoji" aria-hidden="true">🪟</div><div><strong>Keep the timer nearby</strong><span class="guide-desc">Try the floating timer button while studying in another window. Picture-in-Picture support depends on your browser.</span></div></li>
+      <li><div class="guide-emoji" aria-hidden="true">💗</div><div><strong>A little extra encouragement</strong><span class="guide-desc">Enjoy uplifting motivational and Gospel quotes on your home page. Your settings save here automatically, with optional cloud sync.</span></div></li>
+    </ul>
+    <label class="welcome-optout"><input id="guide-hide" type="checkbox"> Don't show this again</label>
+    <button id="guide-close" class="main-btn welcome-accept" type="button">Got it! Let's begin ♡</button>
+  </div>
+</dialog>
+<dialog id="settings-dialog" aria-labelledby="settings-heading">
+  <div class="settings-top"><div><p class="eyebrow">your little space ♡</p><h2 id="settings-heading">Settings ✿</h2></div><button id="settings-close" class="settings-x" type="button" aria-label="Close settings">×</button></div>
+  <p class="settings-intro">Make Study Tracker feel just right for you.</p>
+  <div class="settings-group">
+    <h3>🔔 Alerts & reminders</h3>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Browser reminders</div><div class="control-note">Get an alert when study or break time ends</div></div><button class="pill" id="notify" type="button">Enable</button></div>
+    <p id="notify-status" class="settings-hint" role="status">Checking notification support…</p>
+    <button class="light-btn settings-test" id="notify-test" type="button" hidden>🔔 Send a test notification</button>
+  </div>
+  <div class="settings-group">
+    <h3>🌷 On opening Study Tracker</h3>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Welcome pop-up</div><div class="control-note">Motivational and Gospel messages on opening</div></div><label class="toggle"><input id="welcome-on-open" type="checkbox" checked aria-label="Show welcome pop-up when opening the app"><i></i></label></div>
+    <div class="setting"><div class="setting-copy"><div class="control-label">How it works pop-up</div><div class="control-note">Study and break timer instructions on opening</div></div><label class="toggle"><input id="guide-on-open" type="checkbox" checked aria-label="Show the introduction to the timer on opening"><i></i></label></div>
+  </div>
+  <div class="settings-group">
+    <h3>☁ Cloud Sync</h3>
+    <p class="settings-hint">Use an email sign-in to sync your timer preferences between devices. Your settings also save on this device without signing in.</p>
+    <div class="settings-sync-row"><span id="sync-summary" class="settings-sync-state">Not signed in</span><button id="cloud-btn" class="light-btn" type="button">☁ Open Cloud Sync</button></div>
+  </div>
+  <button id="settings-done" class="main-btn settings-done" type="button">All done ♡</button>
+</dialog>
+<dialog id="account"><h2>Save your cozy space ☁</h2><p>Your settings save on this device automatically. You can also sign in with an email link to securely sync settings between devices.</p>
+<form id="login-form"><input id="email" type="email" required autocomplete="email" placeholder="Your email address"><p class="status" id="login-status"></p><div class="dlg-actions"><button class="main-btn" type="submit">Send sign-in link</button><button id="dismiss" class="light-btn" type="button">Back to Settings</button></div></form>
+<div id="signed-in" class="hidden"><p id="account-email"></p><div class="dlg-actions"><button id="sync-now" class="main-btn" type="button">Sync now</button><button id="sign-out" class="light-btn" type="button">Sign out</button><button id="done" class="light-btn" type="button">Back to Settings</button></div></div></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.0/dist/umd/supabase.min.js" defer></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), SUPABASE_URL='https://vxpufrahrnwmtgltjstd.supabase.co', SUPABASE_KEY='sb_publishable_tRjMtsoo9aT-6n7dzj9p-w_HsUqJ520';
+const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}},save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
+const clamp=(v,lo,hi,f)=>{v=Number(v);return Number.isFinite(v)&&v>=1?Math.round(Math.max(lo,Math.min(hi,v))):f};
+const defaults={focus:25,break:5,rounds:4,auto:true,chime:true,theme:'rose'};
+let settings={...defaults,...read('study-tracker-settings',{})};
+for(const [name,max] of [['focus',240],['break',120],['rounds',20]])settings[name]=clamp(settings[name],1,max,defaults[name]);
+let timer={mode:'focus',left:settings.focus*60,running:false,ends:0,roundCount:0,...read('study-tracker-clock',{})};
+if(!['focus','break'].includes(timer.mode))timer.mode='focus';
+if(!Number.isFinite(timer.left)||timer.left<0)timer.left=settings[timer.mode]*60;
+if(!Number.isFinite(timer.roundCount))timer.roundCount=0;
+let today=()=>new Date().toLocaleDateString('en-CA'),daily=read('study-tracker-daily',{date:today(),count:0});
+if(daily.date!==today())daily={date:today(),count:0};
+/* Original gentle notes, fresh on each page open, even after opting out of the pop-up. */
+const encouragements=[
+"A little progress today is still progress worth celebrating.",
+"You don't need to finish everything at once. Just begin with the next page.",
+"Every minute you spend learning is a gift to your future self.",
+"Take your time, trust your pace, and keep going. You're growing.",
+"Your dreams are worth every small, brave step you take.",
+"You are capable of more than you know, one study session at a time.",
+"The effort you put in today is something to be proud of.",
+"One chapter, one question, one little victory at a time.",
+"Even slow progress is a beautiful kind of progress.",
+"Your best is enough for today. Keep showing up for yourself.",
+"You can be proud of trying, not just of finishing.",
+"Learning something new takes courage. Look at you go!",
+"Small, steady steps can carry you somewhere amazing.",
+"Focus on the next little thing. You've already come so far.",
+"A break isn't falling behind. It's part of moving forward.",
+"Give yourself grace while you grow. You're doing beautifully.",
+"Your future self will be so glad you kept going.",
+"Show up with kindness for yourself. That's real strength.",
+"You don't have to be perfect to make wonderful progress.",
+"Trust the work you're putting in. Good things take time.",
+"A fresh start can begin with a single quiet minute.",
+"Be patient with your mind. Every little lesson counts.",
+"Rest when you need to, then come back to your dreams.",
+"Today is another chance to learn, bloom, and believe in yourself."
+];
+const previousQuote=Number(read('study-tracker-last-quote',-1));
+let quoteIndex=Math.floor(Math.random()*encouragements.length);
+if(quoteIndex===previousQuote)quoteIndex=(quoteIndex+1+Math.floor(Math.random()*(encouragements.length-1)))%encouragements.length;
+save('study-tracker-last-quote',quoteIndex);
+const openingQuote=encouragements[quoteIndex];
+$('home-quote').textContent='“'+openingQuote+'”';
+$('welcome-quote').textContent='“'+openingQuote+'”';
+const gospelVerses=[
+  {text:"With men this is impossible; but with God all things are possible.",ref:"Matthew 19:26"},
+  {text:"For with God nothing shall be impossible.",ref:"Luke 1:37"},
+  {text:"Come unto me, all ye that labour and are heavy laden, and I will give you rest.",ref:"Matthew 11:28"},
+  {text:"Peace I leave with you, my peace I give unto you.",ref:"John 14:27"},
+  {text:"Let not your heart be troubled: ye believe in God, believe also in me.",ref:"John 14:1"},
+  {text:"Be of good cheer; I have overcome the world.",ref:"John 16:33"},
+  {text:"Let your light so shine before men, that they may see your good works.",ref:"Matthew 5:16"},
+  {text:"I am the light of the world: he that followeth me shall not walk in darkness, but shall have the light of life.",ref:"John 8:12"}
+];
+const previousGospelIndex=Number(read('study-tracker-last-gospel',-1));
+let gospelIndex=Math.floor(Math.random()*gospelVerses.length);
+if(gospelIndex===previousGospelIndex)gospelIndex=(gospelIndex+1+Math.floor(Math.random()*(gospelVerses.length-1)))%gospelVerses.length;
+save('study-tracker-last-gospel',gospelIndex);
+const gospel=gospelVerses[gospelIndex],reference=gospel.ref+' · KJV';
+$('home-gospel').textContent='“'+gospel.text+'”';
+$('home-gospel-ref').textContent=reference;
+$('welcome-gospel').textContent='“'+gospel.text+'”';
+$('welcome-gospel-ref').textContent=reference;
+$('welcome-on-open').checked=!read('study-tracker-hide-welcome',false);
+$('welcome-on-open').addEventListener('change',e=>{
+  save('study-tracker-hide-welcome',!e.target.checked);
+  notice(e.target.checked?'Sweet welcome messages are on ♡':'Welcome pop-up turned off ♡');
+});
+$('welcome-close').addEventListener('click',()=>{
+  if($('welcome-hide').checked){save('study-tracker-hide-welcome',true);$('welcome-on-open').checked=false}
+  $('welcome-dialog').close();
+});
+const guidePrefKey='study-tracker-hide-guide';
+$('guide-on-open').checked=!read(guidePrefKey,false);
+$('guide-on-open').addEventListener('change',e=>{
+  save(guidePrefKey,!e.target.checked);
+  notice(e.target.checked?'Timer introduction is on ♡':'Timer introduction turned off ♡');
+});
+$('guide-close').addEventListener('click',()=>$('timer-guide').close());
+$('timer-guide').addEventListener('close',()=>{
+  if($('guide-hide').checked){
+    save(guidePrefKey,true);
+    $('guide-on-open').checked=false;
+  }
+});
+function showOpeningNote(){
+  if($('account').open)return;
+  const quoteOn=!read('study-tracker-hide-welcome',false);
+  const guideOn=!read(guidePrefKey,false);
+  if(quoteOn&&!$('welcome-dialog').open){
+    $('welcome-hide').checked=false;
+    $('welcome-dialog').showModal();
+  }
+  // Opening in this order intentionally places the guide on top of the quote dialog.
+  if(guideOn&&!$('timer-guide').open){
+    $('guide-hide').checked=false;
+    $('timer-guide').showModal();
+  }
+}
+let client=null,user=null,saveTimer,toastTimer,audio;
+let pipWin=null,pipWinInterval=null,pipCanvas=null,pipVideo=null,miniDrag=null;
+const minutes=()=>settings[timer.mode]*60;
+function persist(){save('study-tracker-settings',settings);save('study-tracker-clock',timer);save('study-tracker-daily',daily)}
+function notice(txt){const x=$('toast');x.textContent=txt;x.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>x.classList.remove('show'),2700)}
+function bell(){if(!settings.chime)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume();[587,740,880].forEach((freq,i)=>{const o=audio.createOscillator(),g=audio.createGain(),at=audio.currentTime+i*.17;o.frequency.value=freq;g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(.055,at+.035);g.gain.exponentialRampToValueAtTime(.0001,at+.31);o.connect(g).connect(audio.destination);o.start(at);o.stop(at+.32)})}catch{}}
+/* Browser notifications. Service-worker display works where mobile direct Notification() does not. */
+const REMINDER_KEY='study-tracker-reminders-enabled';
+let remindersEnabled=read(REMINDER_KEY,false);
+let serviceWorkerRegistration=null;
+let lastNotificationError='';
+function notificationCapability(){
+  if(!window.isSecureContext)return 'insecure';
+  if(!('Notification' in window))return 'unsupported';
+  if(!('serviceWorker' in navigator)&&typeof Notification!=='function')return 'unsupported';
+  return Notification.permission;
+}
+async function getReminderWorker(){
+  if(!('serviceWorker' in navigator))return null;
+  if(serviceWorkerRegistration?.active)return serviceWorkerRegistration;
+  try{
+    let reg=await navigator.serviceWorker.getRegistration('/');
+    if(!reg)reg=await navigator.serviceWorker.register('/sw.js');
+    serviceWorkerRegistration=reg;
+    if(reg.active)return reg;
+    // Wait briefly for the initial installation, without blocking the app forever.
+    return await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise(resolve=>setTimeout(()=>resolve(reg),2800))
+    ]);
+  }catch(e){console.warn('Study Tracker service worker:',e);return null}
+}
+function updateReminderUI(){
+  const state=notificationCapability(),btn=$('notify'),tip=$('notify-status'),test=$('notify-test');
+  let text='';
+  if(state==='insecure'){btn.textContent='Unavailable';btn.disabled=true;text='Notifications require a secure HTTPS connection.'}
+  else if(state==='unsupported'){btn.textContent='Unavailable';btn.disabled=true;text='This browser does not offer website notifications. On iPhone, add Study Tracker to the Home Screen, open it there, and try again.'}
+  else if(state==='denied'){btn.textContent='Blocked';btn.disabled=true;text='Notifications are blocked in browser or device settings. Allow them for Study Tracker, then reopen the app.'}
+  else if(state==='default'){btn.textContent='Enable';btn.disabled=false;text='Tap Enable to let Study Tracker remind you when a study or break session ends. Your browser may ask permission.'}
+  else{btn.textContent=remindersEnabled?'Disable':'Enable';btn.disabled=false;text=remindersEnabled?'Reminders are on. You can send a test alert below.':'Permission is granted, but reminders are paused. Tap Enable to turn them on.'}
+  if(lastNotificationError)text+=' '+lastNotificationError;
+  tip.textContent=text;
+  test.hidden=!(state==='granted'&&remindersEnabled);
+}
+async function sendReminder(title,body,{test=false}={}){
+  if(notificationCapability()!=='granted'||!remindersEnabled)return false;
+  const options={body,icon:'/icon.svg',badge:'/icon.svg',tag:test?'study-tracker-test':'study-tracker-interval',data:{url:location.origin+'/'},silent:false};
+  try{
+    const reg=await getReminderWorker();
+    if(reg&&typeof reg.showNotification==='function'){
+      await reg.showNotification(title,options);
+      lastNotificationError='';return true;
+    }
+    if(typeof Notification==='function'){
+      const n=new Notification(title,options);
+      n.onclick=()=>{window.focus();n.close()};
+      lastNotificationError='';return true;
+    }
+    throw Error('Your browser does not support displaying notifications here.');
+  }catch(err){
+    console.warn('Study Tracker reminder:',err);
+    lastNotificationError='This browser could not display the alert. Try installing the app or checking notification settings.';
+    updateReminderUI();
+    if(test)notice('Could not show a notification on this device.');
+    return false;
+  }
+}
+function alertHidden(title,msg){void sendReminder(title,msg)}
+$('notify').onclick=async()=>{
+  const state=notificationCapability();
+  if(state==='granted'){
+    remindersEnabled=!remindersEnabled;
+    lastNotificationError='';
+    save(REMINDER_KEY,remindersEnabled);
+    updateReminderUI();
+    notice(remindersEnabled?'Study and break reminders are on ♡':'Browser reminders are off ♡');
+    return;
+  }
+  if(state!=='default'){updateReminderUI();notice('Notification permission is not available here.');return}
+  try{
+    // Keep requestPermission inside a direct user click for iOS/Chrome permission rules.
+    const permission=await Notification.requestPermission();
+    remindersEnabled=permission==='granted';
+    save(REMINDER_KEY,remindersEnabled);
+    lastNotificationError='';
+    updateReminderUI();
+    if(remindersEnabled){
+      await getReminderWorker();
+      notice('Reminders enabled! Tap Send a test notification ♡');
+    }else notice(permission==='denied'?'Allow notifications in your browser settings to enable reminders.':'Permission was not granted; the timer still works.');
+  }catch(e){lastNotificationError='Permission could not be requested here.';updateReminderUI();notice('Unable to enable browser notifications.')}
+};
+$('notify-test').onclick=async()=>{
+  const ok=await sendReminder('Study Tracker is ready! 🌷','A little test reminder ♡ Your study and break alerts are enabled.',{test:true});
+  notice(ok?'Test notification sent ♡':'This device could not display the test notification.');
+};
+document.addEventListener('visibilitychange',()=>{if(!$('settings-dialog').open)return;updateReminderUI()});
+
+function render(){const secs=Math.max(0,Math.ceil(timer.left)),str=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+$('clock').textContent=str;$('progress').style.strokeDashoffset=String(879.646*Math.max(0,Math.min(1,1-secs/Math.max(1,minutes()))));
+$('play').textContent=timer.running?'Ⅱ Pause':'▶ '+(secs===minutes()?'Start':'Resume');
+$('focus-tab').setAttribute('aria-selected',timer.mode==='focus'?'true':'false');$('break-tab').setAttribute('aria-selected',timer.mode==='break'?'true':'false');
+$('dial-emoji').textContent=timer.mode==='focus'?'🌷':'☕';$('dial-caption').textContent=timer.mode==='focus'?'time to focus':'time to recharge';
+$('headline').textContent=timer.mode==='focus'?"You've got this, love! ♡":"Rest a little, sweet girl ♡";
+$('subtitle').textContent=timer.mode==='focus'?'A little focus now, a little rest after.':'Grab some water and stretch a little.';
+$('encourage').textContent=timer.mode==='focus'?'You can do hard things. One minute at a time ✨':'Rest is part of growing. Enjoy this moment 🌸';
+$('count').textContent=daily.count+' done today · goal '+settings.rounds;
+const dots=$('dots');dots.replaceChildren();for(let i=0;i<settings.rounds;i++){const e=document.createElement('span');e.className='dot'+((timer.roundCount>0&&timer.roundCount%settings.rounds===0)||i<timer.roundCount%settings.rounds?' done':'');dots.append(e)}
+document.title=(timer.running?str+' · ':'')+'Study Tracker ♡';syncPipDisplay()}
+function renderSettings(){for(const n of ['focus','break','rounds'])$(n==='rounds'?'rounds':n+'-min').value=settings[n];$('auto').checked=!!settings.auto;$('chime').checked=!!settings.chime;document.body.dataset.theme=settings.theme;document.querySelectorAll('.swatch').forEach(el=>el.classList.toggle('active',el.dataset.t===settings.theme));render()}
+function change(name,value){if(['focus','break','rounds'].includes(name)){const max=name==='focus'?240:name==='break'?120:20;settings[name]=clamp(value,1,max,settings[name]);if(name===timer.mode&&!timer.running)timer.left=minutes()}else settings[name]=value;persist();renderSettings();scheduleSync()}
+function stop(){timer.running=false;timer.ends=0;timer.left=minutes();persist();render()}
+function advance(countStudy){const before=timer.mode;timer.running=false;timer.ends=0;if(countStudy&&before==='focus'){timer.roundCount++;daily.count++}
+const reached=before==='focus'&&countStudy&&timer.roundCount%settings.rounds===0;
+timer.mode=before==='focus'?'break':'focus';timer.left=minutes();timer.running=!!settings.auto&&!reached;if(timer.running)timer.ends=Date.now()+timer.left*1000;
+persist();render();if(countStudy){bell();alertHidden(before==='focus'?'Study finished 🌷':'Break finished ☕',before==='focus'?'Take a little break, love.':'Ready to focus again?');notice(reached?'You met your little goal! So proud of you ♡':before==='focus'?'Enjoy your cozy break ☕':'Time to bloom 🌷')}}
+$('play').onclick=()=>{if(timer.running){timer.left=Math.max(0,Math.ceil((timer.ends-Date.now())/1000));timer.running=false;timer.ends=0}else{timer.running=true;timer.ends=Date.now()+Math.max(1,timer.left)*1000;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume()}catch{}}persist();render()};
+$('reset').onclick=()=>{stop();notice('Fresh start, fresh energy ♡')};$('skip').onclick=()=>advance(false);
+$('focus-tab').onclick=()=>{if(timer.mode!=='focus'){timer.mode='focus';stop()}};$('break-tab').onclick=()=>{if(timer.mode!=='break'){timer.mode='break';stop()}};
+for(const name of ['focus','break','rounds']){const id=name==='rounds'?'rounds':name+'-min';$(id).addEventListener('change',e=>change(name,e.target.value))}
+document.querySelectorAll('[data-step]').forEach(btn=>btn.onclick=()=>{const [name,delta]=btn.dataset.step.split(':');change(name,settings[name]+Number(delta))});
+$('auto').onchange=e=>change('auto',e.target.checked);$('chime').onchange=e=>change('chime',e.target.checked);
+document.querySelectorAll('.swatch').forEach(btn=>btn.onclick=()=>change('theme',btn.dataset.t));
+updateReminderUI();
+function tick(){if(daily.date!==today()){daily={date:today(),count:0};persist()}if(timer.running){timer.left=Math.max(0,Math.ceil((timer.ends-Date.now())/1000));if(timer.left===0){advance(true);return}save('study-tracker-clock',timer)}render()}
+
+/* Always-on-top Document Picture-in-Picture (desktop), video PiP fallback, and in-page mini timer. */
+function isVideoPip(){return !!pipVideo&&(document.pictureInPictureElement===pipVideo||pipVideo.webkitPresentationMode==='picture-in-picture')}
+function hasDocumentPip(){return !!pipWin&&!pipWin.closed}
+function updatePipButton(){
+const open=hasDocumentPip()||isVideoPip()||!$('mini-float').hidden;
+$('pip').setAttribute('aria-pressed',String(open));
+$('pip').setAttribute('aria-label',open?'Close floating timer':'Open floating Picture-in-Picture timer');
+$('pip').title=open?'Close floating timer':'Floating timer (Picture-in-Picture)';
+}
+function syncPipDisplay(){
+const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
+const time=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
+const label=timer.mode==='focus'?'🌷 Study time':'☕ Break time';
+$('mini-clock').textContent=time;$('mini-mode').textContent=label;$('mini-play').textContent=timer.running?'Ⅱ Pause':'▶ Start';
+if(hasDocumentPip()){
+try{
+const d=pipWin.document;
+const a=d.getElementById('pip-time'), b=d.getElementById('pip-mode'),p=d.getElementById('pip-play'),n=d.getElementById('pip-count');
+if(a)a.textContent=time;if(b)b.textContent=label;if(p)p.textContent=timer.running?'Ⅱ Pause':'▶ Start';
+if(n)n.textContent=daily.count+' sessions completed today ♡';
+d.documentElement.dataset.theme=settings.theme;
+}catch(e){console.warn('PiP update',e)}
+}
+if(isVideoPip())drawPipCanvas();
+updatePipButton();
+}
+async function openDocumentPip(){
+if(!window.documentPictureInPicture?.requestWindow)return false;
+const win=await window.documentPictureInPicture.requestWindow({width:310,height:260});
+pipWin=win;
+win.document.title='Study Tracker ♡';
+win.document.head.innerHTML='<meta name="viewport" content="width=device-width, initial-scale=1"><style>'
++'*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:18px 17px;display:flex;flex-direction:column;align-items:center;justify-content:center}'
++'html{--accent:#cf7494;--bg:#fff8fa;--ink:#66465a;--light:#f9dfeb}'
++'html[data-theme="lavender"]{--accent:#987bc5;--bg:#fcf9ff;--ink:#58466c;--light:#efe6fa}'
++'html[data-theme="sage"]{--accent:#78ac96;--bg:#f8fffa;--ink:#3d6053;--light:#e1f3e9}'
++'.mode{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em}.time{font-variant-numeric:tabular-nums;font-size:67px;font-weight:750;line-height:1.2;letter-spacing:-2px}.count{font-size:10px;opacity:.7;margin-bottom:13px}'
++'.buttons{display:flex;gap:7px;width:100%;max-width:268px}.buttons button{flex:1;min-height:35px;border:none;border-radius:10px;background:var(--light);color:var(--ink);font-size:12px;font-weight:700;cursor:pointer}.buttons button:first-child{background:var(--accent);color:white}'
++'</style>';
+win.document.body.innerHTML='<div id="pip-mode" class="mode">🌷 Study time</div><div id="pip-time" class="time">25:00</div>'
++'<div id="pip-count" class="count">A little focus goes a long way ♡</div>'
++'<div class="buttons"><button id="pip-play" type="button">▶ Start</button><button id="pip-next" type="button">Next →</button><button id="pip-reset" type="button">↺ Reset</button></div>';
+win.document.getElementById('pip-play').addEventListener('click',()=>{ $('play').click();syncPipDisplay() });
+win.document.getElementById('pip-next').addEventListener('click',()=>{ $('skip').click();syncPipDisplay() });
+win.document.getElementById('pip-reset').addEventListener('click',()=>{ $('reset').click();syncPipDisplay() });
+win.addEventListener('pagehide',()=>{
+if(pipWin===win){pipWin=null;pipWinInterval=null;updatePipButton()}
+},{once:true});
+pipWinInterval=win.setInterval(tick,400);
+syncPipDisplay();
+return true;
+}
+function drawPipCanvas(){
+if(!pipCanvas)return;
+const g=pipCanvas.getContext('2d');if(!g)return;
+const palettes={rose:['#fff3f7','#cf7494','#69475b','#fae0e9'],lavender:['#f9f4ff','#987bc5','#58466c','#ebe0f6'],sage:['#f3fff9','#78ac96','#3e6552','#dff5e9']};
+const [bg,accent,ink,soft]=palettes[settings.theme]||palettes.rose;
+const w=500,h=280;g.clearRect(0,0,w,h);g.fillStyle=bg;g.fillRect(0,0,w,h);
+g.fillStyle=soft;g.beginPath();g.arc(40,40,62,0,2*Math.PI);g.fill();g.beginPath();g.arc(478,265,85,0,2*Math.PI);g.fill();
+g.textAlign='center';g.textBaseline='middle';g.fillStyle=accent;g.font='700 24px system-ui';
+g.fillText(timer.mode==='focus'?'✿ STUDY TIME':'☕ BREAK TIME',w/2,58);
+const secs=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
+const str=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+g.font='700 100px system-ui';g.fillStyle=ink;g.fillText(str,w/2,155);
+g.fillStyle=accent;g.font='600 20px system-ui';g.fillText(timer.running?'♡  keep going, you got this':'♡  ready when you are',w/2,221);
+const progress=Math.max(0,Math.min(1,secs/Math.max(1,minutes())));g.strokeStyle=soft;g.lineWidth=8;g.lineCap='round';g.beginPath();g.moveTo(75,249);g.lineTo(425,249);g.stroke();g.strokeStyle=accent;g.beginPath();g.moveTo(75,249);g.lineTo(75+350*progress,249);g.stroke();
+}
+async function openVideoPip(){
+const supportsAPI=typeof HTMLVideoElement!=='undefined'&&('requestPictureInPicture' in HTMLVideoElement.prototype||'webkitSetPresentationMode' in HTMLVideoElement.prototype);
+if(!supportsAPI||!HTMLCanvasElement.prototype.captureStream)return false;
+if(!pipCanvas){
+pipCanvas=document.createElement('canvas');pipCanvas.width=500;pipCanvas.height=280;
+pipVideo=document.createElement('video');pipVideo.playsInline=true;pipVideo.muted=true;pipVideo.autoplay=true;pipVideo.width=2;pipVideo.height=2;
+pipVideo.style.cssText='position:fixed;top:-6px;left:-6px;width:2px;height:2px;opacity:.01;pointer-events:none';
+pipVideo.srcObject=pipCanvas.captureStream(5);document.body.appendChild(pipVideo);
+pipVideo.addEventListener('leavepictureinpicture',()=>{pipVideo.pause();updatePipButton()});
+pipVideo.addEventListener('webkitpresentationmodechanged',()=>{if(pipVideo.webkitPresentationMode!=='picture-in-picture')pipVideo.pause();updatePipButton()});
+}
+drawPipCanvas();
+await pipVideo.play();
+if(document.pictureInPictureEnabled&&typeof pipVideo.requestPictureInPicture==='function'){
+await pipVideo.requestPictureInPicture();syncPipDisplay();return true;
+}
+if(typeof pipVideo.webkitSupportsPresentationMode==='function'&&pipVideo.webkitSupportsPresentationMode('picture-in-picture')){
+pipVideo.webkitSetPresentationMode('picture-in-picture');syncPipDisplay();return isVideoPip();
+}
+return false;
+}
+function closeVideoPip(){
+if(document.pictureInPictureElement===pipVideo&&document.exitPictureInPicture){document.exitPictureInPicture().catch(()=>{})}
+if(pipVideo?.webkitPresentationMode==='picture-in-picture')try{pipVideo.webkitSetPresentationMode('inline')}catch{}
+}
+async function togglePip(){
+if(hasDocumentPip()){pipWin.close();updatePipButton();return}
+if(isVideoPip()){closeVideoPip();updatePipButton();return}
+if(!$('mini-float').hidden){$('mini-float').hidden=true;updatePipButton();return}
+if(window.documentPictureInPicture?.requestWindow){
+try{await openDocumentPip();return}catch(e){console.warn('Document Picture-in-Picture unavailable:',e)}
+}
+try{if(await openVideoPip())return}catch(e){console.warn('Video Picture-in-Picture unavailable:',e)}
+if(pipVideo&&!isVideoPip())pipVideo.pause();
+$('mini-float').hidden=false;updatePipButton();
+notice('Floating timer opened here. For an always-on-top timer, use a browser that supports Picture-in-Picture.');
+}
+$('pip').addEventListener('click',togglePip);
+$('mini-close').addEventListener('click',()=>{$('mini-float').hidden=true;updatePipButton()});
+$('mini-play').addEventListener('click',()=>{$('play').click();syncPipDisplay()});
+$('mini-next').addEventListener('click',()=>{$('skip').click();syncPipDisplay()});
+$('mini-back').addEventListener('click',()=>{window.scrollTo({top:0,behavior:'smooth'})});
+$('mini-grip').addEventListener('pointerdown',e=>{
+if(e.target.closest('button'))return;
+const el=$('mini-float'),box=el.getBoundingClientRect();
+miniDrag={x:e.clientX,y:e.clientY,left:box.left,top:box.top};
+$('mini-grip').setPointerCapture(e.pointerId);
+});
+$('mini-grip').addEventListener('pointermove',e=>{
+if(!miniDrag)return;const el=$('mini-float'),left=miniDrag.left+e.clientX-miniDrag.x,top=miniDrag.top+e.clientY-miniDrag.y;
+el.style.left=Math.max(4,Math.min(window.innerWidth-el.offsetWidth-4,left))+'px';
+el.style.top=Math.max(4,Math.min(window.innerHeight-el.offsetHeight-4,top))+'px';
+el.style.right='auto';el.style.bottom='auto';
+});
+$('mini-grip').addEventListener('pointerup',()=>{miniDrag=null});
+$('mini-grip').addEventListener('pointercancel',()=>{miniDrag=null});
+function row(){return{user_id:user.id,focus_minutes:settings.focus,break_minutes:settings.break,rounds:settings.rounds,auto_start:settings.auto,sound_enabled:settings.chime,theme:settings.theme,updated_at:new Date().toISOString()}}
+async function pushCloud(){if(!client||!user)return;const r=await client.from('study_tracker_preferences').upsert(row(),{onConflict:'user_id'});$('login-status').textContent=r.error?'Sync error: '+r.error.message:'Your settings are synced ♡'}
+function scheduleSync(){if(!user)return;clearTimeout(saveTimer);saveTimer=setTimeout(pushCloud,750)}
+async function pullCloud(){if(!client||!user)return;const r=await client.from('study_tracker_preferences').select('*').eq('user_id',user.id).maybeSingle();if(r.error){$('login-status').textContent=r.error.message;return}if(!r.data){await pushCloud();return}
+const p=r.data;settings.focus=clamp(p.focus_minutes,1,240,25);settings.break=clamp(p.break_minutes,1,120,5);settings.rounds=clamp(p.rounds,1,20,4);settings.auto=!!p.auto_start;settings.chime=!!p.sound_enabled;settings.theme=['rose','lavender','sage'].includes(p.theme)?p.theme:'rose';
+if(!timer.running)timer.left=minutes();persist();renderSettings();$('login-status').textContent='Loaded your cloud settings ♡'}
+function accountUI(){$('login-form').classList.toggle('hidden',!!user);$('signed-in').classList.toggle('hidden',!user);$('sync-summary').textContent=user?'Signed in: '+user.email:'Not signed in';$('cloud-btn').textContent=user?'☁ Manage Sync':'☁ Open Cloud Sync';if(user)$('account-email').textContent='Signed in as '+user.email}
+function closeSettings(){$('settings-dialog').close()}
+$('settings-btn').onclick=()=>{accountUI();updateReminderUI();$('settings-dialog').showModal()};
+$('settings-close').onclick=$('settings-done').onclick=closeSettings;
+$('cloud-btn').onclick=()=>{accountUI();closeSettings();$('account').showModal()};
+$('dismiss').onclick=$('done').onclick=()=>{$('account').close();accountUI();updateReminderUI();$('settings-dialog').showModal()};
+$('login-form').onsubmit=async e=>{e.preventDefault();if(!client){$('login-status').textContent='Cloud login is unavailable. Local saving still works.';return}$('login-status').textContent='Sending your link…';const r=await client.auth.signInWithOtp({email:$('email').value.trim(),options:{emailRedirectTo:location.origin+'/'}});$('login-status').textContent=r.error?r.error.message:'Check your email for the sign-in link ♡'};
+$('sync-now').onclick=async()=>{await pushCloud();notice('Cloud sync checked ♡')};$('sign-out').onclick=async()=>{if(client)await client.auth.signOut();user=null;accountUI();notice('Signed out ♡')};
+async function initCloud(){if(!window.supabase?.createClient)return;try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);client.auth.onAuthStateChange((evt,sess)=>{const next=sess?.user||null,changed=!!next&&(!user||next.id!==user.id);user=next;accountUI();if(changed)setTimeout(pullCloud,0)});const r=await client.auth.getUser();if(r.data?.user&&(!user||user.id!==r.data.user.id)){user=r.data.user;accountUI();await pullCloud()}}catch(err){console.warn('Offline cloud syncing',err)}}
+if(timer.running){timer.left=Math.max(0,Math.ceil((Number(timer.ends)-Date.now())/1000));if(timer.left===0){timer.running=false;timer.ends=0;timer.left=minutes()}}else timer.left=Math.min(timer.left,minutes());
+renderSettings();persist();setInterval(tick,320);document.addEventListener('visibilitychange',tick);window.addEventListener('focus',tick);window.addEventListener('load',initCloud);
+setTimeout(showOpeningNote,380);
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').then(r=>{serviceWorkerRegistration=r}).catch(err=>console.warn('Offline support:',err)));
+})();
+</script>
+</body></html>

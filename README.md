@@ -14,6 +14,7 @@ A sweet, minimal study + break interval timer, made for Whitney.
 - Independent "Don't show this again" controls for the guide and the quote pop-up, each re-enabled independently from Settings
 - Quotes refresh separately on each page open, even when the pop-up is disabled; the pop-up can be turned on again in settings
 - Rose, lavender, and sage color themes
+- Automatically follows the device's light/dark appearance and changes live with system settings, including welcome pop-ups, settings panel, and both floating/Picture-in-Picture timer styles (pastel accent choice remains saved)
 - Keeps timing accurate across browser tabs or when the screen is locked; remaining time is saved on the same device
 - Daily completed-study count, with customizable round goal
 - PWA install support with custom flower icon and cached offline assets

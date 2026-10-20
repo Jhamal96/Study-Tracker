@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#fff7f9">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#fff7f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17141c" media="(prefers-color-scheme: dark)">
 <meta name="description" content="A sweet, minimal study and break interval timer, made with love.">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Study Tracker">
 <link rel="manifest" href="/manifest.webmanifest"><link rel="icon" type="image/svg+xml" href="/icon.svg">
@@ -117,6 +118,59 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 .settings-sync-state{font-size:11px;color:var(--accent-dark);font-weight:700;overflow-wrap:anywhere}
 .settings-done{width:100%;margin-top:3px}
 @media(max-width:600px){#settings-dialog{padding:21px 18px}.settings-group{padding:13px 13px}.settings-sync-row .light-btn{width:100%}}
+
+/* System-synced appearance. Pastel hue stays user-selectable; the brightness is OS-controlled. */
+.appearance-pill{white-space:nowrap;border:1px solid var(--border);color:var(--accent-dark);background:var(--soft);padding:8px 10px;border-radius:99px;font-size:11px;font-weight:700}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme:dark;
+    --accent:#a9557b;--accent-dark:#ffc0d8;--soft:#3b2938;
+    --bg:#17141c;--ink:#f9eff7;--muted:#bfaebd;--border:#40323f;
+    --panel:#211d27;--field:#2b2430;--raised:#2c2631;--toggle-off:#544451;
+  }
+  body[data-theme="lavender"]{
+    --accent:#8563b1;--accent-dark:#dfc5ff;--soft:#30283e;
+    --bg:#171520;--border:#45384f;
+  }
+  body[data-theme="sage"]{
+    --accent:#498b72;--accent-dark:#b5ead4;--soft:#24382f;
+    --bg:#131c19;--border:#354a40;
+  }
+  body{
+    background:radial-gradient(circle at 0 0,var(--soft),transparent 44%),
+      radial-gradient(circle at 100% 100%,#292232,transparent 38%),var(--bg);
+  }
+  .panel,.mini-float,dialog,#settings-dialog{background:var(--panel);color:var(--ink);border-color:var(--border)}
+  .pill,.light-btn{background:var(--raised);border-color:var(--border);color:var(--accent-dark)}
+  .light-btn:hover,.stepper button:hover{background:var(--soft)}
+  .tabs{background:var(--field);border-color:var(--border)}
+  .tabs button[aria-selected=true]{background:var(--raised);color:var(--accent-dark);box-shadow:0 2px 12px #0003}
+  .stepper{background:var(--field);border-color:var(--border)}
+  .stepper input{color:var(--ink)}
+  .stepper button{color:var(--accent-dark)}
+  .toggle i{background:var(--toggle-off)}
+  .toggle i:before{background:#ffedf5}
+  .swatch{border-color:var(--panel);box-shadow:0 0 0 1px var(--border)}
+  .swatch.active{box-shadow:0 0 0 2px var(--accent-dark)}
+  .letter{background:linear-gradient(140deg,var(--soft),var(--panel));border-color:var(--border)}
+  .quote-stack .gospel-card{background:linear-gradient(145deg,var(--panel),var(--soft))}
+  .welcome-hero,.guide-hero{background:linear-gradient(135deg,var(--soft),var(--panel))}
+  .welcome-flower{background:#ffffff12}
+  .welcome-message{background:var(--bg);border-color:var(--border)}
+  .welcome-scripture{background:linear-gradient(130deg,var(--bg),var(--soft))}
+  dialog input[type=email]{background:var(--field);border-color:var(--border);color:var(--ink)}
+  dialog input[type=email]::placeholder{color:var(--muted)}
+  #timer-guide,.settings-group{background:var(--panel);border-color:var(--border)}
+  .settings-group{background:var(--bg)}
+  .settings-x{background:var(--field);border-color:var(--border)}
+  .main-btn{background:var(--accent);color:#fff;box-shadow:0 8px 24px #0004}
+  .mini-actions button{background:var(--soft);color:var(--accent-dark)}
+  .mini-actions button:first-child{background:var(--accent);color:#fff}
+  .toast{background:#f6e8f1;color:#382639;box-shadow:0 5px 20px #0006}
+  .welcome-optout input{accent-color:var(--accent)}
+  .logo{background:var(--soft);color:var(--accent-dark)}
+  .guide-list .guide-emoji,.icon-tile{background:var(--soft)}
+}
 </style>
 </head>
 <body data-theme="rose">
@@ -139,7 +193,7 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 <div class="control"><div class="control-left"><div class="icon-tile">🪄</div><div><div class="control-label">Study rounds</div><div class="control-note">Set your little goal</div></div></div><div class="stepper"><button type="button" data-step="rounds:-1" aria-label="Fewer rounds">−</button><input type="number" id="rounds" min="1" max="20" value="4" aria-label="Study rounds"><span class="unit">x</span><button type="button" data-step="rounds:1" aria-label="More rounds">+</button></div></div>
 <div class="setting"><div><div class="control-label">Auto-start next timer</div><div class="control-note">Study, rest, repeat</div></div><label class="toggle"><input id="auto" type="checkbox" checked aria-label="Automatically start next timer"><i></i></label></div>
 <div class="setting"><div><div class="control-label">Gentle chime</div><div class="control-note">A little ding when time is up</div></div><label class="toggle"><input id="chime" type="checkbox" checked aria-label="Sound notifications"><i></i></label></div>
-<div class="setting"><div><div class="control-label">Little color mood</div><div class="control-note">Pick a happy color</div></div><div class="palette"><button class="swatch active" title="Rose" aria-label="Rose theme" data-t="rose"></button><button class="swatch" title="Lavender" aria-label="Lavender theme" data-t="lavender"></button><button class="swatch" title="Sage" aria-label="Sage theme" data-t="sage"></button></div></div>
+<div class="setting"><div><div class="control-label">Little color mood</div><div class="control-note">Pick a happy color · follows device light/dark mode</div></div><div class="palette"><button class="swatch active" title="Rose" aria-label="Rose theme" data-t="rose"></button><button class="swatch" title="Lavender" aria-label="Lavender theme" data-t="lavender"></button><button class="swatch" title="Sage" aria-label="Sage theme" data-t="sage"></button></div></div>
 
 </section>
 <div class="quote-stack" aria-label="Daily inspiration">
@@ -189,6 +243,10 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 <dialog id="settings-dialog" aria-labelledby="settings-heading">
   <div class="settings-top"><div><p class="eyebrow">your little space ♡</p><h2 id="settings-heading">Settings ✿</h2></div><button id="settings-close" class="settings-x" type="button" aria-label="Close settings">×</button></div>
   <p class="settings-intro">Make Study Tracker feel just right for you.</p>
+  <div class="settings-group">
+    <h3>🌗 Appearance</h3>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Follow device appearance</div><div class="control-note">Study Tracker switches automatically between light and dark mode.</div></div><span class="appearance-pill" id="appearance-status" role="status">Automatic</span></div>
+  </div>
   <div class="settings-group">
     <h3>🔔 Alerts & reminders</h3>
     <div class="setting"><div class="setting-copy"><div class="control-label">Browser reminders</div><div class="control-note">Get an alert when study or break time ends</div></div><button class="pill" id="notify" type="button">Enable</button></div>
@@ -423,6 +481,17 @@ $('encourage').textContent=timer.mode==='focus'?'You can do hard things. One min
 $('count').textContent=daily.count+' done today · goal '+settings.rounds;
 const dots=$('dots');dots.replaceChildren();for(let i=0;i<settings.rounds;i++){const e=document.createElement('span');e.className='dot'+((timer.roundCount>0&&timer.roundCount%settings.rounds===0)||i<timer.roundCount%settings.rounds?' done':'');dots.append(e)}
 document.title=(timer.running?str+' · ':'')+'Study Tracker ♡';syncPipDisplay()}
+function refreshAppearance(){
+  const dark=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  $('appearance-status').textContent=dark?'🌙 Dark mode':'☀ Light mode';
+  if(hasDocumentPip())syncPipDisplay();
+  if(isVideoPip())drawPipCanvas();
+}
+if(window.matchMedia){
+  const appearanceQuery=window.matchMedia('(prefers-color-scheme: dark)');
+  if(appearanceQuery.addEventListener)appearanceQuery.addEventListener('change',refreshAppearance);
+  else if(appearanceQuery.addListener)appearanceQuery.addListener(refreshAppearance);
+}
 function renderSettings(){for(const n of ['focus','break','rounds'])$(n==='rounds'?'rounds':n+'-min').value=settings[n];$('auto').checked=!!settings.auto;$('chime').checked=!!settings.chime;document.body.dataset.theme=settings.theme;document.querySelectorAll('.swatch').forEach(el=>el.classList.toggle('active',el.dataset.t===settings.theme));render()}
 function change(name,value){if(['focus','break','rounds'].includes(name)){const max=name==='focus'?240:name==='break'?120:20;settings[name]=clamp(value,1,max,settings[name]);if(name===timer.mode&&!timer.running)timer.left=minutes()}else settings[name]=value;persist();renderSettings();scheduleSync()}
 function stop(){timer.running=false;timer.ends=0;timer.left=minutes();persist();render()}
@@ -476,6 +545,7 @@ win.document.head.innerHTML='<meta name="viewport" content="width=device-width, 
 +'html{--accent:#cf7494;--bg:#fff8fa;--ink:#66465a;--light:#f9dfeb}'
 +'html[data-theme="lavender"]{--accent:#987bc5;--bg:#fcf9ff;--ink:#58466c;--light:#efe6fa}'
 +'html[data-theme="sage"]{--accent:#78ac96;--bg:#f8fffa;--ink:#3d6053;--light:#e1f3e9}'
++'@media (prefers-color-scheme: dark){html{color-scheme:dark;--accent:#b46587;--bg:#211d27;--ink:#f9eff7;--light:#483245}html[data-theme="lavender"]{--accent:#aa86d8;--bg:#211d2a;--ink:#f8f0ff;--light:#41344e}html[data-theme="sage"]{--accent:#79b399;--bg:#16241f;--ink:#effbf5;--light:#304c3e}}'
 +'.mode{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em}.time{font-variant-numeric:tabular-nums;font-size:67px;font-weight:750;line-height:1.2;letter-spacing:-2px}.count{font-size:10px;opacity:.7;margin-bottom:13px}'
 +'.buttons{display:flex;gap:7px;width:100%;max-width:268px}.buttons button{flex:1;min-height:35px;border:none;border-radius:10px;background:var(--light);color:var(--ink);font-size:12px;font-weight:700;cursor:pointer}.buttons button:first-child{background:var(--accent);color:white}'
 +'</style>';
@@ -496,7 +566,9 @@ function drawPipCanvas(){
 if(!pipCanvas)return;
 const g=pipCanvas.getContext('2d');if(!g)return;
 const palettes={rose:['#fff3f7','#cf7494','#69475b','#fae0e9'],lavender:['#f9f4ff','#987bc5','#58466c','#ebe0f6'],sage:['#f3fff9','#78ac96','#3e6552','#dff5e9']};
-const [bg,accent,ink,soft]=palettes[settings.theme]||palettes.rose;
+const darkPalettes={rose:['#211d27','#d380a2','#f9eff7','#443344'],lavender:['#211d2a','#b89be4','#f8f0ff','#42364e'],sage:['#16241f','#91c6ab','#effbf5','#304d3e']};
+const darkMode=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+const [bg,accent,ink,soft]=(darkMode?darkPalettes:palettes)[settings.theme]||(darkMode?darkPalettes.rose:palettes.rose);
 const w=500,h=280;g.clearRect(0,0,w,h);g.fillStyle=bg;g.fillRect(0,0,w,h);
 g.fillStyle=soft;g.beginPath();g.arc(40,40,62,0,2*Math.PI);g.fill();g.beginPath();g.arc(478,265,85,0,2*Math.PI);g.fill();
 g.textAlign='center';g.textBaseline='middle';g.fillStyle=accent;g.font='700 24px system-ui';
@@ -579,7 +651,7 @@ $('login-form').onsubmit=async e=>{e.preventDefault();if(!client){$('login-statu
 $('sync-now').onclick=async()=>{await pushCloud();notice('Cloud sync checked ♡')};$('sign-out').onclick=async()=>{if(client)await client.auth.signOut();user=null;accountUI();notice('Signed out ♡')};
 async function initCloud(){if(!window.supabase?.createClient)return;try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);client.auth.onAuthStateChange((evt,sess)=>{const next=sess?.user||null,changed=!!next&&(!user||next.id!==user.id);user=next;accountUI();if(changed)setTimeout(pullCloud,0)});const r=await client.auth.getUser();if(r.data?.user&&(!user||user.id!==r.data.user.id)){user=r.data.user;accountUI();await pullCloud()}}catch(err){console.warn('Offline cloud syncing',err)}}
 if(timer.running){timer.left=Math.max(0,Math.ceil((Number(timer.ends)-Date.now())/1000));if(timer.left===0){timer.running=false;timer.ends=0;timer.left=minutes()}}else timer.left=Math.min(timer.left,minutes());
-renderSettings();persist();setInterval(tick,320);document.addEventListener('visibilitychange',tick);window.addEventListener('focus',tick);window.addEventListener('load',initCloud);
+renderSettings();refreshAppearance();persist();setInterval(tick,320);document.addEventListener('visibilitychange',tick);window.addEventListener('focus',tick);window.addEventListener('load',initCloud);
 setTimeout(showOpeningNote,380);
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').then(r=>{serviceWorkerRegistration=r}).catch(err=>console.warn('Offline support:',err)));
 })();

@@ -53,4 +53,5 @@ Press the small overlapping-window icon beside **Next**:
 - If permission is denied or unsupported, the Settings panel explains what to do; the timer and the on-page transition messages continue working.
 
 ## Migration
-- Standalone repository created from the latest Study Tracker files, preserving the old `Jhamal96/Test/study-tracker` folder as a temporary backup until Cloudflare migration is verified.
+- Standalone repository contains the current Study Tracker app. Cloudflare Pages `study-tracker` now connects to `Jhamal96/Study-Tracker` (`main`, project root `.`), retaining `https://study-tracker-cip.pages.dev/`.
+- The old `Jhamal96/Test/study-tracker` folder is retained as a historical backup and is no longer Cloudflare's deployment source.

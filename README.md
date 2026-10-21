@@ -15,7 +15,10 @@ A sweet, minimal study + break interval timer, made for Whitney.
 - Quotes refresh separately on each page open, even when the pop-up is disabled; the pop-up can be turned on again in settings
 - Rose, lavender, and sage color themes
 - Automatically follows the device's light/dark appearance and changes live with system settings, including welcome pop-ups, settings panel, and both floating/Picture-in-Picture timer styles (pastel accent choice remains saved)
-- Six floating timer display options: **Dial** (default circular progress ring), **Digital** (large countdown and progress bar), **Minimal** (clean countdown), **Clock** (analog clock face), **Speedometer** (semicircular gauge), and **Wavy Ring** (a soft circular track with a growing wavy elapsed-time arc and clear remaining-time labels, inspired by a reference screenshot). Change styles in **Settings → Floating timer**, in a supported Document Picture-in-Picture window, or in the in-page floating timer. Video Picture-in-Picture also draws the chosen style but has no in-window style controls. Style selection is saved on this device; all styles honor the rose/lavender/sage theme and system dark/light mode.
+- **10 cute Picture-in-Picture timer styles:** Bloom Circle, Wavy Love, Sweet Hearts, Stardust, Cloud Nine, Pastel Rainbow, Butterfly, Boba Bubbles, Candy Pop, and Cozy Cup. These replace the older six-style clock selector; there are no longer separate Clock or Speedometer options.
+- **Hamburger menu (☰) inside interactive Document PiP and the in-page floating timer** contains the 10 styles; the distracting row of PiP style buttons is removed. Switch looks while the timer runs, without losing countdown progress. Style choice is saved to this device.
+- **Settings → Floating timer → ☰ Choose from 10 cute timer styles** provides the same picker for all devices. In browsers that offer video-only PiP, the video countdown follows this setting but cannot show an interactive hamburger menu inside the video.
+- All ten designs respect rose/lavender/sage accent themes, light/dark appearance, study/break labels and timer progress.
 - Keeps timing accurate across browser tabs or when the screen is locked; remaining time is saved on the same device
 - Daily completed-study count, with customizable round goal
 - PWA install support with custom flower icon and cached offline assets
@@ -42,7 +45,7 @@ Made with ♡
 
 ## Floating timer / Picture-in-Picture
 Press the small overlapping-window icon beside **Next**:
-- Compatible desktop browsers: opens a real always-on-top Picture-in-Picture window with a live timer, **Pause/Resume**, **Next**, and **Reset** controls.
+- Compatible desktop browsers: opens a real always-on-top Picture-in-Picture window with a live timer, **Pause/Resume**, **Next**, **Reset**, and a **☰ hamburger menu** for the ten designs.
 - Where only video Picture-in-Picture is supported: opens a styled floating video countdown. Use the main tab to change or pause the timer.
 - If the browser blocks both PiP methods: opens a small draggable timer inside the Study Tracker page, with **Pause/Resume**, **Next**, and **View**. This in-page fallback does not appear over other apps.
 - On some phones and in installed web apps, the operating system/browser may forbid floating the timer over the home screen or other apps. Genuine system-level Android overlay/PiP in those cases requires a separate native Android app.

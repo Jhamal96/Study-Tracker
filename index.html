@@ -171,6 +171,32 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
   .logo{background:var(--soft);color:var(--accent-dark)}
   .guide-list .guide-emoji,.icon-tile{background:var(--soft)}
 }
+
+/* Picture-in-Picture style selection: dial, digital and minimal. */
+.pip-style-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}
+.pip-style-choice{display:flex;flex-direction:column;align-items:center;gap:3px;border:1px solid var(--border);color:var(--muted);background:var(--panel);border-radius:13px;padding:11px 6px;font-size:12px;font-weight:700}
+.pip-style-choice span{font-size:23px;line-height:1.3;color:var(--accent-dark)}
+.pip-style-choice[aria-pressed="true"]{color:var(--accent-dark);border-color:var(--accent);background:var(--soft)}
+.pip-style-choice:hover{border-color:var(--accent)}
+.mini-display{position:relative;display:flex;align-items:center;justify-content:center;min-height:130px;margin:3px 0}
+.mini-float .mini-clock{z-index:1;margin:0;position:relative;letter-spacing:-1px;font-size:39px}
+.mini-ring{position:absolute;width:148px;height:148px;transform:rotate(-90deg);overflow:visible;display:none}
+.mini-ring circle{fill:none;stroke-width:8}
+.mini-ring-track{stroke:var(--soft)}.mini-ring-progress{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:414.69;stroke-dashoffset:0;transition:stroke-dashoffset .3s linear}
+.mini-progress{display:none;height:6px;border-radius:8px;background:var(--soft);overflow:hidden;margin:0 0 12px}
+.mini-progress span{display:block;background:var(--accent);height:100%;width:100%;border-radius:8px;transition:width .3s linear}
+.mini-style-buttons{display:flex;justify-content:center;gap:6px;margin:1px 0 11px}
+.mini-style-buttons button{width:31px;height:26px;border-radius:8px;font-size:15px;border:1px solid var(--border);color:var(--muted);background:var(--panel);line-height:1;cursor:pointer}
+.mini-style-buttons button[aria-pressed="true"]{background:var(--soft);color:var(--accent-dark);border-color:var(--accent)}
+#mini-float[data-style="ring"] .mini-ring{display:block}
+#mini-float[data-style="ring"] .mini-display{min-height:151px}
+#mini-float[data-style="ring"] .mini-clock{font-size:35px}
+#mini-float[data-style="digital"] .mini-display{min-height:79px}
+#mini-float[data-style="digital"] .mini-clock{font-size:48px}
+#mini-float[data-style="digital"] .mini-progress{display:block}
+#mini-float[data-style="minimal"] .mini-display{min-height:67px}
+#mini-float[data-style="minimal"] .mini-clock{font-size:41px}
+@media(prefers-reduced-motion:reduce){.mini-ring-progress,.mini-progress span{transition:none}}
 </style>
 </head>
 <body data-theme="rose">
@@ -203,7 +229,7 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 </div>
 </main><footer>Breathe in. Focus gently. Bloom beautifully. <span>♥</span></footer>
 </div>
-<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div><div class="mini-clock" id="mini-clock">25:00</div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
+<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div><div class="mini-display"><svg class="mini-ring" viewBox="0 0 160 160" aria-hidden="true"><circle class="mini-ring-track" cx="80" cy="80" r="66"/><circle id="mini-ring-progress" class="mini-ring-progress" cx="80" cy="80" r="66"/></svg><div class="mini-clock" id="mini-clock">25:00</div></div><div class="mini-progress"><span id="mini-progress-bar"></span></div><div class="mini-style-buttons" role="group" aria-label="Mini timer style"><button type="button" data-pip-choice="ring" aria-label="Dial style">◉</button><button type="button" data-pip-choice="digital" aria-label="Digital style">▰</button><button type="button" data-pip-choice="minimal" aria-label="Minimal style">♡</button></div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
 <dialog id="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-quote welcome-gospel">
   <div class="welcome-hero"><div class="welcome-flower" aria-hidden="true">🌷</div><p class="welcome-kicker">a little love for your study time</p><h2 id="welcome-title">You've got this, love! ♡</h2></div>
   <div class="welcome-content">
@@ -246,6 +272,15 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
   <div class="settings-group">
     <h3>🌗 Appearance</h3>
     <div class="setting"><div class="setting-copy"><div class="control-label">Follow device appearance</div><div class="control-note">Study Tracker switches automatically between light and dark mode.</div></div><span class="appearance-pill" id="appearance-status" role="status">Automatic</span></div>
+  </div>
+  <div class="settings-group">
+    <h3>🪟 Floating timer</h3>
+    <p class="settings-hint">Choose the style of your Picture-in-Picture timer. You can switch styles anytime, even while counting down.</p>
+    <div class="pip-style-picker" role="group" aria-label="Floating timer style">
+      <button type="button" class="pip-style-choice" data-pip-choice="ring" aria-pressed="true"><span aria-hidden="true">◉</span> Dial</button>
+      <button type="button" class="pip-style-choice" data-pip-choice="digital" aria-pressed="false"><span aria-hidden="true">▰</span> Digital</button>
+      <button type="button" class="pip-style-choice" data-pip-choice="minimal" aria-pressed="false"><span aria-hidden="true">♡</span> Minimal</button>
+    </div>
   </div>
   <div class="settings-group">
     <h3>🔔 Alerts & reminders</h3>
@@ -374,6 +409,18 @@ function showOpeningNote(){
 }
 let client=null,user=null,saveTimer,toastTimer,audio;
 let pipWin=null,pipWinInterval=null,pipCanvas=null,pipVideo=null,miniDrag=null;
+const pipStyles=['ring','digital','minimal'];
+const pipStyleKey='study-tracker-pip-style';
+let pipStyle=read(pipStyleKey,'ring');
+if(!pipStyles.includes(pipStyle))pipStyle='ring';
+const RING_LENGTH=351.8584,MINI_RING_LENGTH=414.6902;
+function choosePipStyle(style){
+  if(!pipStyles.includes(style))return;
+  pipStyle=style;
+  save(pipStyleKey,style);
+  syncPipDisplay();
+}
+document.querySelectorAll('[data-pip-choice]').forEach(button=>button.addEventListener('click',()=>choosePipStyle(button.dataset.pipChoice)));
 const minutes=()=>settings[timer.mode]*60;
 function persist(){save('study-tracker-settings',settings);save('study-tracker-clock',timer);save('study-tracker-daily',daily)}
 function notice(txt){const x=$('toast');x.textContent=txt;x.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>x.classList.remove('show'),2700)}
@@ -522,14 +569,24 @@ function syncPipDisplay(){
 const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
 const time=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
 const label=timer.mode==='focus'?'🌷 Study time':'☕ Break time';
+const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
 $('mini-clock').textContent=time;$('mini-mode').textContent=label;$('mini-play').textContent=timer.running?'Ⅱ Pause':'▶ Start';
+$('mini-float').dataset.style=pipStyle;
+$('mini-ring-progress').style.strokeDashoffset=String(MINI_RING_LENGTH*(1-progress));
+$('mini-progress-bar').style.width=(progress*100).toFixed(2)+'%';
+document.querySelectorAll('[data-pip-choice]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.pipChoice===pipStyle)));
 if(hasDocumentPip()){
 try{
 const d=pipWin.document;
 const a=d.getElementById('pip-time'), b=d.getElementById('pip-mode'),p=d.getElementById('pip-play'),n=d.getElementById('pip-count');
 if(a)a.textContent=time;if(b)b.textContent=label;if(p)p.textContent=timer.running?'Ⅱ Pause':'▶ Start';
 if(n)n.textContent=daily.count+' sessions completed today ♡';
+const ring=d.getElementById('pip-ring-progress'),bar=d.getElementById('pip-progress-bar');
+if(ring)ring.style.strokeDashoffset=String(RING_LENGTH*(1-progress));
+if(bar)bar.style.width=(progress*100).toFixed(2)+'%';
 d.documentElement.dataset.theme=settings.theme;
+d.document.body.dataset.style=pipStyle;
+d.querySelectorAll('[data-pip-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.pipStyle===pipStyle)));
 }catch(e){console.warn('PiP update',e)}
 }
 if(isVideoPip())drawPipCanvas();
@@ -537,24 +594,31 @@ updatePipButton();
 }
 async function openDocumentPip(){
 if(!window.documentPictureInPicture?.requestWindow)return false;
-const win=await window.documentPictureInPicture.requestWindow({width:310,height:260});
+const win=await window.documentPictureInPicture.requestWindow({width:324,height:350});
 pipWin=win;
 win.document.title='Study Tracker ♡';
 win.document.head.innerHTML='<meta name="viewport" content="width=device-width, initial-scale=1"><style>'
-+'*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:18px 17px;display:flex;flex-direction:column;align-items:center;justify-content:center}'
++'*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}'
 +'html{--accent:#cf7494;--bg:#fff8fa;--ink:#66465a;--light:#f9dfeb}'
 +'html[data-theme="lavender"]{--accent:#987bc5;--bg:#fcf9ff;--ink:#58466c;--light:#efe6fa}'
 +'html[data-theme="sage"]{--accent:#78ac96;--bg:#f8fffa;--ink:#3d6053;--light:#e1f3e9}'
 +'@media (prefers-color-scheme: dark){html{color-scheme:dark;--accent:#b46587;--bg:#211d27;--ink:#f9eff7;--light:#483245}html[data-theme="lavender"]{--accent:#aa86d8;--bg:#211d2a;--ink:#f8f0ff;--light:#41344e}html[data-theme="sage"]{--accent:#79b399;--bg:#16241f;--ink:#effbf5;--light:#304c3e}}'
-+'.mode{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.06em}.time{font-variant-numeric:tabular-nums;font-size:67px;font-weight:750;line-height:1.2;letter-spacing:-2px}.count{font-size:10px;opacity:.7;margin-bottom:13px}'
-+'.buttons{display:flex;gap:7px;width:100%;max-width:268px}.buttons button{flex:1;min-height:35px;border:none;border-radius:10px;background:var(--light);color:var(--ink);font-size:12px;font-weight:700;cursor:pointer}.buttons button:first-child{background:var(--accent);color:white}'
++'.mode{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.04em;flex:none}.visual{width:100%;position:relative;display:flex;align-items:center;justify-content:center;flex:none;min-height:178px}.time{font-variant-numeric:tabular-nums;font-size:58px;font-weight:750;letter-spacing:-2px;position:relative}.count{font-size:10px;opacity:.8;margin:0 0 4px;text-align:center}'
++'.ring{width:173px;height:173px;position:absolute;display:none;transform:rotate(-90deg)}.ring circle{fill:none;stroke-width:9}.ring .track{stroke:var(--light)}.ring .current{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:351.8584;transition:stroke-dashoffset .3s linear}'
++'.progress{height:6px;border-radius:8px;overflow:hidden;background:var(--light);width:85%;display:none;margin:0 auto 6px}.progress span{display:block;background:var(--accent);height:100%;width:100%;border-radius:8px;transition:width .3s linear}'
++'body[data-style="ring"] .ring{display:block}body[data-style="ring"] .time{font-size:45px}body[data-style="digital"] .visual{min-height:95px}body[data-style="digital"] .time{font-size:72px}body[data-style="digital"] .progress{display:block}body[data-style="minimal"] .visual{min-height:78px}body[data-style="minimal"] .time{font-size:64px}'
++'.styles{display:flex;justify-content:center;gap:5px;margin:3px 0 6px}.styles button{border:1px solid var(--light);background:transparent;color:var(--ink);border-radius:9px;padding:5px 8px;min-width:49px;font-size:11px;font-weight:700;cursor:pointer}.styles button[aria-pressed="true"]{background:var(--light);border-color:var(--accent)}'
++'.buttons{display:flex;gap:6px;width:100%;max-width:285px}.buttons button{flex:1;min-height:34px;border:none;border-radius:10px;background:var(--light);color:var(--ink);font-size:11px;font-weight:700;cursor:pointer}.buttons button:first-child{background:var(--accent);color:white}@media(prefers-reduced-motion:reduce){.ring .current,.progress span{transition:none}}'
 +'</style>';
-win.document.body.innerHTML='<div id="pip-mode" class="mode">🌷 Study time</div><div id="pip-time" class="time">25:00</div>'
-+'<div id="pip-count" class="count">A little focus goes a long way ♡</div>'
+win.document.body.innerHTML='<div id="pip-mode" class="mode">🌷 Study time</div>'
++'<div class="visual"><svg class="ring" viewBox="0 0 144 144" aria-hidden="true"><circle class="track" cx="72" cy="72" r="56"/><circle id="pip-ring-progress" class="current" cx="72" cy="72" r="56"/></svg><div id="pip-time" class="time">25:00</div></div>'
++'<div class="progress" aria-hidden="true"><span id="pip-progress-bar"></span></div><div id="pip-count" class="count">A little focus goes a long way ♡</div>'
++'<div class="styles" role="group" aria-label="Timer display style"><button data-pip-style="ring" type="button" title="Circle dial">◉ Dial</button><button data-pip-style="digital" type="button" title="Digital countdown">▰ Digital</button><button data-pip-style="minimal" type="button" title="Minimal countdown">♡ Simple</button></div>'
 +'<div class="buttons"><button id="pip-play" type="button">▶ Start</button><button id="pip-next" type="button">Next →</button><button id="pip-reset" type="button">↺ Reset</button></div>';
 win.document.getElementById('pip-play').addEventListener('click',()=>{ $('play').click();syncPipDisplay() });
 win.document.getElementById('pip-next').addEventListener('click',()=>{ $('skip').click();syncPipDisplay() });
 win.document.getElementById('pip-reset').addEventListener('click',()=>{ $('reset').click();syncPipDisplay() });
+win.document.querySelectorAll('[data-pip-style]').forEach(button=>button.addEventListener('click',()=>choosePipStyle(button.dataset.pipStyle)));
 win.addEventListener('pagehide',()=>{
 if(pipWin===win){pipWin=null;pipWinInterval=null;updatePipButton()}
 },{once:true});
@@ -571,13 +635,30 @@ const darkMode=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: d
 const [bg,accent,ink,soft]=(darkMode?darkPalettes:palettes)[settings.theme]||(darkMode?darkPalettes.rose:palettes.rose);
 const w=500,h=280;g.clearRect(0,0,w,h);g.fillStyle=bg;g.fillRect(0,0,w,h);
 g.fillStyle=soft;g.beginPath();g.arc(40,40,62,0,2*Math.PI);g.fill();g.beginPath();g.arc(478,265,85,0,2*Math.PI);g.fill();
-g.textAlign='center';g.textBaseline='middle';g.fillStyle=accent;g.font='700 24px system-ui';
-g.fillText(timer.mode==='focus'?'✿ STUDY TIME':'☕ BREAK TIME',w/2,58);
+g.textAlign='center';g.textBaseline='middle';g.fillStyle=accent;g.font='700 22px system-ui';
+g.fillText(timer.mode==='focus'?'✿ STUDY TIME':'☕ BREAK TIME',w/2,39);
 const secs=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
-const str=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
-g.font='700 100px system-ui';g.fillStyle=ink;g.fillText(str,w/2,155);
-g.fillStyle=accent;g.font='600 20px system-ui';g.fillText(timer.running?'♡  keep going, you got this':'♡  ready when you are',w/2,221);
-const progress=Math.max(0,Math.min(1,secs/Math.max(1,minutes())));g.strokeStyle=soft;g.lineWidth=8;g.lineCap='round';g.beginPath();g.moveTo(75,249);g.lineTo(425,249);g.stroke();g.strokeStyle=accent;g.beginPath();g.moveTo(75,249);g.lineTo(75+350*progress,249);g.stroke();
+const time=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+const progress=Math.max(0,Math.min(1,secs/Math.max(1,minutes())));
+g.fillStyle=ink;
+if(pipStyle==='ring'){
+  const cx=250,cy=146,r=84;
+  g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.strokeStyle=soft;g.lineWidth=11;g.stroke();
+  if(progress>0){
+    g.beginPath();g.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*progress);
+    g.strokeStyle=accent;g.lineWidth=11;g.lineCap='round';g.stroke();
+  }
+  g.fillStyle=ink;g.font='700 65px system-ui';g.fillText(time,cx,cy+5);
+  g.font='600 16px system-ui';g.fillStyle=accent;g.fillText(timer.running?'keep blooming ♡':'ready when you are ♡',w/2,262);
+}else if(pipStyle==='digital'){
+  g.font='700 104px system-ui';g.fillText(time,w/2,143);
+  g.font='600 20px system-ui';g.fillStyle=accent;g.fillText(timer.running?'♡ one little step at a time':'♡ ready when you are',w/2,209);
+  g.lineCap='round';g.strokeStyle=soft;g.lineWidth=9;g.beginPath();g.moveTo(74,248);g.lineTo(426,248);g.stroke();
+  g.strokeStyle=accent;g.beginPath();g.moveTo(74,248);g.lineTo(74+352*progress,248);g.stroke();
+}else{
+  g.font='700 118px system-ui';g.fillText(time,w/2,152);
+  g.font='600 17px system-ui';g.fillStyle=accent;g.fillText('breathe · focus · bloom ♡',w/2,235);
+}
 }
 async function openVideoPip(){
 const supportsAPI=typeof HTMLVideoElement!=='undefined'&&('requestPictureInPicture' in HTMLVideoElement.prototype||'webkitSetPresentationMode' in HTMLVideoElement.prototype);

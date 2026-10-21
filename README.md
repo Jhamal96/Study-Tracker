@@ -29,7 +29,7 @@ A sweet, minimal study + break interval timer, made for Whitney.
 ## Hosting
 - GitHub: standalone private repository `Jhamal96/Study-Tracker`, all app files located at repository root
 - Cloudflare Pages: project `study-tracker`, production branch `main`, root directory `.`, output directory `.` and no build command
-- Main custom domain: https://studytimer.ajdapp.org/ (Cloudflare Pages domain association and proxied CNAME; allow time for HTTPS certificate validation)
+- Main custom domain: https://studytimer.ajdapp.org/ (Cloudflare Pages custom domain **active**, SSL validation active, and proxied CNAME confirmed)
 - Original Pages address remains available: https://study-tracker-cip.pages.dev/
 - Supabase: existing shared Supabase project, with dedicated `public.study_tracker_preferences` table and owner-only RLS policies.
 

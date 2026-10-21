@@ -172,67 +172,71 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
   .guide-list .guide-emoji,.icon-tile{background:var(--soft)}
 }
 
-/* Picture-in-Picture style selection: dial, digital and minimal. */
-.pip-style-picker{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px}
-.pip-style-choice{display:flex;flex-direction:column;align-items:center;gap:3px;border:1px solid var(--border);color:var(--muted);background:var(--panel);border-radius:13px;padding:11px 6px;font-size:12px;font-weight:700}
-.pip-style-choice span{font-size:23px;line-height:1.3;color:var(--accent-dark)}
-.pip-style-choice[aria-pressed="true"]{color:var(--accent-dark);border-color:var(--accent);background:var(--soft)}
-.pip-style-choice:hover{border-color:var(--accent)}
-.mini-display{position:relative;display:flex;align-items:center;justify-content:center;min-height:130px;margin:3px 0}
-.mini-float .mini-clock{z-index:1;margin:0;position:relative;letter-spacing:-1px;font-size:39px}
-.mini-ring{position:absolute;width:148px;height:148px;transform:rotate(-90deg);overflow:visible;display:none}
-.mini-ring circle{fill:none;stroke-width:8}
-.mini-ring-track{stroke:var(--soft)}.mini-ring-progress{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:414.69;stroke-dashoffset:0;transition:stroke-dashoffset .3s linear}
-.mini-progress{display:none;height:6px;border-radius:8px;background:var(--soft);overflow:hidden;margin:0 0 12px}
-.mini-progress span{display:block;background:var(--accent);height:100%;width:100%;border-radius:8px;transition:width .3s linear}
-.mini-style-buttons{display:flex;justify-content:center;gap:6px;margin:1px 0 11px}
-.mini-style-buttons button{width:31px;height:26px;border-radius:8px;font-size:15px;border:1px solid var(--border);color:var(--muted);background:var(--panel);line-height:1;cursor:pointer}
-.mini-style-buttons button[aria-pressed="true"]{background:var(--soft);color:var(--accent-dark);border-color:var(--accent)}
-#mini-float[data-style="ring"] .mini-ring{display:block}
-#mini-float[data-style="ring"] .mini-display{min-height:151px}
-#mini-float[data-style="ring"] .mini-clock{font-size:35px}
-#mini-float[data-style="digital"] .mini-display{min-height:79px}
-#mini-float[data-style="digital"] .mini-clock{font-size:48px}
-#mini-float[data-style="digital"] .mini-progress{display:block}
-#mini-float[data-style="minimal"] .mini-display{min-height:67px}
-#mini-float[data-style="minimal"] .mini-clock{font-size:41px}
-@media(prefers-reduced-motion:reduce){.mini-ring-progress,.mini-progress span{transition:none}}
 
-/* Additional timer faces: rotating clock hand and semicircular speedometer. */
-.pip-style-picker{grid-template-columns:repeat(3,minmax(0,1fr))}
-.mini-analog,.mini-speed{position:absolute;display:none;pointer-events:none}
-.mini-analog{width:145px;height:145px}
-.mini-speed{width:205px;height:150px;top:1px}
-.analog-face{fill:none;stroke:var(--border);stroke-width:2}
-.analog-ticks{fill:none;stroke:var(--muted);stroke-width:3;stroke-linecap:round}
-.mini-analog text,.mini-speed text{font-family:Quicksand,system-ui,sans-serif;font-size:11px;font-weight:700;fill:var(--muted)}
-.mini-analog #mini-clock-hand line{stroke:var(--accent);stroke-width:5;stroke-linecap:round}
-.analog-center,.speed-center{fill:var(--accent)}
-.speed-track,.speed-fill{fill:none;stroke-width:10;stroke-linecap:round}
-.speed-track{stroke:var(--soft)}
-.speed-fill{stroke:var(--accent);stroke-dasharray:257.61;stroke-dashoffset:0;transition:stroke-dashoffset .3s linear}
-.mini-speed #mini-speed-needle line{stroke:var(--accent-dark);stroke-width:4;stroke-linecap:round}
-#mini-float[data-style="clock"] .mini-analog,
-#mini-float[data-style="speedometer"] .mini-speed{display:block}
-#mini-float[data-style="clock"] .mini-display{min-height:187px;flex-direction:column;justify-content:flex-start}
-#mini-float[data-style="clock"] .mini-analog{top:0}
-#mini-float[data-style="clock"] .mini-clock{position:absolute;bottom:1px;font-size:24px;line-height:1.2}
-#mini-float[data-style="speedometer"] .mini-display{min-height:159px}
-#mini-float[data-style="speedometer"] .mini-clock{position:absolute;bottom:0;font-size:26px;line-height:1.2}
-@media(prefers-reduced-motion:reduce){.speed-fill{transition:none}}
-
-/* Wavy progress ring: softly rippled elapsed time and clean remaining-time labels. */
-.pip-style-choice[data-pip-choice="wave"] span{font-size:26px;font-weight:900}
-.mini-wave{position:absolute;display:none;width:205px;height:205px;pointer-events:none;overflow:visible}
-.wave-track{fill:none;stroke:var(--soft);stroke-width:9;stroke-linecap:round}
-.wave-highlight{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
-.mini-wave-details{display:none;position:absolute;top:116px;width:100%;text-align:center;flex-direction:column;align-items:center;gap:3px;pointer-events:none;color:var(--muted);font-size:11px}
-.mini-wave-details strong{color:var(--ink);font-size:12px}
-.mini-wave-details small{font-size:9px;color:var(--accent-dark)}
-#mini-float[data-style="wave"] .mini-display{min-height:212px;justify-content:center;align-items:center}
-#mini-float[data-style="wave"] .mini-wave{display:block}
-#mini-float[data-style="wave"] .mini-clock{position:absolute;top:58px;font-size:33px;font-weight:750;color:var(--ink);line-height:1.1}
-#mini-float[data-style="wave"] .mini-wave-details{display:flex}
+/* Ten joyful timer faces, with a compact accessible hamburger-style picker. */
+.pip-style-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:10px 0}
+.pip-style-choice{border:1px solid var(--border);border-radius:13px;background:var(--panel);color:var(--ink);font:700 12px system-ui;padding:10px 7px;display:flex;align-items:center;gap:7px;text-align:left;cursor:pointer}
+.pip-style-choice span{font-size:20px;flex:none}
+.pip-style-choice[aria-pressed="true"],.pip-style-choice:hover{border-color:var(--accent);background:var(--soft);color:var(--accent-dark)}
+.cute-settings{margin-top:8px}
+.cute-settings summary{cursor:pointer;border-radius:13px;padding:12px;background:var(--soft);color:var(--accent-dark);font-weight:700;font-size:12px;list-style:none}
+.cute-settings summary::-webkit-details-marker{display:none}
+.cute-settings summary:focus-visible,.cute-menu-button:focus-visible,.cute-menu-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cute-menu-button{border:1px solid var(--border);border-radius:12px;padding:7px 10px;min-height:34px;background:var(--soft);color:var(--accent-dark);font-size:18px;line-height:1;font-weight:700;cursor:pointer}
+.cute-menu{position:absolute;z-index:15;top:44px;right:9px;left:9px;max-height:min(345px,72dvh);overflow-y:auto;padding:11px;background:var(--panel);border:1px solid var(--border);box-shadow:0 14px 40px #31203555;border-radius:19px}
+.cute-menu[hidden]{display:none!important}
+.cute-menu-title{font-size:12px;font-weight:800;letter-spacing:.02em;color:var(--accent-dark);margin:2px 3px 10px}
+.cute-menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.cute-menu-item{border:1px solid var(--border);border-radius:12px;padding:9px 5px;background:var(--bg);color:var(--ink);font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.cute-menu-item span{font-size:22px;line-height:1.3}
+.cute-menu-item[aria-pressed="true"]{background:var(--soft);color:var(--accent-dark);border-color:var(--accent)}
+.cute-face{--face-ink:var(--ink);height:210px;width:210px;max-width:100%;margin:0 auto;position:relative;border-radius:50%;display:grid;place-items:center;isolation:isolate;flex:none}
+.cute-face:before{content:"";position:absolute;inset:15px;border-radius:50%;background:radial-gradient(circle at 30% 25%,var(--soft),transparent 75%);opacity:.5;z-index:-1}
+.cute-art{width:210px;height:210px;position:absolute;inset:0;overflow:visible}
+.cute-art .cute-track,.cute-art .cute-progress,.cute-art .cute-heart-track,.cute-art .cute-heart-progress,.cute-art .cute-wave-track,.cute-art .cute-wave-progress,.cute-art .rainbow-track,.cute-art .rainbow-progress{fill:none;stroke-linecap:round}
+.cute-track,.cute-wave-track,.cute-heart-track,.rainbow-track{stroke:var(--soft);stroke-width:8}
+.cute-progress,.cute-wave-progress,.cute-heart-progress{stroke:var(--accent);stroke-width:9;stroke-linejoin:round}
+.cute-track,.cute-progress,.cute-wave-track,.cute-wave-progress,.cute-heart-track,.cute-heart-progress,.rainbow-track,.rainbow-progress{display:none}
+.cute-track,.cute-progress{transform:rotate(-90deg);transform-origin:105px 105px}
+.cute-progress,.cute-heart-progress,.rainbow-progress{stroke-dasharray:100;stroke-dashoffset:0;transition:stroke-dashoffset .25s linear}
+.cute-overlay{display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;position:absolute;top:47px;left:20px;right:20px;bottom:45px;text-align:center;pointer-events:none}
+.cute-symbol{font-size:21px;line-height:1.1}
+.cute-time{font-family:Quicksand,system-ui,sans-serif;font-size:36px;font-weight:800;letter-spacing:-1.8px;color:var(--face-ink);font-variant-numeric:tabular-nums;line-height:1.08}
+.cute-status{font-size:10px;color:var(--muted)}
+.cute-foot{font-size:10px;font-weight:800;color:var(--accent-dark)}
+.cute-art .cute-petals,.cute-art .cute-stars,.cute-art .cute-bubbles,.cute-art .cute-stripes{display:none}
+.cute-art .cute-petals ellipse{fill:var(--soft);stroke:var(--accent);stroke-width:.7}
+.cute-art .cute-stars text{font-size:25px;fill:var(--accent)}
+.cute-art .cute-bubbles circle{fill:var(--soft);stroke:var(--accent);stroke-width:2;transition:opacity .2s}
+.cute-art .cute-stripes circle{fill:none;stroke:var(--accent);stroke-width:9;stroke-dasharray:6 10}
+.cute-art .rainbow-progress{stroke-width:7}
+.cute-art .rainbow-progress.a{stroke:var(--accent)}
+.cute-art .rainbow-progress.b{stroke:var(--accent-dark)}
+.cute-art .rainbow-progress.c{stroke:var(--muted)}
+.cute-art .rainbow-track{stroke-width:7}
+.cute-face[data-style="bloom"] .cute-track,.cute-face[data-style="bloom"] .cute-progress,.cute-face[data-style="bloom"] .cute-petals{display:block}
+.cute-face[data-style="wave"] .cute-wave-track,.cute-face[data-style="wave"] .cute-wave-progress{display:block}
+.cute-face[data-style="hearts"] .cute-heart-track,.cute-face[data-style="hearts"] .cute-heart-progress{display:block}
+.cute-face[data-style="hearts"] .cute-overlay{top:52px}
+.cute-face[data-style="hearts"] .cute-time{font-size:33px}
+.cute-face[data-style="starry"] .cute-track,.cute-face[data-style="starry"] .cute-progress,.cute-face[data-style="starry"] .cute-stars{display:block}
+.cute-face[data-style="cloud"] .cute-track,.cute-face[data-style="cloud"] .cute-progress{display:block}
+.cute-face[data-style="cloud"]:before{background:linear-gradient(160deg,var(--soft),transparent)}
+.cute-face[data-style="rainbow"] .rainbow-track,.cute-face[data-style="rainbow"] .rainbow-progress{display:block}
+.cute-face[data-style="rainbow"] .cute-overlay{top:64px}
+.cute-face[data-style="butterfly"] .cute-track,.cute-face[data-style="butterfly"] .cute-progress,.cute-face[data-style="butterfly"] .cute-stars{display:block}
+.cute-face[data-style="bubbles"] .cute-bubbles{display:block}
+.cute-face[data-style="candy"] .cute-stripes,.cute-face[data-style="candy"] .cute-track,.cute-face[data-style="candy"] .cute-progress{display:block}
+.cute-face[data-style="cozy"] .cute-track,.cute-face[data-style="cozy"] .cute-progress{display:block}
+.cute-face[data-style="cozy"] .cute-symbol{font-size:31px}
+.cute-face[data-style="cozy"] .cute-time{font-size:40px}
+.cute-face[data-style="cloud"] .cute-symbol,.cute-face[data-style="butterfly"] .cute-symbol,.cute-face[data-style="bubbles"] .cute-symbol{font-size:27px}
+#mini-float{width:251px}
+#mini-float .mini-head{position:relative}
+#mini-float .cute-face{margin:3px auto 0}
+#mini-float .mini-actions{margin-top:6px}
+#mini-float .cute-menu{top:43px}
+@media(prefers-reduced-motion:reduce){.cute-progress,.cute-heart-progress,.rainbow-progress,.cute-art .cute-bubbles circle{transition:none}}
 </style>
 </head>
 <body data-theme="rose">
@@ -265,24 +269,8 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 </div>
 </main><footer>Breathe in. Focus gently. Bloom beautifully. <span>♥</span></footer>
 </div>
-<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div><div class="mini-display"><svg class="mini-ring" viewBox="0 0 160 160" aria-hidden="true"><circle class="mini-ring-track" cx="80" cy="80" r="66"/><circle id="mini-ring-progress" class="mini-ring-progress" cx="80" cy="80" r="66"/></svg><svg class="mini-analog" viewBox="0 0 160 160" aria-hidden="true">
-<circle class="analog-face" cx="80" cy="80" r="67"/>
-<circle class="analog-ticks" cx="80" cy="80" r="59" stroke-dasharray="3.2 27.69" transform="rotate(-90 80 80)"/>
-<text x="80" y="25" text-anchor="middle">12</text><text x="136" y="84" text-anchor="middle">3</text>
-<text x="80" y="142" text-anchor="middle">6</text><text x="24" y="84" text-anchor="middle">9</text>
-<g id="mini-clock-hand"><line x1="80" y1="88" x2="80" y2="40"/></g><circle class="analog-center" cx="80" cy="80" r="5"/>
-</svg>
-<svg class="mini-speed" viewBox="0 0 200 150" aria-hidden="true">
-<path class="speed-track" d="M 18 116 A 82 82 0 0 1 182 116"/>
-<path id="mini-speed-fill" class="speed-fill" d="M 18 116 A 82 82 0 0 1 182 116"/>
-<text x="18" y="137" text-anchor="middle">0</text><text x="182" y="137" text-anchor="middle">FULL</text>
-<g id="mini-speed-needle"><line x1="100" y1="116" x2="100" y2="46"/></g><circle class="speed-center" cx="100" cy="116" r="6"/>
-</svg>
-<svg class="mini-wave" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="77" class="wave-track"/><path id="mini-wave-progress" class="wave-highlight" d=""/></svg>
-<div class="mini-clock" id="mini-clock">25:00</div><div class="mini-wave-details"><span>Remaining</span><strong id="mini-wave-session">Study session</strong><small id="mini-wave-caption">One step at a time ♡</small></div></div><div class="mini-progress"><span id="mini-progress-bar"></span></div><div class="mini-style-buttons" role="group" aria-label="Mini timer style"><button type="button" data-pip-choice="ring" aria-label="Dial style">◉</button><button type="button" data-pip-choice="digital" aria-label="Digital style">▰</button><button type="button" data-pip-choice="minimal" aria-label="Minimal style">♡</button>
-<button type="button" data-pip-choice="clock" aria-label="Clock dial style">◷</button>
-<button type="button" data-pip-choice="speedometer" aria-label="Speedometer style">◠</button>
-<button type="button" data-pip-choice="wave" aria-label="Wavy ring style">〰</button></div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
+<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><div class="mini-head-actions"><button id="mini-style-toggle" class="cute-menu-button" type="button" aria-controls="mini-style-menu" aria-expanded="false" aria-label="Choose timer style">☰</button><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div></div><div id="mini-visual" class="mini-cute-visual"></div>
+<div id="mini-style-menu" class="cute-menu" hidden></div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
 <dialog id="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-quote welcome-gospel">
   <div class="welcome-hero"><div class="welcome-flower" aria-hidden="true">🌷</div><p class="welcome-kicker">a little love for your study time</p><h2 id="welcome-title">You've got this, love! ♡</h2></div>
   <div class="welcome-content">
@@ -329,14 +317,18 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
   <div class="settings-group">
     <h3>🪟 Floating timer</h3>
     <p class="settings-hint">Choose the style of your Picture-in-Picture timer. You can switch styles anytime, even while counting down.</p>
-    <div class="pip-style-picker" role="group" aria-label="Floating timer style">
-      <button type="button" class="pip-style-choice" data-pip-choice="ring" aria-pressed="true"><span aria-hidden="true">◉</span> Dial</button>
-      <button type="button" class="pip-style-choice" data-pip-choice="digital" aria-pressed="false"><span aria-hidden="true">▰</span> Digital</button>
-      <button type="button" class="pip-style-choice" data-pip-choice="minimal" aria-pressed="false"><span aria-hidden="true">♡</span> Minimal</button>
-      <button type="button" class="pip-style-choice" data-pip-choice="clock" aria-pressed="false"><span aria-hidden="true">◷</span> Clock</button>
-      <button type="button" class="pip-style-choice" data-pip-choice="speedometer" aria-pressed="false"><span aria-hidden="true">◠</span> Speedometer</button>
-      <button type="button" class="pip-style-choice" data-pip-choice="wave" aria-pressed="false"><span aria-hidden="true">〰</span> Wavy Ring</button>
-    </div>
+    <details class="cute-settings"><summary>☰ Choose from 10 cute timer styles</summary><div class="pip-style-picker" role="group" aria-label="Choose floating timer style">
+<button type="button" class="pip-style-choice" data-pip-choice="bloom" aria-pressed="false"><span aria-hidden="true">🌷</span>Bloom Circle</button>
+<button type="button" class="pip-style-choice" data-pip-choice="wave" aria-pressed="false"><span aria-hidden="true">〰️</span>Wavy Love</button>
+<button type="button" class="pip-style-choice" data-pip-choice="hearts" aria-pressed="false"><span aria-hidden="true">💖</span>Sweet Hearts</button>
+<button type="button" class="pip-style-choice" data-pip-choice="starry" aria-pressed="false"><span aria-hidden="true">✨</span>Stardust</button>
+<button type="button" class="pip-style-choice" data-pip-choice="cloud" aria-pressed="false"><span aria-hidden="true">☁️</span>Cloud Nine</button>
+<button type="button" class="pip-style-choice" data-pip-choice="rainbow" aria-pressed="false"><span aria-hidden="true">🌈</span>Pastel Rainbow</button>
+<button type="button" class="pip-style-choice" data-pip-choice="butterfly" aria-pressed="false"><span aria-hidden="true">🦋</span>Butterfly</button>
+<button type="button" class="pip-style-choice" data-pip-choice="bubbles" aria-pressed="false"><span aria-hidden="true">🫧</span>Boba Bubbles</button>
+<button type="button" class="pip-style-choice" data-pip-choice="candy" aria-pressed="false"><span aria-hidden="true">🍭</span>Candy Pop</button>
+<button type="button" class="pip-style-choice" data-pip-choice="cozy" aria-pressed="false"><span aria-hidden="true">☕</span>Cozy Cup</button>
+</div></details>
   </div>
   <div class="settings-group">
     <h3>🔔 Alerts & reminders</h3>
@@ -465,35 +457,90 @@ function showOpeningNote(){
 }
 let client=null,user=null,saveTimer,toastTimer,audio;
 let pipWin=null,pipWinInterval=null,pipCanvas=null,pipVideo=null,miniDrag=null;
-const pipStyles=['ring','digital','minimal','clock','speedometer','wave'];
-const pipStyleKey='study-tracker-pip-style';
-let pipStyle=read(pipStyleKey,'ring');
-if(!pipStyles.includes(pipStyle))pipStyle='ring';
-const RING_LENGTH=351.8584,MINI_RING_LENGTH=414.6902,SPEED_ARC=257.61;
-/* A gently scalloped elapsed-time arc, modeled as short radial ripples along a circle.
-   Use the same geometry for SVG and video PiP so all floating modes stay in sync. */
-function wavePoints(elapsed,cx,cy,r){
-  const fraction=Math.max(0,Math.min(1,Number(elapsed)||0));
-  if(fraction===0)return [];
-  const steps=Math.max(8,Math.ceil(230*fraction)),pts=[];
-  for(let i=0;i<=steps;i++){
-    const t=i/steps,angle=-Math.PI/2-2*Math.PI*fraction*t;
-    const taper=Math.min(1,Math.min(t,1-t)*16);
-    const radius=r+3.6*Math.sin((2*Math.PI*fraction*t)*13)*taper;
-    pts.push([cx+Math.cos(angle)*radius,cy+Math.sin(angle)*radius]);
-  }
-  return pts;
+
+/* Cute floating timer designs. All menu choices are shared by the three PiP modes. */
+const CUTE_STYLES=[{"id":"bloom","icon":"🌷","label":"Bloom Circle","symbol":"🌸"},{"id":"wave","icon":"〰️","label":"Wavy Love","symbol":"💗"},{"id":"hearts","icon":"💖","label":"Sweet Hearts","symbol":"💝"},{"id":"starry","icon":"✨","label":"Stardust","symbol":"⭐"},{"id":"cloud","icon":"☁️","label":"Cloud Nine","symbol":"☁️"},{"id":"rainbow","icon":"🌈","label":"Pastel Rainbow","symbol":"🌈"},{"id":"butterfly","icon":"🦋","label":"Butterfly","symbol":"🦋"},{"id":"bubbles","icon":"🫧","label":"Boba Bubbles","symbol":"🧋"},{"id":"candy","icon":"🍭","label":"Candy Pop","symbol":"🍬"},{"id":"cozy","icon":"☕","label":"Cozy Cup","symbol":"☕"}];
+const CUTE_CSS="\n/* Ten joyful timer faces, with a compact accessible hamburger-style picker. */\n.pip-style-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:10px 0}\n.pip-style-choice{border:1px solid var(--border);border-radius:13px;background:var(--panel);color:var(--ink);font:700 12px system-ui;padding:10px 7px;display:flex;align-items:center;gap:7px;text-align:left;cursor:pointer}\n.pip-style-choice span{font-size:20px;flex:none}\n.pip-style-choice[aria-pressed=\"true\"],.pip-style-choice:hover{border-color:var(--accent);background:var(--soft);color:var(--accent-dark)}\n.cute-settings{margin-top:8px}\n.cute-settings summary{cursor:pointer;border-radius:13px;padding:12px;background:var(--soft);color:var(--accent-dark);font-weight:700;font-size:12px;list-style:none}\n.cute-settings summary::-webkit-details-marker{display:none}\n.cute-settings summary:focus-visible,.cute-menu-button:focus-visible,.cute-menu-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}\n.cute-menu-button{border:1px solid var(--border);border-radius:12px;padding:7px 10px;min-height:34px;background:var(--soft);color:var(--accent-dark);font-size:18px;line-height:1;font-weight:700;cursor:pointer}\n.cute-menu{position:absolute;z-index:15;top:44px;right:9px;left:9px;max-height:min(345px,72dvh);overflow-y:auto;padding:11px;background:var(--panel);border:1px solid var(--border);box-shadow:0 14px 40px #31203555;border-radius:19px}\n.cute-menu[hidden]{display:none!important}\n.cute-menu-title{font-size:12px;font-weight:800;letter-spacing:.02em;color:var(--accent-dark);margin:2px 3px 10px}\n.cute-menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}\n.cute-menu-item{border:1px solid var(--border);border-radius:12px;padding:9px 5px;background:var(--bg);color:var(--ink);font-size:11px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}\n.cute-menu-item span{font-size:22px;line-height:1.3}\n.cute-menu-item[aria-pressed=\"true\"]{background:var(--soft);color:var(--accent-dark);border-color:var(--accent)}\n.cute-face{--face-ink:var(--ink);height:210px;width:210px;max-width:100%;margin:0 auto;position:relative;border-radius:50%;display:grid;place-items:center;isolation:isolate;flex:none}\n.cute-face:before{content:\"\";position:absolute;inset:15px;border-radius:50%;background:radial-gradient(circle at 30% 25%,var(--soft),transparent 75%);opacity:.5;z-index:-1}\n.cute-art{width:210px;height:210px;position:absolute;inset:0;overflow:visible}\n.cute-art .cute-track,.cute-art .cute-progress,.cute-art .cute-heart-track,.cute-art .cute-heart-progress,.cute-art .cute-wave-track,.cute-art .cute-wave-progress,.cute-art .rainbow-track,.cute-art .rainbow-progress{fill:none;stroke-linecap:round}\n.cute-track,.cute-wave-track,.cute-heart-track,.rainbow-track{stroke:var(--soft);stroke-width:8}\n.cute-progress,.cute-wave-progress,.cute-heart-progress{stroke:var(--accent);stroke-width:9;stroke-linejoin:round}\n.cute-track,.cute-progress,.cute-wave-track,.cute-wave-progress,.cute-heart-track,.cute-heart-progress,.rainbow-track,.rainbow-progress{display:none}\n.cute-track,.cute-progress{transform:rotate(-90deg);transform-origin:105px 105px}\n.cute-progress,.cute-heart-progress,.rainbow-progress{stroke-dasharray:100;stroke-dashoffset:0;transition:stroke-dashoffset .25s linear}\n.cute-overlay{display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;position:absolute;top:47px;left:20px;right:20px;bottom:45px;text-align:center;pointer-events:none}\n.cute-symbol{font-size:21px;line-height:1.1}\n.cute-time{font-family:Quicksand,system-ui,sans-serif;font-size:36px;font-weight:800;letter-spacing:-1.8px;color:var(--face-ink);font-variant-numeric:tabular-nums;line-height:1.08}\n.cute-status{font-size:10px;color:var(--muted)}\n.cute-foot{font-size:10px;font-weight:800;color:var(--accent-dark)}\n.cute-art .cute-petals,.cute-art .cute-stars,.cute-art .cute-bubbles,.cute-art .cute-stripes{display:none}\n.cute-art .cute-petals ellipse{fill:var(--soft);stroke:var(--accent);stroke-width:.7}\n.cute-art .cute-stars text{font-size:25px;fill:var(--accent)}\n.cute-art .cute-bubbles circle{fill:var(--soft);stroke:var(--accent);stroke-width:2;transition:opacity .2s}\n.cute-art .cute-stripes circle{fill:none;stroke:var(--accent);stroke-width:9;stroke-dasharray:6 10}\n.cute-art .rainbow-progress{stroke-width:7}\n.cute-art .rainbow-progress.a{stroke:var(--accent)}\n.cute-art .rainbow-progress.b{stroke:var(--accent-dark)}\n.cute-art .rainbow-progress.c{stroke:var(--muted)}\n.cute-art .rainbow-track{stroke-width:7}\n.cute-face[data-style=\"bloom\"] .cute-track,.cute-face[data-style=\"bloom\"] .cute-progress,.cute-face[data-style=\"bloom\"] .cute-petals{display:block}\n.cute-face[data-style=\"wave\"] .cute-wave-track,.cute-face[data-style=\"wave\"] .cute-wave-progress{display:block}\n.cute-face[data-style=\"hearts\"] .cute-heart-track,.cute-face[data-style=\"hearts\"] .cute-heart-progress{display:block}\n.cute-face[data-style=\"hearts\"] .cute-overlay{top:52px}\n.cute-face[data-style=\"hearts\"] .cute-time{font-size:33px}\n.cute-face[data-style=\"starry\"] .cute-track,.cute-face[data-style=\"starry\"] .cute-progress,.cute-face[data-style=\"starry\"] .cute-stars{display:block}\n.cute-face[data-style=\"cloud\"] .cute-track,.cute-face[data-style=\"cloud\"] .cute-progress{display:block}\n.cute-face[data-style=\"cloud\"]:before{background:linear-gradient(160deg,var(--soft),transparent)}\n.cute-face[data-style=\"rainbow\"] .rainbow-track,.cute-face[data-style=\"rainbow\"] .rainbow-progress{display:block}\n.cute-face[data-style=\"rainbow\"] .cute-overlay{top:64px}\n.cute-face[data-style=\"butterfly\"] .cute-track,.cute-face[data-style=\"butterfly\"] .cute-progress,.cute-face[data-style=\"butterfly\"] .cute-stars{display:block}\n.cute-face[data-style=\"bubbles\"] .cute-bubbles{display:block}\n.cute-face[data-style=\"candy\"] .cute-stripes,.cute-face[data-style=\"candy\"] .cute-track,.cute-face[data-style=\"candy\"] .cute-progress{display:block}\n.cute-face[data-style=\"cozy\"] .cute-track,.cute-face[data-style=\"cozy\"] .cute-progress{display:block}\n.cute-face[data-style=\"cozy\"] .cute-symbol{font-size:31px}\n.cute-face[data-style=\"cozy\"] .cute-time{font-size:40px}\n.cute-face[data-style=\"cloud\"] .cute-symbol,.cute-face[data-style=\"butterfly\"] .cute-symbol,.cute-face[data-style=\"bubbles\"] .cute-symbol{font-size:27px}\n#mini-float{width:251px}\n#mini-float .mini-head{position:relative}\n#mini-float .cute-face{margin:3px auto 0}\n#mini-float .mini-actions{margin-top:6px}\n#mini-float .cute-menu{top:43px}\n@media(prefers-reduced-motion:reduce){.cute-progress,.cute-heart-progress,.rainbow-progress,.cute-art .cute-bubbles circle{transition:none}}\n";
+const cuteNames=CUTE_STYLES.map(x=>x.id),pipStyleKey='study-tracker-pip-style';
+const previousLooks={ring:'bloom',digital:'cloud',minimal:'cozy',clock:'starry',speedometer:'rainbow'};
+let pipStyle=read(pipStyleKey,'bloom');
+pipStyle=previousLooks[pipStyle]||pipStyle;
+if(!cuteNames.includes(pipStyle))pipStyle='bloom';
+const cuteCurrent=()=>CUTE_STYLES.find(x=>x.id===pipStyle)||CUTE_STYLES[0];
+function cuteFaceMarkup(prefix){
+  const petals=Array.from({length:10},(_,i)=>'<ellipse cx="105" cy="12" rx="8" ry="13" transform="rotate('+(i*36)+' 105 105)"/>').join('');
+  const bubbles=Array.from({length:12},(_,i)=>{const a=-Math.PI/2+i*Math.PI/6;return '<circle data-cute-bubble cx="'+(105+83*Math.cos(a)).toFixed(2)+'" cy="'+(105+83*Math.sin(a)).toFixed(2)+'" r="'+(i%3===0?10:7)+'"/>'}).join('');
+  const stars='<text x="10" y="62">✦</text><text x="169" y="49">✧</text><text x="24" y="168">✧</text><text x="180" y="173">✦</text>';
+  return '<div class="cute-face" id="'+prefix+'-face" data-style="'+pipStyle+'"><svg class="cute-art" viewBox="0 0 210 210" aria-hidden="true">'
+    +'<circle class="cute-track" cx="105" cy="105" r="83"/>'
+    +'<circle id="'+prefix+'-circle" class="cute-progress" pathLength="100" cx="105" cy="105" r="83"/>'
+    +'<circle class="cute-wave-track" cx="105" cy="105" r="83"/>'
+    +'<path id="'+prefix+'-wave" class="cute-wave-progress" d=""/>'
+    +'<path class="cute-heart-track" d="M105 183 C73 161 33 131 33 90 C33 47 85 37 105 73 C125 37 177 47 177 90 C177 131 137 161 105 183"/>'
+    +'<path id="'+prefix+'-heart" class="cute-heart-progress" pathLength="100" d="M105 183 C73 161 33 131 33 90 C33 47 85 37 105 73 C125 37 177 47 177 90 C177 131 137 161 105 183"/>'
+    +'<g class="cute-petals">'+petals+'</g><g class="cute-stars">'+stars+'</g>'
+    +'<g class="cute-bubbles">'+bubbles+'</g>'
+    +'<g class="cute-stripes"><circle cx="105" cy="105" r="97"/></g>'
+    +'<path class="rainbow-track" d="M 40 148 A 65 65 0 0 1 170 148"/><path id="'+prefix+'-rainbow-a" class="rainbow-progress a" pathLength="100" d="M 40 148 A 65 65 0 0 1 170 148"/>'
+    +'<path class="rainbow-track" d="M 30 148 A 75 75 0 0 1 180 148"/><path id="'+prefix+'-rainbow-b" class="rainbow-progress b" pathLength="100" d="M 30 148 A 75 75 0 0 1 180 148"/>'
+    +'<path class="rainbow-track" d="M 20 148 A 85 85 0 0 1 190 148"/><path id="'+prefix+'-rainbow-c" class="rainbow-progress c" pathLength="100" d="M 20 148 A 85 85 0 0 1 190 148"/>'
+    +'</svg><div class="cute-overlay"><div id="'+prefix+'-symbol" class="cute-symbol">🌸</div><div id="'+prefix+'-time" class="cute-time">25:00</div><div class="cute-status">Remaining</div><div id="'+prefix+'-foot" class="cute-foot">Bloom gently ♡</div></div></div>';
 }
-function waveSvgPath(elapsed,cx,cy,r){
-  return wavePoints(elapsed,cx,cy,r).map((p,i)=>(i?'L':'M')+p[0].toFixed(2)+' '+p[1].toFixed(2)).join(' ');
+function cuteMenuMarkup(prefix){
+  return '<div class="cute-menu-title">🌷 Pick your happy timer</div><div class="cute-menu-grid" role="group" aria-label="Timer designs">'
+   +CUTE_STYLES.map(s=>'<button type="button" class="cute-menu-item" data-pip-choice="'+s.id+'" aria-pressed="false"><span>'+s.icon+'</span>'+s.label+'</button>').join('')+'</div>';
+}
+function setupCuteMenu(doc,prefix){
+ const menu=doc.getElementById(prefix+'-style-menu'),toggle=doc.getElementById(prefix+'-style-toggle');
+ if(!menu||!toggle)return;
+ menu.innerHTML=cuteMenuMarkup(prefix);
+ toggle.addEventListener('click',()=>{
+   menu.hidden=!menu.hidden;
+   toggle.setAttribute('aria-expanded',String(!menu.hidden));
+ });
+ menu.querySelectorAll('[data-pip-choice]').forEach(button=>button.addEventListener('click',()=>{
+   choosePipStyle(button.dataset.pipChoice);
+   menu.hidden=true;
+   toggle.setAttribute('aria-expanded','false');
+ }));
+ doc.addEventListener('keydown',e=>{if(e.key==='Escape'&&!menu.hidden){e.preventDefault();e.stopPropagation();menu.hidden=true;toggle.setAttribute('aria-expanded','false')}});
+}
+function wavePoints(elapsed,cx,cy,r){
+ const fraction=Math.max(0,Math.min(1,Number(elapsed)||0));
+ if(!fraction)return [];
+ const pts=[],steps=Math.max(8,Math.ceil(230*fraction));
+ for(let i=0;i<=steps;i++){
+   const t=i/steps,angle=-Math.PI/2-2*Math.PI*fraction*t,taper=Math.min(1,Math.min(t,1-t)*16);
+   const radius=r+3.5*Math.sin(Math.PI*2*fraction*t*13)*taper;
+   pts.push([cx+Math.cos(angle)*radius,cy+Math.sin(angle)*radius]);
+ }
+ return pts;
+}
+function waveSvgPath(elapsed,cx,cy,r){return wavePoints(elapsed,cx,cy,r).map((p,i)=>(i?'L':'M')+p[0].toFixed(2)+' '+p[1].toFixed(2)).join(' ')}
+function updateCuteFace(doc,prefix,seconds,progress){
+ const face=doc.getElementById(prefix+'-face');if(!face)return;
+ const p=Math.max(0,Math.min(1,progress)),active=cuteCurrent(),time=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
+ face.dataset.style=pipStyle;
+ const timeNode=doc.getElementById(prefix+'-time'),symbol=doc.getElementById(prefix+'-symbol'),foot=doc.getElementById(prefix+'-foot');
+ if(timeNode)timeNode.textContent=time;
+ if(symbol)symbol.textContent=active.symbol;
+ if(foot)foot.textContent=timer.mode==='focus'?'You are blooming ♡':'Rest, sweet soul ♡';
+ for(const suffix of ['circle','heart','rainbow-a','rainbow-b','rainbow-c']){
+    const n=doc.getElementById(prefix+'-'+suffix);if(n)n.style.strokeDashoffset=String(100*(1-p));
+ }
+ const wave=doc.getElementById(prefix+'-wave');if(wave)wave.setAttribute('d',waveSvgPath(1-p,105,105,83));
+ face.querySelectorAll('[data-cute-bubble]').forEach((bubble,i)=>{
+   bubble.style.opacity= i/12<p?'1':'.18';
+ });
+ doc.querySelectorAll('[data-pip-choice]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pipChoice===pipStyle)));
 }
 function choosePipStyle(style){
-  if(!pipStyles.includes(style))return;
-  pipStyle=style;
-  save(pipStyleKey,style);
-  syncPipDisplay();
+ if(!cuteNames.includes(style))return;
+ pipStyle=style;save(pipStyleKey,style);syncPipDisplay();
 }
-document.querySelectorAll('[data-pip-choice]').forEach(button=>button.addEventListener('click',()=>choosePipStyle(button.dataset.pipChoice)));
+$('mini-visual').innerHTML=cuteFaceMarkup('mini');
+setupCuteMenu(document,'mini');
+document.querySelectorAll('.pip-style-picker [data-pip-choice]').forEach(button=>button.addEventListener('click',()=>choosePipStyle(button.dataset.pipChoice)));
 const minutes=()=>settings[timer.mode]*60;
 function persist(){save('study-tracker-settings',settings);save('study-tracker-clock',timer);save('study-tracker-daily',daily)}
 function notice(txt){const x=$('toast');x.textContent=txt;x.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>x.classList.remove('show'),2700)}
@@ -639,163 +686,116 @@ $('pip').setAttribute('aria-label',open?'Close floating timer':'Open floating Pi
 $('pip').title=open?'Close floating timer':'Floating timer (Picture-in-Picture)';
 }
 function syncPipDisplay(){
-const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
-const time=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
-const label=timer.mode==='focus'?'🌷 Study time':'☕ Break time';
-const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
-$('mini-clock').textContent=time;$('mini-mode').textContent=label;$('mini-play').textContent=timer.running?'Ⅱ Pause':'▶ Start';
-$('mini-float').dataset.style=pipStyle;
-$('mini-ring-progress').style.strokeDashoffset=String(MINI_RING_LENGTH*(1-progress));
-$('mini-progress-bar').style.width=(progress*100).toFixed(2)+'%';
-$('mini-clock-hand').setAttribute('transform','rotate('+((1-progress)*360)+' 80 80)');
-$('mini-speed-fill').style.strokeDashoffset=String(SPEED_ARC*(1-progress));
-$('mini-speed-needle').setAttribute('transform','rotate('+((progress-.5)*180)+' 100 116)');
-$('mini-wave-progress').setAttribute('d',waveSvgPath(1-progress,100,100,77));
-$('mini-wave-session').textContent=timer.mode==='focus'?'Study session':'Break time';
-$('mini-wave-caption').textContent=timer.mode==='focus'?'Until your next break ♡':'Rest before studying ♡';
-document.querySelectorAll('[data-pip-choice]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.pipChoice===pipStyle)));
-if(hasDocumentPip()){
-try{
-const d=pipWin.document;
-const a=d.getElementById('pip-time'), b=d.getElementById('pip-mode'),p=d.getElementById('pip-play'),n=d.getElementById('pip-count');
-if(a)a.textContent=time;if(b)b.textContent=label;if(p)p.textContent=timer.running?'Ⅱ Pause':'▶ Start';
-if(n)n.textContent=daily.count+' sessions completed today ♡';
-const ring=d.getElementById('pip-ring-progress'),bar=d.getElementById('pip-progress-bar');
-if(ring)ring.style.strokeDashoffset=String(RING_LENGTH*(1-progress));
-if(bar)bar.style.width=(progress*100).toFixed(2)+'%';
-const hand=d.getElementById('pip-clock-hand'),speed=d.getElementById('pip-speed-fill'),needle=d.getElementById('pip-speed-needle');
-if(hand)hand.setAttribute('transform','rotate('+((1-progress)*360)+' 80 80)');
-if(speed)speed.style.strokeDashoffset=String(SPEED_ARC*(1-progress));
-if(needle)needle.setAttribute('transform','rotate('+((progress-.5)*180)+' 100 116)');
-const wave=d.getElementById('pip-wave-progress'),waveLabel=d.getElementById('pip-wave-session'),waveCaption=d.getElementById('pip-wave-caption');
-if(wave)wave.setAttribute('d',waveSvgPath(1-progress,100,100,77));
-if(waveLabel)waveLabel.textContent=timer.mode==='focus'?'Study session':'Break time';
-if(waveCaption)waveCaption.textContent=timer.mode==='focus'?'Until your next break ♡':'Rest before studying ♡';
-d.documentElement.dataset.theme=settings.theme;
-d.body.dataset.style=pipStyle;
-d.querySelectorAll('[data-pip-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.pipStyle===pipStyle)));
-}catch(e){console.warn('PiP update',e)}
-}
-if(isVideoPip())drawPipCanvas();
-updatePipButton();
+  const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
+  const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
+  const label=timer.mode==='focus'?'🌷 Study time':'☕ Break time';
+  $('mini-mode').textContent=label;$('mini-play').textContent=timer.running?'Ⅱ Pause':'▶ Start';
+  updateCuteFace(document,'mini',seconds,progress);
+  if(hasDocumentPip()){
+    try{
+      const d=pipWin.document;
+      updateCuteFace(d,'pip',seconds,progress);
+      const mode=d.getElementById('pip-mode'),play=d.getElementById('pip-play'),count=d.getElementById('pip-count');
+      if(mode)mode.textContent=label;
+      if(play)play.textContent=timer.running?'Ⅱ Pause':'▶ Start';
+      if(count)count.textContent=daily.count+' sessions completed today ♡';
+      d.documentElement.dataset.theme=settings.theme;
+    }catch(e){console.warn('PiP display update',e)}
+  }
+  if(isVideoPip())drawPipCanvas();
+  updatePipButton();
 }
 async function openDocumentPip(){
-if(!window.documentPictureInPicture?.requestWindow)return false;
-const win=await window.documentPictureInPicture.requestWindow({width:340,height:390});
-pipWin=win;
-win.document.title='Study Tracker ♡';
-win.document.head.innerHTML='<meta name="viewport" content="width=device-width, initial-scale=1"><style>'
-+'*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;overflow-y:auto}'
-+'html{--accent:#cf7494;--bg:#fff8fa;--ink:#66465a;--light:#f9dfeb}'
-+'html[data-theme="lavender"]{--accent:#987bc5;--bg:#fcf9ff;--ink:#58466c;--light:#efe6fa}'
-+'html[data-theme="sage"]{--accent:#78ac96;--bg:#f8fffa;--ink:#3d6053;--light:#e1f3e9}'
-+'@media (prefers-color-scheme: dark){html{color-scheme:dark;--accent:#b46587;--bg:#211d27;--ink:#f9eff7;--light:#483245}html[data-theme="lavender"]{--accent:#aa86d8;--bg:#211d2a;--ink:#f8f0ff;--light:#41344e}html[data-theme="sage"]{--accent:#79b399;--bg:#16241f;--ink:#effbf5;--light:#304c3e}}'
-+'.mode{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.04em;flex:none}.visual{width:100%;position:relative;display:flex;align-items:center;justify-content:center;flex:none;min-height:178px}.time{font-variant-numeric:tabular-nums;font-size:58px;font-weight:750;letter-spacing:-2px;position:relative}.count{font-size:10px;opacity:.8;margin:0 0 4px;text-align:center}'
-+'.ring{width:173px;height:173px;position:absolute;display:none;transform:rotate(-90deg)}.ring circle{fill:none;stroke-width:9}.ring .track{stroke:var(--light)}.ring .current{stroke:var(--accent);stroke-linecap:round;stroke-dasharray:351.8584;transition:stroke-dashoffset .3s linear}'
-+'.progress{height:6px;border-radius:8px;overflow:hidden;background:var(--light);width:85%;display:none;margin:0 auto 6px}.progress span{display:block;background:var(--accent);height:100%;width:100%;border-radius:8px;transition:width .3s linear}'
-+'body[data-style="ring"] .ring{display:block}body[data-style="ring"] .time{font-size:45px}body[data-style="digital"] .visual{min-height:95px}body[data-style="digital"] .time{font-size:72px}body[data-style="digital"] .progress{display:block}body[data-style="minimal"] .visual{min-height:78px}body[data-style="minimal"] .time{font-size:64px}'
-+'.analog,.speed{position:absolute;display:none}.analog{height:180px;width:180px;top:0}.speed{height:165px;width:235px;top:1px}.analog-face{fill:none;stroke:var(--light);stroke-width:2}.analog-ticks{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round}.analog text,.speed text{fill:var(--ink);font-size:11px;font-weight:700}.analog line{stroke:var(--accent);stroke-width:5;stroke-linecap:round}.pivot{fill:var(--accent)}.speed-track,.speed-fill{fill:none;stroke-width:10;stroke-linecap:round}.speed-track{stroke:var(--light)}.speed-fill{stroke:var(--accent);stroke-dasharray:257.61;transition:stroke-dashoffset .3s linear}.speed line{stroke:var(--accent);stroke-width:4;stroke-linecap:round}'
-+'body[data-style="clock"] .analog{display:block}body[data-style="clock"] .visual{min-height:214px;align-items:flex-end}body[data-style="clock"] .time{font-size:29px;margin-bottom:2px}'
-+'body[data-style="speedometer"] .speed{display:block}body[data-style="speedometer"] .visual{min-height:185px;align-items:flex-end}body[data-style="speedometer"] .time{font-size:31px;margin-bottom:0}'
-+'.wave{display:none;position:absolute;width:218px;height:218px;top:0}.wave-track{fill:none;stroke:var(--light);stroke-width:9;stroke-linecap:round}.wave-highlight{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}.wave-labels{display:none;flex-direction:column;align-items:center;gap:5px;position:absolute;top:133px;color:var(--ink);font-size:12px;line-height:1.2;pointer-events:none}.wave-labels .remaining{color:var(--ink);opacity:.55}.wave-labels strong{font-size:13px}.wave-labels small{font-size:10px;opacity:.55}'
-+'body[data-style="wave"] .wave{display:block}body[data-style="wave"] .visual{min-height:221px}body[data-style="wave"] .time{position:absolute;top:67px;font-size:43px}body[data-style="wave"] .wave-labels{display:flex}'
-+'.styles{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:3px 0 6px;max-width:300px}.styles button{border:1px solid var(--light);background:transparent;color:var(--ink);border-radius:9px;padding:5px 7px;min-width:49px;font-size:11px;font-weight:700;cursor:pointer}.styles button[aria-pressed="true"]{background:var(--light);border-color:var(--accent)}'
-+'.buttons{display:flex;gap:6px;width:100%;max-width:285px}.buttons button{flex:1;min-height:34px;border:none;border-radius:10px;background:var(--light);color:var(--ink);font-size:11px;font-weight:700;cursor:pointer}.buttons button:first-child{background:var(--accent);color:white}@media(prefers-reduced-motion:reduce){.ring .current,.progress span{transition:none}}'
-+'</style>';
-win.document.body.innerHTML='<div id="pip-mode" class="mode">🌷 Study time</div>'
-+'<div class="visual"><svg class="ring" viewBox="0 0 144 144" aria-hidden="true"><circle class="track" cx="72" cy="72" r="56"/><circle id="pip-ring-progress" class="current" cx="72" cy="72" r="56"/></svg>'
-+'<svg class="analog" viewBox="0 0 160 160" aria-hidden="true"><circle class="analog-face" cx="80" cy="80" r="67"/><circle class="analog-ticks" cx="80" cy="80" r="59" stroke-dasharray="3.2 27.69" transform="rotate(-90 80 80)"/><text x="80" y="25" text-anchor="middle">12</text><text x="136" y="84" text-anchor="middle">3</text><text x="80" y="142" text-anchor="middle">6</text><text x="24" y="84" text-anchor="middle">9</text><g id="pip-clock-hand"><line x1="80" y1="88" x2="80" y2="40"/></g><circle class="pivot" cx="80" cy="80" r="5"/></svg>'
-+'<svg class="speed" viewBox="0 0 200 150" aria-hidden="true"><path class="speed-track" d="M 18 116 A 82 82 0 0 1 182 116"/><path id="pip-speed-fill" class="speed-fill" d="M 18 116 A 82 82 0 0 1 182 116"/><text x="18" y="137" text-anchor="middle">0</text><text x="182" y="137" text-anchor="middle">FULL</text><g id="pip-speed-needle"><line x1="100" y1="116" x2="100" y2="46"/></g><circle class="pivot" cx="100" cy="116" r="6"/></svg>'
-+'<svg class="wave" viewBox="0 0 200 200" aria-hidden="true"><circle class="wave-track" cx="100" cy="100" r="77"/><path class="wave-highlight" id="pip-wave-progress" d=""/></svg>'
-+'<div id="pip-time" class="time">25:00</div><div class="wave-labels"><span class="remaining">Remaining</span><strong id="pip-wave-session">Study session</strong><small id="pip-wave-caption">Until your next break ♡</small></div></div>'
-+'<div class="progress" aria-hidden="true"><span id="pip-progress-bar"></span></div><div id="pip-count" class="count">A little focus goes a long way ♡</div>'
-+'<div class="styles" role="group" aria-label="Timer display style"><button data-pip-style="ring" type="button" title="Circle dial">◉ Dial</button><button data-pip-style="digital" type="button" title="Digital countdown">▰ Digital</button><button data-pip-style="minimal" type="button" title="Minimal countdown">♡ Simple</button><button data-pip-style="clock" type="button" title="Clock face">◷ Clock</button><button data-pip-style="speedometer" type="button" title="Speedometer gauge">◠ Gauge</button><button data-pip-style="wave" type="button" title="Wavy progress ring">〰 Wavy</button></div>'
-+'<div class="buttons"><button id="pip-play" type="button">▶ Start</button><button id="pip-next" type="button">Next →</button><button id="pip-reset" type="button">↺ Reset</button></div>';
-win.document.getElementById('pip-play').addEventListener('click',()=>{ $('play').click();syncPipDisplay() });
-win.document.getElementById('pip-next').addEventListener('click',()=>{ $('skip').click();syncPipDisplay() });
-win.document.getElementById('pip-reset').addEventListener('click',()=>{ $('reset').click();syncPipDisplay() });
-win.document.querySelectorAll('[data-pip-style]').forEach(button=>button.addEventListener('click',()=>choosePipStyle(button.dataset.pipStyle)));
-win.addEventListener('pagehide',()=>{
-if(pipWin===win){pipWin=null;pipWinInterval=null;updatePipButton()}
-},{once:true});
-pipWinInterval=win.setInterval(tick,400);
-syncPipDisplay();
-return true;
+ if(!window.documentPictureInPicture?.requestWindow)return false;
+ const win=await window.documentPictureInPicture.requestWindow({width:304,height:344});
+ pipWin=win;
+ win.document.title='Study Tracker ♡';
+ win.document.head.innerHTML='<meta name="viewport" content="width=device-width,initial-scale=1"><style>'+CUTE_CSS+"\nhtml{--accent:#cf7494;--accent-dark:#a85072;--soft:#ffe7ef;--bg:#fffaf9;--ink:#5b4c56;--muted:#9b8993;--border:#f3e6e9;--panel:#fff}\nhtml[data-theme=lavender]{--accent:#987bc5;--accent-dark:#7659a3;--soft:#f0e7fb;--bg:#fcfaff;--border:#ece5f4}\nhtml[data-theme=sage]{--accent:#78ac96;--accent-dark:#4d806e;--soft:#e4f4ec;--bg:#fafffa;--border:#e3ede5}\n@media(prefers-color-scheme:dark){html{color-scheme:dark;--accent:#a9557b;--accent-dark:#ffc0d8;--soft:#3b2938;--bg:#17141c;--ink:#f9eff7;--muted:#bfaebd;--border:#40323f;--panel:#211d27}html[data-theme=lavender]{--accent:#8563b1;--accent-dark:#dfc5ff;--soft:#30283e;--bg:#171520;--border:#45384f}html[data-theme=sage]{--accent:#498b72;--accent-dark:#b5ead4;--soft:#24382f;--bg:#131c19;--border:#354a40}}\n*{box-sizing:border-box}html,body{margin:0;min-height:100%;width:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:12px;display:flex;flex-direction:column;align-items:center;gap:5px;overflow-y:auto}\n.pip-top{display:flex;align-items:center;justify-content:space-between;width:100%;gap:7px;flex:none;position:relative}.pip-top strong{font-size:12px;color:var(--accent-dark)}\n.pip-visual{width:100%;display:grid;place-items:center;flex:none}\n.pip-count{font-size:10px;color:var(--muted);margin-top:-3px;margin-bottom:4px;text-align:center}\n.pip-actions{display:flex;gap:6px;width:100%;max-width:295px}\n.pip-actions button{flex:1;padding:8px 4px;min-height:36px;border:0;border-radius:10px;background:var(--soft);color:var(--accent-dark);font-size:11px;font-weight:800;cursor:pointer}\n.pip-actions button:first-child{background:var(--accent);color:#fff}\n"+'</style>';
+ win.document.body.innerHTML='<div class="pip-top"><strong id="pip-mode">🌷 Study time</strong><button type="button" id="pip-style-toggle" class="cute-menu-button" aria-label="Choose timer style" aria-controls="pip-style-menu" aria-expanded="false">☰</button><div id="pip-style-menu" class="cute-menu" hidden></div></div>'
+  +'<div id="pip-visual" class="pip-visual">'+cuteFaceMarkup('pip')+'</div>'
+  +'<div id="pip-count" class="pip-count">A little focus goes a long way ♡</div>'
+  +'<div class="pip-actions"><button type="button" id="pip-play">▶ Start</button><button type="button" id="pip-next">Next →</button><button type="button" id="pip-reset">↺ Reset</button></div>';
+ setupCuteMenu(win.document,'pip');
+ win.document.getElementById('pip-play').addEventListener('click',()=>{$('play').click();syncPipDisplay()});
+ win.document.getElementById('pip-next').addEventListener('click',()=>{$('skip').click();syncPipDisplay()});
+ win.document.getElementById('pip-reset').addEventListener('click',()=>{$('reset').click();syncPipDisplay()});
+ win.addEventListener('pagehide',()=>{if(pipWin===win){pipWin=null;pipWinInterval=null;updatePipButton()}},{once:true});
+ pipWinInterval=win.setInterval(tick,400);
+ syncPipDisplay();
+ return true;
 }
 function drawPipCanvas(){
-if(!pipCanvas)return;
-const g=pipCanvas.getContext('2d');if(!g)return;
-const palettes={rose:['#fff3f7','#cf7494','#69475b','#fae0e9'],lavender:['#f9f4ff','#987bc5','#58466c','#ebe0f6'],sage:['#f3fff9','#78ac96','#3e6552','#dff5e9']};
-const darkPalettes={rose:['#211d27','#d380a2','#f9eff7','#443344'],lavender:['#211d2a','#b89be4','#f8f0ff','#42364e'],sage:['#16241f','#91c6ab','#effbf5','#304d3e']};
-const darkMode=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-const [bg,accent,ink,soft]=(darkMode?darkPalettes:palettes)[settings.theme]||(darkMode?darkPalettes.rose:palettes.rose);
-const w=500,h=280;g.clearRect(0,0,w,h);g.fillStyle=bg;g.fillRect(0,0,w,h);
-g.fillStyle=soft;g.beginPath();g.arc(40,40,62,0,2*Math.PI);g.fill();g.beginPath();g.arc(478,265,85,0,2*Math.PI);g.fill();
-g.textAlign='center';g.textBaseline='middle';g.fillStyle=accent;g.font='700 22px system-ui';
-g.fillText(timer.mode==='focus'?'✿ STUDY TIME':'☕ BREAK TIME',w/2,39);
-const secs=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
-const time=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
-const progress=Math.max(0,Math.min(1,secs/Math.max(1,minutes())));
-g.fillStyle=ink;
-if(pipStyle==='ring'){
-  const cx=250,cy=146,r=84;
-  g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.strokeStyle=soft;g.lineWidth=11;g.stroke();
-  if(progress>0){
-    g.beginPath();g.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*progress);
-    g.strokeStyle=accent;g.lineWidth=11;g.lineCap='round';g.stroke();
-  }
-  g.fillStyle=ink;g.font='700 65px system-ui';g.fillText(time,cx,cy+5);
-  g.font='600 16px system-ui';g.fillStyle=accent;g.fillText(timer.running?'keep blooming ♡':'ready when you are ♡',w/2,262);
-}else if(pipStyle==='wave'){
-  const cx=250,cy=137,r=93,elapsed=1-progress;
-  g.lineWidth=10;g.lineCap='round';g.lineJoin='round';g.strokeStyle=soft;
-  g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.stroke();
-  const pts=wavePoints(elapsed,cx,cy,r);
-  if(pts.length){
-    g.strokeStyle=accent;g.lineWidth=10;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);
-    for(let i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);
-    g.stroke();
-  }
-  g.fillStyle=ink;g.font='750 54px system-ui';g.fillText(time,cx,cy-28);
-  g.fillStyle=accent;g.font='500 18px system-ui';g.fillText('Remaining',cx,cy+8);
-  g.fillStyle=ink;g.font='700 18px system-ui';g.fillText(timer.mode==='focus'?'Study session':'Break time',cx,cy+41);
-  g.fillStyle=accent;g.font='500 12px system-ui';g.fillText(timer.mode==='focus'?'Until your next break ♡':'Rest before studying ♡',cx,cy+60);
-}else if(pipStyle==='clock'){
-  const cx=250,cy=138,r=84;
-  g.strokeStyle=soft;g.lineWidth=2;g.beginPath();g.arc(cx,cy,r+13,0,2*Math.PI);g.stroke();
-  for(let i=0;i<12;i++){
-    const angle=i*Math.PI/6-Math.PI/2;
-    g.beginPath();g.moveTo(cx+Math.cos(angle)*(r-2),cy+Math.sin(angle)*(r-2));
-    g.lineTo(cx+Math.cos(angle)*(r+8),cy+Math.sin(angle)*(r+8));
-    g.strokeStyle=accent;g.lineWidth=3;g.lineCap='round';g.stroke();
-  }
-  g.save();g.translate(cx,cy);g.rotate((1-progress)*Math.PI*2);
-  g.beginPath();g.moveTo(0,9);g.lineTo(0,-r+14);g.strokeStyle=accent;g.lineWidth=6;g.lineCap='round';g.stroke();g.restore();
-  g.fillStyle=accent;g.beginPath();g.arc(cx,cy,6,0,2*Math.PI);g.fill();
-  g.fillStyle=ink;g.font='700 32px system-ui';g.fillText(time,w/2,254);
-}else if(pipStyle==='speedometer'){
-  const cx=250,cy=177,r=105;
-  g.lineWidth=13;g.lineCap='round';g.strokeStyle=soft;g.beginPath();
-  g.arc(cx,cy,r,Math.PI,2*Math.PI,false);g.stroke();
-  if(progress>0){g.strokeStyle=accent;g.beginPath();g.arc(cx,cy,r,Math.PI,Math.PI+Math.PI*progress,false);g.stroke();}
-  for(let i=0;i<=10;i++){
-    const a=Math.PI+i*Math.PI/10;g.strokeStyle=ink;g.lineWidth=2;
-    g.beginPath();g.moveTo(cx+Math.cos(a)*(r-21),cy+Math.sin(a)*(r-21));
-    g.lineTo(cx+Math.cos(a)*(r-12),cy+Math.sin(a)*(r-12));g.stroke();
-  }
-  const na=Math.PI+Math.PI*progress;
-  g.strokeStyle=accent;g.lineWidth=5;g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.cos(na)*(r-26),cy+Math.sin(na)*(r-26));g.stroke();
-  g.fillStyle=accent;g.beginPath();g.arc(cx,cy,7,0,2*Math.PI);g.fill();
-  g.fillStyle=ink;g.font='700 38px system-ui';g.fillText(time,w/2,249);
-}else if(pipStyle==='digital'){
-  g.font='700 104px system-ui';g.fillText(time,w/2,143);
-  g.font='600 20px system-ui';g.fillStyle=accent;g.fillText(timer.running?'♡ one little step at a time':'♡ ready when you are',w/2,209);
-  g.lineCap='round';g.strokeStyle=soft;g.lineWidth=9;g.beginPath();g.moveTo(74,248);g.lineTo(426,248);g.stroke();
-  g.strokeStyle=accent;g.beginPath();g.moveTo(74,248);g.lineTo(74+352*progress,248);g.stroke();
-}else{
-  g.font='700 118px system-ui';g.fillText(time,w/2,152);
-  g.font='600 17px system-ui';g.fillStyle=accent;g.fillText('breathe · focus · bloom ♡',w/2,235);
-}
+ if(!pipCanvas)return;
+ const g=pipCanvas.getContext('2d');if(!g)return;
+ const palettes={rose:['#fff3f7','#cf7494','#69475b','#fae0e9'],lavender:['#f9f4ff','#987bc5','#58466c','#ebe0f6'],sage:['#f3fff9','#78ac96','#3e6552','#dff5e9']};
+ const darkPalettes={rose:['#211d27','#d380a2','#f9eff7','#443344'],lavender:['#211d2a','#b89be4','#f8f0ff','#42364e'],sage:['#16241f','#91c6ab','#effbf5','#304d3e']};
+ const dark=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+ const [bg,accent,ink,soft]=(dark?darkPalettes:palettes)[settings.theme]||(dark?darkPalettes.rose:palettes.rose);
+ const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
+ const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
+ const time=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
+ const w=500,h=280,cx=250,cy=141,r=96;
+ g.clearRect(0,0,w,h);g.fillStyle=bg;g.fillRect(0,0,w,h);
+ g.textAlign='center';g.textBaseline='middle';
+ const arc=(radius,start,end,color,width=10)=>{
+   g.strokeStyle=color;g.lineWidth=width;g.lineCap='round';g.beginPath();g.arc(cx,cy,radius,start,end);g.stroke();
+ };
+ const outline=()=>{arc(r,0,Math.PI*2,soft);if(progress>0)arc(r,-Math.PI/2,-Math.PI/2+progress*Math.PI*2,accent)};
+ const renderDots=(count,filled)=>{
+   for(let i=0;i<count;i++){
+     const a=-Math.PI/2+(i/count)*Math.PI*2;
+     g.beginPath();g.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,i%3===0?10:7,0,Math.PI*2);
+     g.fillStyle=i/count<filled?accent:soft;g.fill();
+   }
+ };
+ switch(pipStyle){
+   case 'wave':{
+     arc(r,0,Math.PI*2,soft);
+     const pts=wavePoints(1-progress,cx,cy,r);
+     if(pts.length){g.strokeStyle=accent;g.lineWidth=10;g.lineCap='round';g.lineJoin='round';g.beginPath();g.moveTo(...pts[0]);for(let i=1;i<pts.length;i++)g.lineTo(...pts[i]);g.stroke()}
+     break;
+   }
+   case 'hearts':{
+     g.save();g.translate(cx,cy+14);g.scale(1.08,1.08);
+     g.beginPath();g.moveTo(0,95);g.bezierCurveTo(-55,54,-92,-12,-73,-63);g.bezierCurveTo(-58,-106,-15,-94,0,-68);g.bezierCurveTo(15,-94,58,-106,73,-63);g.bezierCurveTo(92,-12,55,54,0,95);
+     g.strokeStyle=soft;g.lineWidth=11;g.stroke();g.restore();
+     g.fillStyle=accent;g.font='45px system-ui';g.fillText('💝',cx,cy-68);break;
+   }
+   case 'rainbow':{
+     for(let i=0;i<3;i++){
+       const rr=75+i*14;
+       arc(rr,Math.PI,Math.PI*2,soft,8);
+       if(progress>0)arc(rr,Math.PI,Math.PI+Math.PI*progress,[accent,ink,accent][i],8);
+     }break;
+   }
+   case 'bubbles':{renderDots(12,progress);break}
+   case 'candy':{
+     outline();
+     for(let i=0;i<24;i++){
+       const a=-Math.PI/2+i*Math.PI/12;
+       g.beginPath();g.arc(cx+Math.cos(a)*(r+14),cy+Math.sin(a)*(r+14),3,0,2*Math.PI);
+       g.fillStyle=i%2===0?accent:soft;g.fill();
+     }break;
+   }
+   case 'bloom':{
+     outline();
+     for(let i=0;i<10;i++){
+       const a=-Math.PI/2+i*Math.PI/5;
+       g.beginPath();g.arc(cx+Math.cos(a)*(r+15),cy+Math.sin(a)*(r+15),5,0,Math.PI*2);
+       g.fillStyle=soft;g.fill();
+     }break;
+   }
+   case 'starry':case 'butterfly':{
+     outline();g.font='27px system-ui';
+     g.fillText('✨',cx-r-16,cy-45);g.fillText('✦',cx+r+12,cy+36);break;
+   }
+   default:outline();break;
+ }
+ const current=cuteCurrent();
+ g.fillStyle=accent;g.font='32px system-ui';g.fillText(current.symbol,cx,cy-51);
+ g.fillStyle=ink;g.font='800 68px system-ui';g.fillText(time,cx,cy+5);
+ g.fillStyle=accent;g.font='600 17px system-ui';g.fillText(timer.mode==='focus'?'Study gently ♡':'Enjoy your break ♡',cx,cy+61);
+ g.font='700 21px system-ui';g.fillText(timer.mode==='focus'?'✿ STUDY TIME':'☕ BREAK TIME',cx,24);
 }
 async function openVideoPip(){
 const supportsAPI=typeof HTMLVideoElement!=='undefined'&&('requestPictureInPicture' in HTMLVideoElement.prototype||'webkitSetPresentationMode' in HTMLVideoElement.prototype);

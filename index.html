@@ -426,12 +426,17 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 const $=id=>document.getElementById(id), SUPABASE_URL='https://vxpufrahrnwmtgltjstd.supabase.co', SUPABASE_KEY='sb_publishable_tRjMtsoo9aT-6n7dzj9p-w_HsUqJ520';
 const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}},save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 const clamp=(v,lo,hi,f)=>{v=Number(v);return Number.isFinite(v)&&v>=1?Math.round(Math.max(lo,Math.min(hi,v))):f};
-const defaults={focus:25,break:5,rounds:4,auto:true,chime:true,theme:'rose'};
+const THEMES=["rose","lavender","sage","peach","sky","mint","buttercream","lilac","coral"],CHIME_SOUNDS=["musicbox","bells","harp","chimes","piano","birds"],CHIME_DURATIONS=[1,2,3,5,8];
+const defaults={focus:25,break:5,rounds:4,auto:true,chime:true,chimeSound:'musicbox',chimeDuration:3,theme:'rose'};
 let settings={...defaults,...read('study-tracker-settings',{})};
 // One-time migration: enable continuous study/break transitions for existing visitors.
 // The switch remains available if someone intentionally wants to pause after each interval.
 if(!read('study-tracker-auto-cycle-v2',false)){settings.auto=true;save('study-tracker-auto-cycle-v2',true)}
 for(const [name,max] of [['focus',240],['break',120],['rounds',20]])settings[name]=clamp(settings[name],1,max,defaults[name]);
+if(!THEMES.includes(settings.theme))settings.theme='rose';
+if(!CHIME_SOUNDS.includes(settings.chimeSound))settings.chimeSound='musicbox';
+if(!CHIME_DURATIONS.includes(Number(settings.chimeDuration)))settings.chimeDuration=3;
+settings.chimeDuration=Number(settings.chimeDuration);
 let timer={mode:'focus',left:settings.focus*60,running:false,ends:0,roundCount:0,...read('study-tracker-clock',{})};
 if(!['focus','break'].includes(timer.mode))timer.mode='focus';
 if(!Number.isFinite(timer.left)||timer.left<0)timer.left=settings[timer.mode]*60;
@@ -616,26 +621,37 @@ document.querySelectorAll('.pip-style-picker [data-pip-choice]').forEach(button=
 const minutes=()=>settings[timer.mode]*60;
 function persist(){save('study-tracker-settings',settings);save('study-tracker-clock',timer);save('study-tracker-daily',daily)}
 function notice(txt){const x=$('toast');x.textContent=txt;x.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>x.classList.remove('show'),2700)}
-function bell(){
-  if(!settings.chime)return;
-  try{
-    audio=audio||new(window.AudioContext||window.webkitAudioContext)();
-    void audio.resume();
-    // Gentle five-note music-box melody, with lingering tails (~2.3 seconds).
-    const notes=[523.25,659.25,783.99,880,783.99];
-    notes.forEach((freq,i)=>{
-      const oscillator=audio.createOscillator(),volume=audio.createGain();
-      const at=audio.currentTime+i*.36,end=at+.78;
-      oscillator.type='sine';
-      oscillator.frequency.setValueAtTime(freq,at);
-      volume.gain.setValueAtTime(.0001,at);
-      volume.gain.exponentialRampToValueAtTime(.038,at+.075);
-      volume.gain.exponentialRampToValueAtTime(.014,at+.32);
-      volume.gain.exponentialRampToValueAtTime(.0001,end);
-      oscillator.connect(volume).connect(audio.destination);
-      oscillator.start(at);oscillator.stop(end+.015);
-    });
-  }catch(err){console.warn('Chime unavailable on this device',err)}
+function bell(preview=false){
+ if(!preview&&!settings.chime)return;
+ try{
+   const AudioCtx=window.AudioContext||window.webkitAudioContext;
+   if(!AudioCtx)return;
+   audio=audio||new AudioCtx();
+   const resumed=audio.resume();if(resumed&&typeof resumed.catch==='function')resumed.catch(()=>{});
+   const profiles={
+     musicbox:{notes:[523.25,659.25,783.99,880,783.99,659.25],type:'sine',gain:.035},
+     bells:{notes:[659.25,987.77,783.99,1174.66,987.77],type:'sine',gain:.043},
+     harp:{notes:[392,523.25,659.25,783.99,1046.5,783.99],type:'triangle',gain:.027},
+     chimes:{notes:[587.33,880,1174.66,698.46,1046.5,783.99],type:'sine',gain:.03},
+     piano:{notes:[261.63,329.63,392,523.25,659.25,523.25],type:'triangle',gain:.029},
+     birds:{notes:[1174.66,1396.91,1318.51,1567.98,1480,1760],type:'sine',gain:.024}
+   };
+   const profile=profiles[settings.chimeSound]||profiles.musicbox;
+   const duration=CHIME_DURATIONS.includes(Number(settings.chimeDuration))?Number(settings.chimeDuration):3;
+   const count=Math.max(2,Math.min(18,Math.ceil(duration/.39)));
+   const start=audio.currentTime+.025,step=duration/count;
+   for(let i=0;i<count;i++){
+     const offset=i*step,at=start+offset,freq=profile.notes[i%profile.notes.length];
+     const osc=audio.createOscillator(),gain=audio.createGain(),release=Math.min(duration-offset,Math.max(step*.92,.34)),end=at+release;
+     osc.type=profile.type;osc.frequency.setValueAtTime(freq,at);
+     if(settings.chimeSound==='birds'&&osc.frequency.exponentialRampToValueAtTime)
+       osc.frequency.exponentialRampToValueAtTime(freq*1.14,Math.min(end-.012,at+.15));
+     gain.gain.setValueAtTime(.0001,at);
+     gain.gain.exponentialRampToValueAtTime(profile.gain,at+Math.min(.07,release*.26));
+     gain.gain.exponentialRampToValueAtTime(.0001,end);
+     osc.connect(gain);gain.connect(audio.destination);osc.start(at);osc.stop(end+.012);
+   }
+ }catch(err){console.warn('Gentle chime unavailable',err);if(preview)notice('Audio preview is not available here.')}
 }
 /* Browser notifications. Service-worker display works where mobile direct Notification() does not. */
 const REMINDER_KEY='study-tracker-reminders-enabled';
@@ -751,8 +767,8 @@ if(window.matchMedia){
   if(appearanceQuery.addEventListener)appearanceQuery.addEventListener('change',refreshAppearance);
   else if(appearanceQuery.addListener)appearanceQuery.addListener(refreshAppearance);
 }
-function renderSettings(){for(const n of ['focus','break','rounds'])$(n==='rounds'?'rounds':n+'-min').value=settings[n];$('auto').checked=!!settings.auto;$('chime').checked=!!settings.chime;document.body.dataset.theme=settings.theme;document.querySelectorAll('.swatch').forEach(el=>el.classList.toggle('active',el.dataset.t===settings.theme));render()}
-function change(name,value){if(['focus','break','rounds'].includes(name)){const max=name==='focus'?240:name==='break'?120:20;settings[name]=clamp(value,1,max,settings[name]);if(name===timer.mode&&!timer.running)timer.left=minutes()}else settings[name]=value;persist();renderSettings();scheduleSync()}
+function renderSettings(){for(const n of ['focus','break','rounds'])$(n==='rounds'?'rounds':n+'-min').value=settings[n];$('auto').checked=!!settings.auto;$('chime').checked=!!settings.chime;$('chime-sound').value=settings.chimeSound;$('chime-duration').value=String(settings.chimeDuration);document.body.dataset.theme=settings.theme;document.querySelectorAll('.swatch').forEach(el=>el.classList.toggle('active',el.dataset.t===settings.theme));render()}
+function change(name,value){if(['focus','break','rounds'].includes(name)){const max=name==='focus'?240:name==='break'?120:20;settings[name]=clamp(value,1,max,settings[name]);if(name===timer.mode&&!timer.running)timer.left=minutes()}else if(name==='chimeSound')settings.chimeSound=CHIME_SOUNDS.includes(value)?value:'musicbox';else if(name==='chimeDuration')settings.chimeDuration=CHIME_DURATIONS.includes(Number(value))?Number(value):3;else if(name==='theme')settings.theme=THEMES.includes(value)?value:'rose';else settings[name]=value;persist();renderSettings();scheduleSync()}
 function stop(){timer.running=false;timer.ends=0;timer.left=minutes();persist();render()}
 function advanceInterval(completed,at=Date.now()){
   const before=timer.mode;
@@ -786,6 +802,9 @@ $('focus-tab').onclick=()=>{if(timer.mode!=='focus'){timer.mode='focus';stop()}}
 for(const name of ['focus','break','rounds']){const id=name==='rounds'?'rounds':name+'-min';$(id).addEventListener('change',e=>change(name,e.target.value))}
 document.querySelectorAll('[data-step]').forEach(btn=>btn.onclick=()=>{const [name,delta]=btn.dataset.step.split(':');change(name,settings[name]+Number(delta))});
 $('auto').onchange=e=>change('auto',e.target.checked);$('chime').onchange=e=>change('chime',e.target.checked);
+$('chime-sound').onchange=e=>change('chimeSound',e.target.value);
+$('chime-duration').onchange=e=>change('chimeDuration',Number(e.target.value));
+$('chime-preview').onclick=()=>bell(true);
 document.querySelectorAll('.swatch').forEach(btn=>btn.onclick=()=>change('theme',btn.dataset.t));
 updateReminderUI();
 function tick(){
@@ -827,16 +846,22 @@ $('pip').setAttribute('aria-pressed',String(open));
 $('pip').setAttribute('aria-label',open?'Close floating timer':'Open floating Picture-in-Picture timer');
 $('pip').title=open?'Close floating timer':'Floating timer (Picture-in-Picture)';
 }
+function updateFloatingQuotes(doc,prefix){
+ const assign=(id,value)=>{const el=doc.getElementById(prefix+'-'+id);if(el)el.textContent=value};
+ assign('motivation',$('home-quote').textContent);
+ assign('gospel',$('home-gospel').textContent);
+ assign('gospel-ref',$('home-gospel-ref').textContent);
+}
 function syncPipDisplay(){
   const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
   const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
   const label=timer.mode==='focus'?'🌷 Study time':'☕ Break time';
   $('mini-mode').textContent=label;$('mini-play').textContent=timer.running?'Ⅱ Pause':'▶ Start';
-  updateCuteFace(document,'mini',seconds,progress);
+  updateCuteFace(document,'mini',seconds,progress);updateFloatingQuotes(document,'mini');
   if(hasDocumentPip()){
     try{
       const d=pipWin.document;
-      updateCuteFace(d,'pip',seconds,progress);
+      updateCuteFace(d,'pip',seconds,progress);updateFloatingQuotes(d,'pip');
       const mode=d.getElementById('pip-mode'),play=d.getElementById('pip-play'),count=d.getElementById('pip-count');
       if(mode)mode.textContent=label;
       if(play)play.textContent=timer.running?'Ⅱ Pause':'▶ Start';
@@ -995,11 +1020,11 @@ el.style.right='auto';el.style.bottom='auto';
 });
 $('mini-grip').addEventListener('pointerup',()=>{miniDrag=null});
 $('mini-grip').addEventListener('pointercancel',()=>{miniDrag=null});
-function row(){return{user_id:user.id,focus_minutes:settings.focus,break_minutes:settings.break,rounds:settings.rounds,auto_start:settings.auto,sound_enabled:settings.chime,theme:settings.theme,updated_at:new Date().toISOString()}}
+function row(){return{user_id:user.id,focus_minutes:settings.focus,break_minutes:settings.break,rounds:settings.rounds,auto_start:settings.auto,sound_enabled:settings.chime,chime_sound:settings.chimeSound,chime_duration:settings.chimeDuration,theme:settings.theme,updated_at:new Date().toISOString()}}
 async function pushCloud(){if(!client||!user)return;const r=await client.from('study_tracker_preferences').upsert(row(),{onConflict:'user_id'});$('login-status').textContent=r.error?'Sync error: '+r.error.message:'Your settings are synced ♡'}
 function scheduleSync(){if(!user)return;clearTimeout(saveTimer);saveTimer=setTimeout(pushCloud,750)}
 async function pullCloud(){if(!client||!user)return;const r=await client.from('study_tracker_preferences').select('*').eq('user_id',user.id).maybeSingle();if(r.error){$('login-status').textContent=r.error.message;return}if(!r.data){await pushCloud();return}
-const p=r.data;settings.focus=clamp(p.focus_minutes,1,240,25);settings.break=clamp(p.break_minutes,1,120,5);settings.rounds=clamp(p.rounds,1,20,4);settings.auto=!!p.auto_start;settings.chime=!!p.sound_enabled;settings.theme=['rose','lavender','sage'].includes(p.theme)?p.theme:'rose';
+const p=r.data;settings.focus=clamp(p.focus_minutes,1,240,25);settings.break=clamp(p.break_minutes,1,120,5);settings.rounds=clamp(p.rounds,1,20,4);settings.auto=!!p.auto_start;settings.chime=!!p.sound_enabled;settings.theme=THEMES.includes(p.theme)?p.theme:'rose';settings.chimeSound=CHIME_SOUNDS.includes(p.chime_sound)?p.chime_sound:'musicbox';settings.chimeDuration=CHIME_DURATIONS.includes(p.chime_duration)?p.chime_duration:3;
 if(!timer.running)timer.left=minutes();persist();renderSettings();$('login-status').textContent='Loaded your cloud settings ♡'}
 function accountUI(){$('login-form').classList.toggle('hidden',!!user);$('signed-in').classList.toggle('hidden',!user);$('sync-summary').textContent=user?'Signed in: '+user.email:'Not signed in';$('cloud-btn').textContent=user?'☁ Manage Sync':'☁ Open Cloud Sync';if(user)$('account-email').textContent='Signed in as '+user.email}
 function closeSettings(){$('settings-dialog').close()}

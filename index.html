@@ -874,11 +874,12 @@ function syncPipDisplay(){
 }
 async function openDocumentPip(){
  if(!window.documentPictureInPicture?.requestWindow)return false;
- const win=await window.documentPictureInPicture.requestWindow({width:304,height:344});
+ const win=await window.documentPictureInPicture.requestWindow({width:318,height:470});
  pipWin=win;
  win.document.title='Study Tracker ♡';
- win.document.head.innerHTML='<meta name="viewport" content="width=device-width,initial-scale=1"><style>'+CUTE_CSS+"\nhtml{--accent:#cf7494;--accent-dark:#a85072;--soft:#ffe7ef;--bg:#fffaf9;--ink:#5b4c56;--muted:#9b8993;--border:#f3e6e9;--panel:#fff}\nhtml[data-theme=lavender]{--accent:#987bc5;--accent-dark:#7659a3;--soft:#f0e7fb;--bg:#fcfaff;--border:#ece5f4}\nhtml[data-theme=sage]{--accent:#78ac96;--accent-dark:#4d806e;--soft:#e4f4ec;--bg:#fafffa;--border:#e3ede5}\n@media(prefers-color-scheme:dark){html{color-scheme:dark;--accent:#a9557b;--accent-dark:#ffc0d8;--soft:#3b2938;--bg:#17141c;--ink:#f9eff7;--muted:#bfaebd;--border:#40323f;--panel:#211d27}html[data-theme=lavender]{--accent:#8563b1;--accent-dark:#dfc5ff;--soft:#30283e;--bg:#171520;--border:#45384f}html[data-theme=sage]{--accent:#498b72;--accent-dark:#b5ead4;--soft:#24382f;--bg:#131c19;--border:#354a40}}\n*{box-sizing:border-box}html,body{margin:0;min-height:100%;width:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:12px;display:flex;flex-direction:column;align-items:center;gap:5px;overflow-y:auto}\n.pip-top{display:flex;align-items:center;justify-content:space-between;width:100%;gap:7px;flex:none;position:relative}.pip-top strong{font-size:12px;color:var(--accent-dark)}\n.pip-visual{width:100%;display:grid;place-items:center;flex:none}\n.pip-count{font-size:10px;color:var(--muted);margin-top:-3px;margin-bottom:4px;text-align:center}\n.pip-actions{display:flex;gap:6px;width:100%;max-width:295px}\n.pip-actions button{flex:1;padding:8px 4px;min-height:36px;border:0;border-radius:10px;background:var(--soft);color:var(--accent-dark);font-size:11px;font-weight:800;cursor:pointer}\n.pip-actions button:first-child{background:var(--accent);color:#fff}\n"+'</style>';
- win.document.body.innerHTML='<div class="pip-top"><strong id="pip-mode">🌷 Study time</strong><button type="button" id="pip-style-toggle" class="cute-menu-button" aria-label="Choose timer style" aria-controls="pip-style-menu" aria-expanded="false">☰</button><div id="pip-style-menu" class="cute-menu" hidden></div></div>'
+ win.document.head.innerHTML='<meta name="viewport" content="width=device-width,initial-scale=1"><style>'+CUTE_CSS+"\nhtml{--accent:#cf7494;--accent-dark:#a85072;--soft:#ffe7ef;--bg:#fffaf9;--ink:#5b4c56;--muted:#9b8993;--border:#f3e6e9;--panel:#fff}\nhtml[data-theme=lavender]{--accent:#987bc5;--accent-dark:#7659a3;--soft:#f0e7fb;--bg:#fcfaff;--border:#ece5f4}\nhtml[data-theme=sage]{--accent:#78ac96;--accent-dark:#4d806e;--soft:#e4f4ec;--bg:#fafffa;--border:#e3ede5}\n@media(prefers-color-scheme:dark){html{color-scheme:dark;--accent:#a9557b;--accent-dark:#ffc0d8;--soft:#3b2938;--bg:#17141c;--ink:#f9eff7;--muted:#bfaebd;--border:#40323f;--panel:#211d27}html[data-theme=lavender]{--accent:#8563b1;--accent-dark:#dfc5ff;--soft:#30283e;--bg:#171520;--border:#45384f}html[data-theme=sage]{--accent:#498b72;--accent-dark:#b5ead4;--soft:#24382f;--bg:#131c19;--border:#354a40}}\n*{box-sizing:border-box}html,body{margin:0;min-height:100%;width:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:12px;display:flex;flex-direction:column;align-items:center;gap:5px;overflow-y:auto}\n.pip-top{display:flex;align-items:center;justify-content:space-between;width:100%;gap:7px;flex:none;position:relative}.pip-top strong{font-size:12px;color:var(--accent-dark)}\n.pip-visual{width:100%;display:grid;place-items:center;flex:none}\n.pip-count{font-size:10px;color:var(--muted);margin-top:-3px;margin-bottom:4px;text-align:center}\n.pip-actions{display:flex;gap:6px;width:100%;max-width:295px}\n.pip-actions button{flex:1;padding:8px 4px;min-height:36px;border:0;border-radius:10px;background:var(--soft);color:var(--accent-dark);font-size:11px;font-weight:800;cursor:pointer}\n.pip-actions button:first-child{background:var(--accent);color:#fff}\n\nhtml[data-theme=peach]{--accent:#ec987c;--accent-dark:#bb6a51;--soft:#ffeadf;--bg:#fffbf7;--border:#f9e1d4}\n@media(prefers-color-scheme:dark){html[data-theme=peach]{--accent:#b16a50;--accent-dark:#ffd0b4;--soft:#3c2b26;--bg:#201916;--border:#4b382e}\nhtml[data-theme=sky]{--accent:#74acd9;--accent-dark:#3d79ae;--soft:#e2f2ff;--bg:#f9fdff;--border:#dfebf7}\n@media(prefers-color-scheme:dark){html[data-theme=sky]{--accent:#487ba7;--accent-dark:#b8e1ff;--soft:#29394b;--bg:#171e2a;--border:#334b5c}\nhtml[data-theme=mint]{--accent:#5ab9ad;--accent-dark:#278277;--soft:#d9f7ed;--bg:#f7fffc;--border:#d3efe5}\n@media(prefers-color-scheme:dark){html[data-theme=mint]{--accent:#3d9e90;--accent-dark:#adf3e5;--soft:#234039;--bg:#15231e;--border:#32564b}\nhtml[data-theme=buttercream]{--accent:#d7a954;--accent-dark:#936f2b;--soft:#fff1c8;--bg:#fffdf5;--border:#f4e8c9}\n@media(prefers-color-scheme:dark){html[data-theme=buttercream]{--accent:#a77c30;--accent-dark:#ffe9a7;--soft:#393321;--bg:#221e14;--border:#544b30}\nhtml[data-theme=lilac]{--accent:#b994d7;--accent-dark:#8856a8;--soft:#f1e5fc;--bg:#fdfaff;--border:#efe4f5}\n@media(prefers-color-scheme:dark){html[data-theme=lilac]{--accent:#9472ba;--accent-dark:#e5caff;--soft:#32263c;--bg:#1d1725;--border:#46334d}\nhtml[data-theme=coral]{--accent:#e6818d;--accent-dark:#b75662;--soft:#ffeaec;--bg:#fffbfb;--border:#f5dfe1}\n@media(prefers-color-scheme:dark){html[data-theme=coral]{--accent:#bb6575;--accent-dark:#ffbec6;--soft:#402a32;--bg:#21171c;--border:#553943}\n.float-quotes{display:grid;width:100%;gap:5px;margin:0 0 4px}.float-quote{border:1px solid var(--border);border-radius:10px;padding:6px 9px;background:var(--soft)}.float-quote span{display:block;color:var(--accent-dark);font-size:9px;font-weight:800}.float-quote p{color:var(--ink);font-size:10px;line-height:1.23;margin:2px 0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.float-quote small{display:block;color:var(--accent-dark);font-size:9px}.pip-quotes{flex:none}"+'</style>';
+ win.document.body.innerHTML='<div class="float-quotes pip-quotes" aria-label="Motivational and Gospel quotes"><div class="float-quote"><span>💌 Motivation</span><p id="pip-motivation"></p></div><div class="float-quote"><span>🕊️ Gospel</span><p id="pip-gospel"></p><small id="pip-gospel-ref"></small></div></div>'
+  +'<div class="pip-top"><strong id="pip-mode">🌷 Study time</strong><button type="button" id="pip-style-toggle" class="cute-menu-button" aria-label="Choose timer style" aria-controls="pip-style-menu" aria-expanded="false">☰</button><div id="pip-style-menu" class="cute-menu" hidden></div></div>'
   +'<div id="pip-visual" class="pip-visual">'+cuteFaceMarkup('pip')+'</div>'
   +'<div id="pip-count" class="pip-count">A little focus goes a long way ♡</div>'
   +'<div class="pip-actions"><button type="button" id="pip-play">▶ Start</button><button type="button" id="pip-next">Next →</button><button type="button" id="pip-reset">↺ Reset</button></div>';
@@ -894,16 +895,21 @@ async function openDocumentPip(){
 function drawPipCanvas(){
  if(!pipCanvas)return;
  const g=pipCanvas.getContext('2d');if(!g)return;
- const palettes={rose:['#fff3f7','#cf7494','#69475b','#fae0e9'],lavender:['#f9f4ff','#987bc5','#58466c','#ebe0f6'],sage:['#f3fff9','#78ac96','#3e6552','#dff5e9']};
- const darkPalettes={rose:['#211d27','#d380a2','#f9eff7','#443344'],lavender:['#211d2a','#b89be4','#f8f0ff','#42364e'],sage:['#16241f','#91c6ab','#effbf5','#304d3e']};
+ const palettes={"rose":["#fff3f7","#cf7494","#69475b","#fae0e9"],"lavender":["#f9f4ff","#987bc5","#58466c","#ebe0f6"],"sage":["#f3fff9","#78ac96","#3e6552","#dff5e9"],"peach":["#fffbf7","#ec987c","#bb6a51","#ffeadf"],"sky":["#f9fdff","#74acd9","#3d79ae","#e2f2ff"],"mint":["#f7fffc","#5ab9ad","#278277","#d9f7ed"],"buttercream":["#fffdf5","#d7a954","#936f2b","#fff1c8"],"lilac":["#fdfaff","#b994d7","#8856a8","#f1e5fc"],"coral":["#fffbfb","#e6818d","#b75662","#ffeaec"]};
+ const darkPalettes={"rose":["#211d27","#d380a2","#f9eff7","#443344"],"lavender":["#211d2a","#b89be4","#f8f0ff","#42364e"],"sage":["#16241f","#91c6ab","#effbf5","#304d3e"],"peach":["#201916","#b16a50","#ffd0b4","#3c2b26"],"sky":["#171e2a","#487ba7","#b8e1ff","#29394b"],"mint":["#15231e","#3d9e90","#adf3e5","#234039"],"buttercream":["#221e14","#a77c30","#ffe9a7","#393321"],"lilac":["#1d1725","#9472ba","#e5caff","#32263c"],"coral":["#21171c","#bb6575","#ffbec6","#402a32"]};
  const dark=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
  const [bg,accent,ink,soft]=(dark?darkPalettes:palettes)[settings.theme]||(dark?darkPalettes.rose:palettes.rose);
  const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
  const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
  const time=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
- const w=500,h=280,cx=250,cy=141,r=96;
+ const w=500,h=390,cx=250,cy=236,r=96;
  g.clearRect(0,0,w,h);g.fillStyle=bg;g.fillRect(0,0,w,h);
  g.textAlign='center';g.textBaseline='middle';
+ g.fillStyle=accent;g.font='700 15px system-ui';g.fillText('💌 MOTIVATION',250,17);
+ g.fillStyle=ink;g.font='500 12px system-ui';g.fillText($('home-quote').textContent,250,37,460);
+ g.fillStyle=accent;g.font='700 15px system-ui';g.fillText('🕊️ GOSPEL',250,61);
+ g.fillStyle=ink;g.font='500 12px system-ui';g.fillText($('home-gospel').textContent,250,81,460);
+ g.fillStyle=accent;g.font='600 11px system-ui';g.fillText($('home-gospel-ref').textContent,250,100);
  const arc=(radius,start,end,color,width=10)=>{
    g.strokeStyle=color;g.lineWidth=width;g.lineCap='round';g.beginPath();g.arc(cx,cy,radius,start,end);g.stroke();
  };
@@ -962,13 +968,13 @@ function drawPipCanvas(){
  g.fillStyle=accent;g.font='32px system-ui';g.fillText(current.symbol,cx,cy-51);
  g.fillStyle=ink;g.font='800 68px system-ui';g.fillText(time,cx,cy+5);
  g.fillStyle=accent;g.font='600 17px system-ui';g.fillText(timer.mode==='focus'?'Study gently ♡':'Enjoy your break ♡',cx,cy+61);
- g.font='700 21px system-ui';g.fillText(timer.mode==='focus'?'✿ STUDY TIME':'☕ BREAK TIME',cx,24);
+ g.font='700 21px system-ui';g.fillText(timer.mode==='focus'?'✿ STUDY TIME':'☕ BREAK TIME',cx,123);
 }
 async function openVideoPip(){
 const supportsAPI=typeof HTMLVideoElement!=='undefined'&&('requestPictureInPicture' in HTMLVideoElement.prototype||'webkitSetPresentationMode' in HTMLVideoElement.prototype);
 if(!supportsAPI||!HTMLCanvasElement.prototype.captureStream)return false;
 if(!pipCanvas){
-pipCanvas=document.createElement('canvas');pipCanvas.width=500;pipCanvas.height=280;
+pipCanvas=document.createElement('canvas');pipCanvas.width=500;pipCanvas.height=390;
 pipVideo=document.createElement('video');pipVideo.playsInline=true;pipVideo.muted=true;pipVideo.autoplay=true;pipVideo.width=2;pipVideo.height=2;
 pipVideo.style.cssText='position:fixed;top:-6px;left:-6px;width:2px;height:2px;opacity:.01;pointer-events:none';
 pipVideo.srcObject=pipCanvas.captureStream(5);document.body.appendChild(pipVideo);

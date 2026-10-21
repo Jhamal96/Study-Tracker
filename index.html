@@ -220,6 +220,19 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 #mini-float[data-style="speedometer"] .mini-display{min-height:159px}
 #mini-float[data-style="speedometer"] .mini-clock{position:absolute;bottom:0;font-size:26px;line-height:1.2}
 @media(prefers-reduced-motion:reduce){.speed-fill{transition:none}}
+
+/* Wavy progress ring: softly rippled elapsed time and clean remaining-time labels. */
+.pip-style-choice[data-pip-choice="wave"] span{font-size:26px;font-weight:900}
+.mini-wave{position:absolute;display:none;width:205px;height:205px;pointer-events:none;overflow:visible}
+.wave-track{fill:none;stroke:var(--soft);stroke-width:9;stroke-linecap:round}
+.wave-highlight{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.mini-wave-details{display:none;position:absolute;top:116px;width:100%;text-align:center;flex-direction:column;align-items:center;gap:3px;pointer-events:none;color:var(--muted);font-size:11px}
+.mini-wave-details strong{color:var(--ink);font-size:12px}
+.mini-wave-details small{font-size:9px;color:var(--accent-dark)}
+#mini-float[data-style="wave"] .mini-display{min-height:212px;justify-content:center;align-items:center}
+#mini-float[data-style="wave"] .mini-wave{display:block}
+#mini-float[data-style="wave"] .mini-clock{position:absolute;top:58px;font-size:33px;font-weight:750;color:var(--ink);line-height:1.1}
+#mini-float[data-style="wave"] .mini-wave-details{display:flex}
 </style>
 </head>
 <body data-theme="rose">
@@ -265,9 +278,11 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 <text x="18" y="137" text-anchor="middle">0</text><text x="182" y="137" text-anchor="middle">FULL</text>
 <g id="mini-speed-needle"><line x1="100" y1="116" x2="100" y2="46"/></g><circle class="speed-center" cx="100" cy="116" r="6"/>
 </svg>
-<div class="mini-clock" id="mini-clock">25:00</div></div><div class="mini-progress"><span id="mini-progress-bar"></span></div><div class="mini-style-buttons" role="group" aria-label="Mini timer style"><button type="button" data-pip-choice="ring" aria-label="Dial style">◉</button><button type="button" data-pip-choice="digital" aria-label="Digital style">▰</button><button type="button" data-pip-choice="minimal" aria-label="Minimal style">♡</button>
+<svg class="mini-wave" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="77" class="wave-track"/><path id="mini-wave-progress" class="wave-highlight" d=""/></svg>
+<div class="mini-clock" id="mini-clock">25:00</div><div class="mini-wave-details"><span>Remaining</span><strong id="mini-wave-session">Study session</strong><small id="mini-wave-caption">One step at a time ♡</small></div></div><div class="mini-progress"><span id="mini-progress-bar"></span></div><div class="mini-style-buttons" role="group" aria-label="Mini timer style"><button type="button" data-pip-choice="ring" aria-label="Dial style">◉</button><button type="button" data-pip-choice="digital" aria-label="Digital style">▰</button><button type="button" data-pip-choice="minimal" aria-label="Minimal style">♡</button>
 <button type="button" data-pip-choice="clock" aria-label="Clock dial style">◷</button>
-<button type="button" data-pip-choice="speedometer" aria-label="Speedometer style">◠</button></div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
+<button type="button" data-pip-choice="speedometer" aria-label="Speedometer style">◠</button>
+<button type="button" data-pip-choice="wave" aria-label="Wavy ring style">〰</button></div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
 <dialog id="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-quote welcome-gospel">
   <div class="welcome-hero"><div class="welcome-flower" aria-hidden="true">🌷</div><p class="welcome-kicker">a little love for your study time</p><h2 id="welcome-title">You've got this, love! ♡</h2></div>
   <div class="welcome-content">
@@ -320,6 +335,7 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
       <button type="button" class="pip-style-choice" data-pip-choice="minimal" aria-pressed="false"><span aria-hidden="true">♡</span> Minimal</button>
       <button type="button" class="pip-style-choice" data-pip-choice="clock" aria-pressed="false"><span aria-hidden="true">◷</span> Clock</button>
       <button type="button" class="pip-style-choice" data-pip-choice="speedometer" aria-pressed="false"><span aria-hidden="true">◠</span> Speedometer</button>
+      <button type="button" class="pip-style-choice" data-pip-choice="wave" aria-pressed="false"><span aria-hidden="true">〰</span> Wavy Ring</button>
     </div>
   </div>
   <div class="settings-group">
@@ -449,11 +465,28 @@ function showOpeningNote(){
 }
 let client=null,user=null,saveTimer,toastTimer,audio;
 let pipWin=null,pipWinInterval=null,pipCanvas=null,pipVideo=null,miniDrag=null;
-const pipStyles=['ring','digital','minimal','clock','speedometer'];
+const pipStyles=['ring','digital','minimal','clock','speedometer','wave'];
 const pipStyleKey='study-tracker-pip-style';
 let pipStyle=read(pipStyleKey,'ring');
 if(!pipStyles.includes(pipStyle))pipStyle='ring';
 const RING_LENGTH=351.8584,MINI_RING_LENGTH=414.6902,SPEED_ARC=257.61;
+/* A gently scalloped elapsed-time arc, modeled as short radial ripples along a circle.
+   Use the same geometry for SVG and video PiP so all floating modes stay in sync. */
+function wavePoints(elapsed,cx,cy,r){
+  const fraction=Math.max(0,Math.min(1,Number(elapsed)||0));
+  if(fraction===0)return [];
+  const steps=Math.max(8,Math.ceil(230*fraction)),pts=[];
+  for(let i=0;i<=steps;i++){
+    const t=i/steps,angle=-Math.PI/2-2*Math.PI*fraction*t;
+    const taper=Math.min(1,Math.min(t,1-t)*16);
+    const radius=r+3.6*Math.sin((2*Math.PI*fraction*t)*13)*taper;
+    pts.push([cx+Math.cos(angle)*radius,cy+Math.sin(angle)*radius]);
+  }
+  return pts;
+}
+function waveSvgPath(elapsed,cx,cy,r){
+  return wavePoints(elapsed,cx,cy,r).map((p,i)=>(i?'L':'M')+p[0].toFixed(2)+' '+p[1].toFixed(2)).join(' ');
+}
 function choosePipStyle(style){
   if(!pipStyles.includes(style))return;
   pipStyle=style;
@@ -617,6 +650,9 @@ $('mini-progress-bar').style.width=(progress*100).toFixed(2)+'%';
 $('mini-clock-hand').setAttribute('transform','rotate('+((1-progress)*360)+' 80 80)');
 $('mini-speed-fill').style.strokeDashoffset=String(SPEED_ARC*(1-progress));
 $('mini-speed-needle').setAttribute('transform','rotate('+((progress-.5)*180)+' 100 116)');
+$('mini-wave-progress').setAttribute('d',waveSvgPath(1-progress,100,100,77));
+$('mini-wave-session').textContent=timer.mode==='focus'?'Study session':'Break time';
+$('mini-wave-caption').textContent=timer.mode==='focus'?'Until your next break ♡':'Rest before studying ♡';
 document.querySelectorAll('[data-pip-choice]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.pipChoice===pipStyle)));
 if(hasDocumentPip()){
 try{
@@ -631,6 +667,10 @@ const hand=d.getElementById('pip-clock-hand'),speed=d.getElementById('pip-speed-
 if(hand)hand.setAttribute('transform','rotate('+((1-progress)*360)+' 80 80)');
 if(speed)speed.style.strokeDashoffset=String(SPEED_ARC*(1-progress));
 if(needle)needle.setAttribute('transform','rotate('+((progress-.5)*180)+' 100 116)');
+const wave=d.getElementById('pip-wave-progress'),waveLabel=d.getElementById('pip-wave-session'),waveCaption=d.getElementById('pip-wave-caption');
+if(wave)wave.setAttribute('d',waveSvgPath(1-progress,100,100,77));
+if(waveLabel)waveLabel.textContent=timer.mode==='focus'?'Study session':'Break time';
+if(waveCaption)waveCaption.textContent=timer.mode==='focus'?'Until your next break ♡':'Rest before studying ♡';
 d.documentElement.dataset.theme=settings.theme;
 d.body.dataset.style=pipStyle;
 d.querySelectorAll('[data-pip-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.pipStyle===pipStyle)));
@@ -657,6 +697,8 @@ win.document.head.innerHTML='<meta name="viewport" content="width=device-width, 
 +'.analog,.speed{position:absolute;display:none}.analog{height:180px;width:180px;top:0}.speed{height:165px;width:235px;top:1px}.analog-face{fill:none;stroke:var(--light);stroke-width:2}.analog-ticks{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round}.analog text,.speed text{fill:var(--ink);font-size:11px;font-weight:700}.analog line{stroke:var(--accent);stroke-width:5;stroke-linecap:round}.pivot{fill:var(--accent)}.speed-track,.speed-fill{fill:none;stroke-width:10;stroke-linecap:round}.speed-track{stroke:var(--light)}.speed-fill{stroke:var(--accent);stroke-dasharray:257.61;transition:stroke-dashoffset .3s linear}.speed line{stroke:var(--accent);stroke-width:4;stroke-linecap:round}'
 +'body[data-style="clock"] .analog{display:block}body[data-style="clock"] .visual{min-height:214px;align-items:flex-end}body[data-style="clock"] .time{font-size:29px;margin-bottom:2px}'
 +'body[data-style="speedometer"] .speed{display:block}body[data-style="speedometer"] .visual{min-height:185px;align-items:flex-end}body[data-style="speedometer"] .time{font-size:31px;margin-bottom:0}'
++'.wave{display:none;position:absolute;width:218px;height:218px;top:0}.wave-track{fill:none;stroke:var(--light);stroke-width:9;stroke-linecap:round}.wave-highlight{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;stroke-linejoin:round}.wave-labels{display:none;flex-direction:column;align-items:center;gap:5px;position:absolute;top:133px;color:var(--ink);font-size:12px;line-height:1.2;pointer-events:none}.wave-labels .remaining{color:var(--ink);opacity:.55}.wave-labels strong{font-size:13px}.wave-labels small{font-size:10px;opacity:.55}'
++'body[data-style="wave"] .wave{display:block}body[data-style="wave"] .visual{min-height:221px}body[data-style="wave"] .time{position:absolute;top:67px;font-size:43px}body[data-style="wave"] .wave-labels{display:flex}'
 +'.styles{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:3px 0 6px;max-width:300px}.styles button{border:1px solid var(--light);background:transparent;color:var(--ink);border-radius:9px;padding:5px 7px;min-width:49px;font-size:11px;font-weight:700;cursor:pointer}.styles button[aria-pressed="true"]{background:var(--light);border-color:var(--accent)}'
 +'.buttons{display:flex;gap:6px;width:100%;max-width:285px}.buttons button{flex:1;min-height:34px;border:none;border-radius:10px;background:var(--light);color:var(--ink);font-size:11px;font-weight:700;cursor:pointer}.buttons button:first-child{background:var(--accent);color:white}@media(prefers-reduced-motion:reduce){.ring .current,.progress span{transition:none}}'
 +'</style>';
@@ -664,9 +706,10 @@ win.document.body.innerHTML='<div id="pip-mode" class="mode">🌷 Study time</di
 +'<div class="visual"><svg class="ring" viewBox="0 0 144 144" aria-hidden="true"><circle class="track" cx="72" cy="72" r="56"/><circle id="pip-ring-progress" class="current" cx="72" cy="72" r="56"/></svg>'
 +'<svg class="analog" viewBox="0 0 160 160" aria-hidden="true"><circle class="analog-face" cx="80" cy="80" r="67"/><circle class="analog-ticks" cx="80" cy="80" r="59" stroke-dasharray="3.2 27.69" transform="rotate(-90 80 80)"/><text x="80" y="25" text-anchor="middle">12</text><text x="136" y="84" text-anchor="middle">3</text><text x="80" y="142" text-anchor="middle">6</text><text x="24" y="84" text-anchor="middle">9</text><g id="pip-clock-hand"><line x1="80" y1="88" x2="80" y2="40"/></g><circle class="pivot" cx="80" cy="80" r="5"/></svg>'
 +'<svg class="speed" viewBox="0 0 200 150" aria-hidden="true"><path class="speed-track" d="M 18 116 A 82 82 0 0 1 182 116"/><path id="pip-speed-fill" class="speed-fill" d="M 18 116 A 82 82 0 0 1 182 116"/><text x="18" y="137" text-anchor="middle">0</text><text x="182" y="137" text-anchor="middle">FULL</text><g id="pip-speed-needle"><line x1="100" y1="116" x2="100" y2="46"/></g><circle class="pivot" cx="100" cy="116" r="6"/></svg>'
-+'<div id="pip-time" class="time">25:00</div></div>'
++'<svg class="wave" viewBox="0 0 200 200" aria-hidden="true"><circle class="wave-track" cx="100" cy="100" r="77"/><path class="wave-highlight" id="pip-wave-progress" d=""/></svg>'
++'<div id="pip-time" class="time">25:00</div><div class="wave-labels"><span class="remaining">Remaining</span><strong id="pip-wave-session">Study session</strong><small id="pip-wave-caption">Until your next break ♡</small></div></div>'
 +'<div class="progress" aria-hidden="true"><span id="pip-progress-bar"></span></div><div id="pip-count" class="count">A little focus goes a long way ♡</div>'
-+'<div class="styles" role="group" aria-label="Timer display style"><button data-pip-style="ring" type="button" title="Circle dial">◉ Dial</button><button data-pip-style="digital" type="button" title="Digital countdown">▰ Digital</button><button data-pip-style="minimal" type="button" title="Minimal countdown">♡ Simple</button><button data-pip-style="clock" type="button" title="Clock face">◷ Clock</button><button data-pip-style="speedometer" type="button" title="Speedometer gauge">◠ Gauge</button></div>'
++'<div class="styles" role="group" aria-label="Timer display style"><button data-pip-style="ring" type="button" title="Circle dial">◉ Dial</button><button data-pip-style="digital" type="button" title="Digital countdown">▰ Digital</button><button data-pip-style="minimal" type="button" title="Minimal countdown">♡ Simple</button><button data-pip-style="clock" type="button" title="Clock face">◷ Clock</button><button data-pip-style="speedometer" type="button" title="Speedometer gauge">◠ Gauge</button><button data-pip-style="wave" type="button" title="Wavy progress ring">〰 Wavy</button></div>'
 +'<div class="buttons"><button id="pip-play" type="button">▶ Start</button><button id="pip-next" type="button">Next →</button><button id="pip-reset" type="button">↺ Reset</button></div>';
 win.document.getElementById('pip-play').addEventListener('click',()=>{ $('play').click();syncPipDisplay() });
 win.document.getElementById('pip-next').addEventListener('click',()=>{ $('skip').click();syncPipDisplay() });
@@ -703,6 +746,20 @@ if(pipStyle==='ring'){
   }
   g.fillStyle=ink;g.font='700 65px system-ui';g.fillText(time,cx,cy+5);
   g.font='600 16px system-ui';g.fillStyle=accent;g.fillText(timer.running?'keep blooming ♡':'ready when you are ♡',w/2,262);
+}else if(pipStyle==='wave'){
+  const cx=250,cy=137,r=93,elapsed=1-progress;
+  g.lineWidth=10;g.lineCap='round';g.lineJoin='round';g.strokeStyle=soft;
+  g.beginPath();g.arc(cx,cy,r,0,Math.PI*2);g.stroke();
+  const pts=wavePoints(elapsed,cx,cy,r);
+  if(pts.length){
+    g.strokeStyle=accent;g.lineWidth=10;g.beginPath();g.moveTo(pts[0][0],pts[0][1]);
+    for(let i=1;i<pts.length;i++)g.lineTo(pts[i][0],pts[i][1]);
+    g.stroke();
+  }
+  g.fillStyle=ink;g.font='750 54px system-ui';g.fillText(time,cx,cy-28);
+  g.fillStyle=accent;g.font='500 18px system-ui';g.fillText('Remaining',cx,cy+8);
+  g.fillStyle=ink;g.font='700 18px system-ui';g.fillText(timer.mode==='focus'?'Study session':'Break time',cx,cy+41);
+  g.fillStyle=accent;g.font='500 12px system-ui';g.fillText(timer.mode==='focus'?'Until your next break ♡':'Rest before studying ♡',cx,cy+60);
 }else if(pipStyle==='clock'){
   const cx=250,cy=138,r=84;
   g.strokeStyle=soft;g.lineWidth=2;g.beginPath();g.arc(cx,cy,r+13,0,2*Math.PI);g.stroke();

@@ -585,7 +585,7 @@ const ring=d.getElementById('pip-ring-progress'),bar=d.getElementById('pip-progr
 if(ring)ring.style.strokeDashoffset=String(RING_LENGTH*(1-progress));
 if(bar)bar.style.width=(progress*100).toFixed(2)+'%';
 d.documentElement.dataset.theme=settings.theme;
-d.document.body.dataset.style=pipStyle;
+d.body.dataset.style=pipStyle;
 d.querySelectorAll('[data-pip-style]').forEach(el=>el.setAttribute('aria-pressed',String(el.dataset.pipStyle===pipStyle)));
 }catch(e){console.warn('PiP update',e)}
 }

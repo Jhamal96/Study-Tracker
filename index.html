@@ -12,6 +12,12 @@
 :root{font-family:"DM Sans",system-ui,sans-serif;--accent:#cf7494;--accent-dark:#a85072;--soft:#ffe7ef;--bg:#fffaf9;--ink:#5b4c56;--muted:#9b8993;--border:#f3e6e9;--panel:#fff; color:var(--ink)}
 body[data-theme=lavender]{--accent:#987bc5;--accent-dark:#7659a3;--soft:#f0e7fb;--bg:#fcfaff;--border:#ece5f4}
 body[data-theme=sage]{--accent:#78ac96;--accent-dark:#4d806e;--soft:#e4f4ec;--bg:#fafffa;--border:#e3ede5}
+body[data-theme="peach"]{--accent:#ec987c;--accent-dark:#bb6a51;--soft:#ffeadf;--bg:#fffbf7;--border:#f9e1d4}
+body[data-theme="sky"]{--accent:#74acd9;--accent-dark:#3d79ae;--soft:#e2f2ff;--bg:#f9fdff;--border:#dfebf7}
+body[data-theme="mint"]{--accent:#5ab9ad;--accent-dark:#278277;--soft:#d9f7ed;--bg:#f7fffc;--border:#d3efe5}
+body[data-theme="buttercream"]{--accent:#d7a954;--accent-dark:#936f2b;--soft:#fff1c8;--bg:#fffdf5;--border:#f4e8c9}
+body[data-theme="lilac"]{--accent:#b994d7;--accent-dark:#8856a8;--soft:#f1e5fc;--bg:#fdfaff;--border:#efe4f5}
+body[data-theme="coral"]{--accent:#e6818d;--accent-dark:#b75662;--soft:#ffeaec;--bg:#fffbfb;--border:#f5dfe1}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 0 0,var(--soft),transparent 35%),radial-gradient(circle at 100% 100%,#f8edf7,transparent 36%),var(--bg);min-height:100dvh}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}h1,h2,h3{font-family:Quicksand,system-ui,sans-serif;margin:0}.wrap{max-width:1060px;margin:auto;padding:25px 22px 16px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;background:var(--soft);color:var(--accent-dark);display:grid;place-items:center;border-radius:16px;font-size:29px}.brand strong{display:block;font-family:Quicksand;font-size:23px;letter-spacing:-.8px}.brand strong span{color:var(--accent)}.brand small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-top:3px}
 .pill{border:1px solid var(--border);background:white;border-radius:999px;padding:11px 17px;color:var(--accent-dark);font-size:12px;font-weight:700}
@@ -128,6 +134,12 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
     --bg:#17141c;--ink:#f9eff7;--muted:#bfaebd;--border:#40323f;
     --panel:#211d27;--field:#2b2430;--raised:#2c2631;--toggle-off:#544451;
   }
+  body[data-theme="peach"]{--accent:#b16a50;--accent-dark:#ffd0b4;--soft:#3c2b26;--bg:#201916;--border:#4b382e}
+  body[data-theme="sky"]{--accent:#487ba7;--accent-dark:#b8e1ff;--soft:#29394b;--bg:#171e2a;--border:#334b5c}
+  body[data-theme="mint"]{--accent:#3d9e90;--accent-dark:#adf3e5;--soft:#234039;--bg:#15231e;--border:#32564b}
+  body[data-theme="buttercream"]{--accent:#a77c30;--accent-dark:#ffe9a7;--soft:#393321;--bg:#221e14;--border:#544b30}
+  body[data-theme="lilac"]{--accent:#9472ba;--accent-dark:#e5caff;--soft:#32263c;--bg:#1d1725;--border:#46334d}
+  body[data-theme="coral"]{--accent:#bb6575;--accent-dark:#ffbec6;--soft:#402a32;--bg:#21171c;--border:#553943}
   body[data-theme="lavender"]{
     --accent:#8563b1;--accent-dark:#dfc5ff;--soft:#30283e;
     --bg:#171520;--border:#45384f;
@@ -248,11 +260,38 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 .cute-face[data-style="cozy"] .cute-foot{font-size:11px}
 @keyframes cuteTwinkle{from{opacity:.5}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.cute-progress,.cute-heart-progress,.rainbow-progress,.cute-art .cute-bubbles circle{transition:none}.cute-face[data-style="starry"] .cute-stars text{animation:none}}
+
+/* Home inspiration comes first, above the timer and controls. */
+.inspiration-top{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0 0 21px}
+.inspiration-top .letter{min-height:154px;padding:19px 21px;gap:5px}
+.inspiration-top .letter h3{font-size:15px;line-height:1.42;margin:3px 0 5px}
+.inspiration-top .letter .quote-icon{font-size:19px;margin:0}
+.inspiration-top .letter>div:last-child{display:flex;justify-content:space-between;gap:7px;align-items:end}
+.inspiration-top .letter>div:last-child p{margin:0}
+.grid{grid-template-columns:minmax(0,1.18fr) minmax(310px,.82fr)}
+.chime-choices{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center;margin:12px 0}
+.chime-choices label{font-size:12px;font-weight:700;color:var(--muted)}
+.chime-choices select{width:100%;min-width:0;padding:11px 9px;border-radius:12px;border:1px solid var(--border);background:var(--panel);color:var(--ink);font-size:12px}
+.chime-preview{width:100%;font-size:12px;padding:12px}
+.settings-palette{display:flex;flex-wrap:wrap;gap:12px;padding:10px 0 5px}
+.settings-palette .swatch{width:35px;height:35px;flex:none;background:var(--swatch-color)}
+.settings-palette .swatch.active{box-shadow:0 0 0 2px var(--accent),0 0 0 5px var(--soft)}
+.float-quotes{width:100%;display:grid;gap:5px;margin:7px auto 0}
+.float-quote{background:var(--soft);border:1px solid var(--border);border-radius:11px;padding:6px 8px}
+.float-quote span{display:block;font-size:9px;font-weight:800;color:var(--accent-dark);margin-bottom:2px}
+.float-quote p{font-size:10px;line-height:1.3;margin:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.float-quote small{display:block;color:var(--accent-dark);font-size:9px;margin:2px 0 0}
+#mini-float{width:260px}
+@media(max-width:700px){.inspiration-top{grid-template-columns:1fr;gap:10px;margin-bottom:15px}.inspiration-top .letter{min-height:105px;padding:13px 16px}.inspiration-top .letter h3{font-size:14px}.inspiration-top .letter>div:last-child p{display:none}}
 </style>
 </head>
 <body data-theme="rose">
 <div class="wrap">
 <header><div class="brand"><div class="logo" aria-hidden="true">✿</div><div><strong>study tracker<span>.</span></strong><small>a cozy little focus space</small></div></div><button id="settings-btn" class="pill settings-trigger" type="button" aria-haspopup="dialog" aria-controls="settings-dialog">⚙ Settings</button></header>
+<div class="quote-stack inspiration-top" aria-label="Daily inspiration">
+<section class="letter motivation-card" aria-labelledby="motivation-title"><div><div class="quote-icon" aria-hidden="true">💌</div><p class="quote-eyebrow" id="motivation-title">✨ Motivational quote</p><h3 id="home-quote">A little progress today is still progress worth celebrating.</h3></div><div><p>Keep going at your own pace.</p><strong>made just for you, with ♡</strong></div></section>
+<section class="letter gospel-card" aria-labelledby="gospel-title"><div><div class="quote-icon" aria-hidden="true">🕊️</div><p class="quote-eyebrow" id="gospel-title">✝ Gospel encouragement</p><h3 id="home-gospel">For with God nothing shall be impossible.</h3></div><div><p id="home-gospel-ref" class="verse-reference">Luke 1:37 · KJV</p><strong>Faith over fear ♡</strong></div></section>
+</div>
 <main class="grid">
 <section class="panel clock-panel">
 <p class="eyebrow">one little step at a time</p><h1 id="headline">You've got this, love! ♡</h1>
@@ -268,9 +307,7 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 <div class="control"><div class="control-left"><div class="icon-tile">📚</div><div><div class="control-label">Study session</div><div class="control-note">Deep focus, no pressure</div></div></div><div class="stepper"><button type="button" data-step="focus:-1" aria-label="Shorter study timer">−</button><input type="number" id="focus-min" min="1" max="240" value="25" aria-label="Study duration in minutes"><span class="unit">min</span><button type="button" data-step="focus:1" aria-label="Longer study timer">+</button></div></div>
 <div class="control"><div class="control-left"><div class="icon-tile">🧸</div><div><div class="control-label">Break session</div><div class="control-note">Rest is productive, too</div></div></div><div class="stepper"><button type="button" data-step="break:-1" aria-label="Shorter break timer">−</button><input type="number" id="break-min" min="1" max="120" value="5" aria-label="Break duration in minutes"><span class="unit">min</span><button type="button" data-step="break:1" aria-label="Longer break timer">+</button></div></div>
 <div class="control"><div class="control-left"><div class="icon-tile">🪄</div><div><div class="control-label">Study rounds</div><div class="control-note">Set your little goal</div></div></div><div class="stepper"><button type="button" data-step="rounds:-1" aria-label="Fewer rounds">−</button><input type="number" id="rounds" min="1" max="20" value="4" aria-label="Study rounds"><span class="unit">x</span><button type="button" data-step="rounds:1" aria-label="More rounds">+</button></div></div>
-<div class="setting"><div><div class="control-label">Auto-start next timer</div><div class="control-note">Automatically start each break and following study session, even after a round goal</div></div><label class="toggle"><input id="auto" type="checkbox" checked aria-label="Automatically start next timer"><i></i></label></div>
-<div class="setting"><div><div class="control-label">Gentle chime</div><div class="control-note">A longer, soft melody when study or break time ends</div></div><label class="toggle"><input id="chime" type="checkbox" checked aria-label="Sound notifications"><i></i></label></div>
-<div class="setting"><div><div class="control-label">Little color mood</div><div class="control-note">Pick a happy color · follows device light/dark mode</div></div><div class="palette"><button class="swatch active" title="Rose" aria-label="Rose theme" data-t="rose"></button><button class="swatch" title="Lavender" aria-label="Lavender theme" data-t="lavender"></button><button class="swatch" title="Sage" aria-label="Sage theme" data-t="sage"></button></div></div>
+
 
 </section>
 <div class="quote-stack" aria-label="Daily inspiration">
@@ -280,7 +317,7 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 </div>
 </main><footer>Breathe in. Focus gently. Bloom beautifully. <span>♥</span></footer>
 </div>
-<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><div class="mini-head-actions"><button id="mini-style-toggle" class="cute-menu-button" type="button" aria-controls="mini-style-menu" aria-expanded="false" aria-label="Choose timer style">☰</button><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div></div><div id="mini-visual" class="mini-cute-visual"></div>
+<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><div class="mini-head-actions"><button id="mini-style-toggle" class="cute-menu-button" type="button" aria-controls="mini-style-menu" aria-expanded="false" aria-label="Choose timer style">☰</button><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div></div><div class="float-quotes" aria-label="Words of encouragement"><div class="float-quote"><span>💌 Motivation</span><p id="mini-motivation"></p></div><div class="float-quote"><span>🕊️ Gospel</span><p id="mini-gospel"></p><small id="mini-gospel-ref"></small></div></div><div id="mini-visual" class="mini-cute-visual"></div>
 <div id="mini-style-menu" class="cute-menu" hidden></div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
 <dialog id="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-quote welcome-gospel">
   <div class="welcome-hero"><div class="welcome-flower" aria-hidden="true">🌷</div><p class="welcome-kicker">a little love for your study time</p><h2 id="welcome-title">You've got this, love! ♡</h2></div>
@@ -324,6 +361,27 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
   <div class="settings-group">
     <h3>🌗 Appearance</h3>
     <div class="setting"><div class="setting-copy"><div class="control-label">Follow device appearance</div><div class="control-note">Study Tracker switches automatically between light and dark mode.</div></div><span class="appearance-pill" id="appearance-status" role="status">Automatic</span></div>
+  </div>
+  <div class="settings-group">
+    <h3>⏱ Study flow</h3>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Auto-start next timer</div><div class="control-note">Start the break automatically, then the next study round.</div></div><label class="toggle"><input id="auto" type="checkbox" checked aria-label="Automatically start next timer"><i></i></label></div>
+  </div>
+  <div class="settings-group">
+    <h3>🎵 Gentle chimes</h3>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Completion sound</div><div class="control-note">Play a soft sound when each interval finishes.</div></div><label class="toggle"><input id="chime" type="checkbox" checked aria-label="Enable gentle chime"><i></i></label></div>
+    <div class="chime-choices">
+      <label for="chime-sound">Sound</label>
+      <select id="chime-sound" aria-label="Chime sound"><option value="musicbox">🧸 Music box</option><option value="bells">🔔 Soft bells</option><option value="harp">🎶 Dreamy harp</option><option value="chimes">🎐 Wind chimes</option><option value="piano">🎹 Cozy piano</option><option value="birds">🐦 Morning birds</option></select>
+      <label for="chime-duration">How long?</label>
+      <select id="chime-duration" aria-label="Chime duration"><option value="1">1 second</option><option value="2">2 seconds</option><option value="3" selected>3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option></select>
+    </div>
+    <button id="chime-preview" type="button" class="light-btn chime-preview">♫ Preview selected chime</button>
+    <p class="settings-hint">Preview plays even when completion sounds are off. Device sound settings may restrict playback.</p>
+  </div>
+  <div class="settings-group">
+    <h3>🎨 Color mood</h3>
+    <p class="settings-hint">Pick your happy color. All colors follow device light and dark mode.</p>
+    <div class="palette settings-palette" role="group" aria-label="Color themes"><button class="swatch active" type="button" title="Rose" aria-label="rose theme" data-t="rose" style="--swatch-color:#cf7494"></button><button class="swatch" type="button" title="Lavender" aria-label="lavender theme" data-t="lavender" style="--swatch-color:#987bc5"></button><button class="swatch" type="button" title="Sage" aria-label="sage theme" data-t="sage" style="--swatch-color:#78ac96"></button><button class="swatch" type="button" title="Peach" aria-label="peach theme" data-t="peach" style="--swatch-color:#ec987c"></button><button class="swatch" type="button" title="Sky" aria-label="sky theme" data-t="sky" style="--swatch-color:#74acd9"></button><button class="swatch" type="button" title="Mint" aria-label="mint theme" data-t="mint" style="--swatch-color:#5ab9ad"></button><button class="swatch" type="button" title="Buttercream" aria-label="buttercream theme" data-t="buttercream" style="--swatch-color:#d7a954"></button><button class="swatch" type="button" title="Lilac" aria-label="lilac theme" data-t="lilac" style="--swatch-color:#b994d7"></button><button class="swatch" type="button" title="Coral" aria-label="coral theme" data-t="coral" style="--swatch-color:#e6818d"></button></div>
   </div>
   <div class="settings-group">
     <h3>🪟 Floating timer</h3>

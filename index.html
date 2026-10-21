@@ -641,11 +641,11 @@ updatePipButton();
 }
 async function openDocumentPip(){
 if(!window.documentPictureInPicture?.requestWindow)return false;
-const win=await window.documentPictureInPicture.requestWindow({width:324,height:350});
+const win=await window.documentPictureInPicture.requestWindow({width:340,height:390});
 pipWin=win;
 win.document.title='Study Tracker ♡';
 win.document.head.innerHTML='<meta name="viewport" content="width=device-width, initial-scale=1"><style>'
-+'*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}'
++'*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}body{font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);padding:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;overflow-y:auto}'
 +'html{--accent:#cf7494;--bg:#fff8fa;--ink:#66465a;--light:#f9dfeb}'
 +'html[data-theme="lavender"]{--accent:#987bc5;--bg:#fcf9ff;--ink:#58466c;--light:#efe6fa}'
 +'html[data-theme="sage"]{--accent:#78ac96;--bg:#f8fffa;--ink:#3d6053;--light:#e1f3e9}'

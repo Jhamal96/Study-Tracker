@@ -268,8 +268,8 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 <div class="control"><div class="control-left"><div class="icon-tile">📚</div><div><div class="control-label">Study session</div><div class="control-note">Deep focus, no pressure</div></div></div><div class="stepper"><button type="button" data-step="focus:-1" aria-label="Shorter study timer">−</button><input type="number" id="focus-min" min="1" max="240" value="25" aria-label="Study duration in minutes"><span class="unit">min</span><button type="button" data-step="focus:1" aria-label="Longer study timer">+</button></div></div>
 <div class="control"><div class="control-left"><div class="icon-tile">🧸</div><div><div class="control-label">Break session</div><div class="control-note">Rest is productive, too</div></div></div><div class="stepper"><button type="button" data-step="break:-1" aria-label="Shorter break timer">−</button><input type="number" id="break-min" min="1" max="120" value="5" aria-label="Break duration in minutes"><span class="unit">min</span><button type="button" data-step="break:1" aria-label="Longer break timer">+</button></div></div>
 <div class="control"><div class="control-left"><div class="icon-tile">🪄</div><div><div class="control-label">Study rounds</div><div class="control-note">Set your little goal</div></div></div><div class="stepper"><button type="button" data-step="rounds:-1" aria-label="Fewer rounds">−</button><input type="number" id="rounds" min="1" max="20" value="4" aria-label="Study rounds"><span class="unit">x</span><button type="button" data-step="rounds:1" aria-label="More rounds">+</button></div></div>
-<div class="setting"><div><div class="control-label">Auto-start next timer</div><div class="control-note">Study, rest, repeat</div></div><label class="toggle"><input id="auto" type="checkbox" checked aria-label="Automatically start next timer"><i></i></label></div>
-<div class="setting"><div><div class="control-label">Gentle chime</div><div class="control-note">A little ding when time is up</div></div><label class="toggle"><input id="chime" type="checkbox" checked aria-label="Sound notifications"><i></i></label></div>
+<div class="setting"><div><div class="control-label">Auto-start next timer</div><div class="control-note">Automatically start each break and following study session, even after a round goal</div></div><label class="toggle"><input id="auto" type="checkbox" checked aria-label="Automatically start next timer"><i></i></label></div>
+<div class="setting"><div><div class="control-label">Gentle chime</div><div class="control-note">A longer, soft melody when study or break time ends</div></div><label class="toggle"><input id="chime" type="checkbox" checked aria-label="Sound notifications"><i></i></label></div>
 <div class="setting"><div><div class="control-label">Little color mood</div><div class="control-note">Pick a happy color · follows device light/dark mode</div></div><div class="palette"><button class="swatch active" title="Rose" aria-label="Rose theme" data-t="rose"></button><button class="swatch" title="Lavender" aria-label="Lavender theme" data-t="lavender"></button><button class="swatch" title="Sage" aria-label="Sage theme" data-t="sage"></button></div></div>
 
 </section>
@@ -370,6 +370,9 @@ const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{retur
 const clamp=(v,lo,hi,f)=>{v=Number(v);return Number.isFinite(v)&&v>=1?Math.round(Math.max(lo,Math.min(hi,v))):f};
 const defaults={focus:25,break:5,rounds:4,auto:true,chime:true,theme:'rose'};
 let settings={...defaults,...read('study-tracker-settings',{})};
+// One-time migration: enable continuous study/break transitions for existing visitors.
+// The switch remains available if someone intentionally wants to pause after each interval.
+if(!read('study-tracker-auto-cycle-v2',false)){settings.auto=true;save('study-tracker-auto-cycle-v2',true)}
 for(const [name,max] of [['focus',240],['break',120],['rounds',20]])settings[name]=clamp(settings[name],1,max,defaults[name]);
 let timer={mode:'focus',left:settings.focus*60,running:false,ends:0,roundCount:0,...read('study-tracker-clock',{})};
 if(!['focus','break'].includes(timer.mode))timer.mode='focus';
@@ -555,7 +558,27 @@ document.querySelectorAll('.pip-style-picker [data-pip-choice]').forEach(button=
 const minutes=()=>settings[timer.mode]*60;
 function persist(){save('study-tracker-settings',settings);save('study-tracker-clock',timer);save('study-tracker-daily',daily)}
 function notice(txt){const x=$('toast');x.textContent=txt;x.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>x.classList.remove('show'),2700)}
-function bell(){if(!settings.chime)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume();[587,740,880].forEach((freq,i)=>{const o=audio.createOscillator(),g=audio.createGain(),at=audio.currentTime+i*.17;o.frequency.value=freq;g.gain.setValueAtTime(.0001,at);g.gain.exponentialRampToValueAtTime(.055,at+.035);g.gain.exponentialRampToValueAtTime(.0001,at+.31);o.connect(g).connect(audio.destination);o.start(at);o.stop(at+.32)})}catch{}}
+function bell(){
+  if(!settings.chime)return;
+  try{
+    audio=audio||new(window.AudioContext||window.webkitAudioContext)();
+    void audio.resume();
+    // Gentle five-note music-box melody, with lingering tails (~2.3 seconds).
+    const notes=[523.25,659.25,783.99,880,783.99];
+    notes.forEach((freq,i)=>{
+      const oscillator=audio.createOscillator(),volume=audio.createGain();
+      const at=audio.currentTime+i*.36,end=at+.78;
+      oscillator.type='sine';
+      oscillator.frequency.setValueAtTime(freq,at);
+      volume.gain.setValueAtTime(.0001,at);
+      volume.gain.exponentialRampToValueAtTime(.038,at+.075);
+      volume.gain.exponentialRampToValueAtTime(.014,at+.32);
+      volume.gain.exponentialRampToValueAtTime(.0001,end);
+      oscillator.connect(volume).connect(audio.destination);
+      oscillator.start(at);oscillator.stop(end+.015);
+    });
+  }catch(err){console.warn('Chime unavailable on this device',err)}
+}
 /* Browser notifications. Service-worker display works where mobile direct Notification() does not. */
 const REMINDER_KEY='study-tracker-reminders-enabled';
 let remindersEnabled=read(REMINDER_KEY,false);
@@ -673,10 +696,32 @@ if(window.matchMedia){
 function renderSettings(){for(const n of ['focus','break','rounds'])$(n==='rounds'?'rounds':n+'-min').value=settings[n];$('auto').checked=!!settings.auto;$('chime').checked=!!settings.chime;document.body.dataset.theme=settings.theme;document.querySelectorAll('.swatch').forEach(el=>el.classList.toggle('active',el.dataset.t===settings.theme));render()}
 function change(name,value){if(['focus','break','rounds'].includes(name)){const max=name==='focus'?240:name==='break'?120:20;settings[name]=clamp(value,1,max,settings[name]);if(name===timer.mode&&!timer.running)timer.left=minutes()}else settings[name]=value;persist();renderSettings();scheduleSync()}
 function stop(){timer.running=false;timer.ends=0;timer.left=minutes();persist();render()}
-function advance(countStudy){const before=timer.mode;timer.running=false;timer.ends=0;if(countStudy&&before==='focus'){timer.roundCount++;daily.count++}
-const reached=before==='focus'&&countStudy&&timer.roundCount%settings.rounds===0;
-timer.mode=before==='focus'?'break':'focus';timer.left=minutes();timer.running=!!settings.auto&&!reached;if(timer.running)timer.ends=Date.now()+timer.left*1000;
-persist();render();if(countStudy){bell();alertHidden(before==='focus'?'Study finished 🌷':'Break finished ☕',before==='focus'?'Take a little break, love.':'Ready to focus again?');notice(reached?'You met your little goal! So proud of you ♡':before==='focus'?'Enjoy your cozy break ☕':'Time to bloom 🌷')}}
+function advanceInterval(completed,at=Date.now()){
+  const before=timer.mode;
+  const wasRunning=timer.running;
+  if(completed&&before==='focus'){timer.roundCount++;daily.count++}
+  const reached=!!(completed&&before==='focus'&&timer.roundCount%settings.rounds===0);
+  timer.mode=before==='focus'?'break':'focus';
+  timer.left=minutes();
+  // A round goal celebrates progress but does not block the next break.
+  timer.running=!!settings.auto;
+  timer.ends=timer.running?at+timer.left*1000:0;
+  return {before,reached,wasRunning};
+}
+function announceInterval(result,goalReached=false,caughtUp=false){
+  bell();
+  const justStudied=result.before==='focus';
+  alertHidden(justStudied?'Study finished 🌷':'Break finished ☕',
+    justStudied?'Time to relax for a bit, love.':'Your next little study session is ready!');
+  notice(goalReached||result.reached?'You met your study goal! Keep blooming ♡':
+    caughtUp?'Your timer caught up — '+(timer.mode==='break'?'enjoy your break ☕':'study time 🌷'):
+    justStudied?'Enjoy your cozy break ☕':'Time to bloom 🌷');
+}
+function advance(countStudy){
+  const result=advanceInterval(!!countStudy);
+  persist();render();
+  if(countStudy)announceInterval(result);
+}
 $('play').onclick=()=>{if(timer.running){timer.left=Math.max(0,Math.ceil((timer.ends-Date.now())/1000));timer.running=false;timer.ends=0}else{timer.running=true;timer.ends=Date.now()+Math.max(1,timer.left)*1000;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume()}catch{}}persist();render()};
 $('reset').onclick=()=>{stop();notice('Fresh start, fresh energy ♡')};$('skip').onclick=()=>advance(false);
 $('focus-tab').onclick=()=>{if(timer.mode!=='focus'){timer.mode='focus';stop()}};$('break-tab').onclick=()=>{if(timer.mode!=='break'){timer.mode='break';stop()}};
@@ -685,7 +730,35 @@ document.querySelectorAll('[data-step]').forEach(btn=>btn.onclick=()=>{const [na
 $('auto').onchange=e=>change('auto',e.target.checked);$('chime').onchange=e=>change('chime',e.target.checked);
 document.querySelectorAll('.swatch').forEach(btn=>btn.onclick=()=>change('theme',btn.dataset.t));
 updateReminderUI();
-function tick(){if(daily.date!==today()){daily={date:today(),count:0};persist()}if(timer.running){timer.left=Math.max(0,Math.ceil((timer.ends-Date.now())/1000));if(timer.left===0){advance(true);return}save('study-tracker-clock',timer)}render()}
+function tick(){
+  if(daily.date!==today()){daily={date:today(),count:0};persist()}
+  if(timer.running){
+    const now=Date.now();
+    let transitions=0,lastResult=null,goalReached=false;
+    // Browser timers may be throttled while the tab is hidden. Reconcile elapsed
+    // intervals using their absolute end timestamps when the tab becomes active.
+    while(timer.running&&Number(timer.ends)<=now&&transitions<96){
+      const endedAt=Number(timer.ends);
+      lastResult=advanceInterval(true,endedAt);
+      goalReached=goalReached||lastResult.reached;
+      transitions++;
+    }
+    if(transitions){
+      if(timer.running&&timer.ends<=now){
+        // Bound catch-up work after an exceptionally long time away.
+        timer.left=minutes();timer.ends=now+timer.left*1000;
+      }else if(timer.running){
+        timer.left=Math.max(0,Math.ceil((timer.ends-now)/1000));
+      }
+      persist();render();
+      announceInterval(lastResult,goalReached,transitions>1);
+      return;
+    }
+    timer.left=Math.max(0,Math.ceil((timer.ends-now)/1000));
+    save('study-tracker-clock',timer);
+  }
+  render();
+}
 
 /* Always-on-top Document Picture-in-Picture (desktop), video PiP fallback, and in-page mini timer. */
 function isVideoPip(){return !!pipVideo&&(document.pictureInPictureElement===pipVideo||pipVideo.webkitPresentationMode==='picture-in-picture')}
@@ -879,8 +952,8 @@ $('dismiss').onclick=$('done').onclick=()=>{$('account').close();accountUI();upd
 $('login-form').onsubmit=async e=>{e.preventDefault();if(!client){$('login-status').textContent='Cloud login is unavailable. Local saving still works.';return}$('login-status').textContent='Sending your link…';const r=await client.auth.signInWithOtp({email:$('email').value.trim(),options:{emailRedirectTo:location.origin+'/'}});$('login-status').textContent=r.error?r.error.message:'Check your email for the sign-in link ♡'};
 $('sync-now').onclick=async()=>{await pushCloud();notice('Cloud sync checked ♡')};$('sign-out').onclick=async()=>{if(client)await client.auth.signOut();user=null;accountUI();notice('Signed out ♡')};
 async function initCloud(){if(!window.supabase?.createClient)return;try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);client.auth.onAuthStateChange((evt,sess)=>{const next=sess?.user||null,changed=!!next&&(!user||next.id!==user.id);user=next;accountUI();if(changed)setTimeout(pullCloud,0)});const r=await client.auth.getUser();if(r.data?.user&&(!user||user.id!==r.data.user.id)){user=r.data.user;accountUI();await pullCloud()}}catch(err){console.warn('Offline cloud syncing',err)}}
-if(timer.running){timer.left=Math.max(0,Math.ceil((Number(timer.ends)-Date.now())/1000));if(timer.left===0){timer.running=false;timer.ends=0;timer.left=minutes()}}else timer.left=Math.min(timer.left,minutes());
-renderSettings();refreshAppearance();persist();setInterval(tick,320);document.addEventListener('visibilitychange',tick);window.addEventListener('focus',tick);window.addEventListener('load',initCloud);
+if(timer.running){timer.left=Math.max(0,Math.ceil((Number(timer.ends)-Date.now())/1000))}else timer.left=Math.min(timer.left,minutes());
+renderSettings();refreshAppearance();tick();persist();setInterval(tick,320);document.addEventListener('visibilitychange',tick);window.addEventListener('focus',tick);window.addEventListener('load',initCloud);
 setTimeout(showOpeningNote,380);
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').then(r=>{serviceWorkerRegistration=r}).catch(err=>console.warn('Offline support:',err)));
 })();

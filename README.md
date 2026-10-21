@@ -5,16 +5,17 @@ A sweet, minimal study + break interval timer, made for Whitney.
 ## Features
 - Adjustable study minutes (1–240), break minutes (1–120), and study rounds (1–20)
 - Start, pause, reset, skip, and **automatic study → break → study** cycling (enabled by default for new and existing visitors). Round-goal celebrations do not interrupt auto-cycling, and time missed while tabs are suspended is reconciled from stored timestamps.
-- A longer, soft five-note completion chime (~2.2 seconds), played at the end of study **and** break sessions when chimes are enabled
+- Configurable, gently synthesized completion sounds: **Music box, Soft bells, Dreamy harp, Wind chimes, Cozy piano, Morning birds**. Choose **1, 2, 3, 5, or 8 seconds**, hear a preview, or turn chimes off. Preview works with automatic completion sound disabled.
 - Gentle chime and study/break browser notifications, with an enable/disable control and live **Send a test notification** button in Settings
 - Notification display uses the service worker first (with browser Notification fallback) and can open/focus the Study Tracker website when tapped
 - The three former homepage options—Browser Reminders, Welcome pop-up, How it works pop-up—are in the Settings modal; the Cloud Sync button and account controls are also accessible from Settings
-- Two independent, always-visible home-page quote cards: a rotating motivational message and a rotating Gospel passage from the King James Version with Bible reference
+- **Auto-start next timer**, **Gentle chime enable**, **Sound selection / duration / preview**, and **Color mood** are all available inside **Settings**; the home controls only show study minutes, break minutes, and round goals.
+- Two independent, always-visible quote cards—motivational and Gospel/KJV—now appear **above the main timer**, and condensed versions remain **above the floating timer** in Document PiP, video PiP, and the in-page floating fallback.
 - Welcome pop-up showing both messages side by side in separate sections, including a “Don't show this again” option
 - How Study Tracker Works introductory pop-up appears above the quote pop-up on opening, explains study/break timings, auto-start, round goals, chimes, floating timer, and cloud sync
 - Independent "Don't show this again" controls for the guide and the quote pop-up, each re-enabled independently from Settings
 - Quotes refresh separately on each page open, even when the pop-up is disabled; the pop-up can be turned on again in settings
-- Rose, lavender, and sage color themes
+- **Nine color themes**: Rose, Lavender, Sage, Peach, Sky, Mint, Buttercream, Lilac, and Coral. Theme selection follows light/dark appearance in both main and floating timers.
 - Automatically follows the device's light/dark appearance and changes live with system settings, including welcome pop-ups, settings panel, and both floating/Picture-in-Picture timer styles (pastel accent choice remains saved)
 - **10 cute Picture-in-Picture timer styles:** Bloom Circle, Wavy Love, Sweet Hearts, Stardust, Cloud Nine, Pastel Rainbow, Butterfly, Boba Bubbles, Candy Pop, and Cozy Cup. These replace the older six-style clock selector; there are no longer separate Clock or Speedometer options.
 - **Hamburger menu (☰) inside interactive Document PiP and the in-page floating timer** contains the 10 styles; the distracting row of PiP style buttons is removed. Switch looks while the timer runs, without losing countdown progress. Style choice is saved to this device.
@@ -62,3 +63,6 @@ Press the small overlapping-window icon beside **Next**:
 ## Migration
 - Standalone repository contains the current Study Tracker app. Cloudflare Pages `study-tracker` now connects to `Jhamal96/Study-Tracker` (`main`, project root `.`), retaining `https://study-tracker-cip.pages.dev/`.
 - The old `Jhamal96/Test/study-tracker` folder is retained as a historical backup and is no longer Cloudflare's deployment source.
+
+## Cloud-synced sound and color choices
+The shared Supabase `public.study_tracker_preferences` table has an expanded nine-color theme constraint and owner-protected `chime_sound` and `chime_duration` columns. Legacy rows default to Music box and 3 seconds. These preferences sync with the signed-in account; sound playback still requires a browser/device allowing Web Audio.

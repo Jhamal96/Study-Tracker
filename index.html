@@ -555,7 +555,7 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
     <label for="email">Email address</label>
     <input id="email" name="email" type="email" required autocomplete="email" inputmode="email" placeholder="you@example.com" maxlength="254">
     <label for="auth-password">Password</label>
-    <div class="auth-password-row"><input id="auth-password" name="password" type="password" required minlength="8" autocomplete="current-password" placeholder="At least 8 characters"><button id="show-auth-password" type="button" class="auth-eye" aria-label="Show password" aria-pressed="false">👁</button></div>
+    <div class="auth-password-row"><input id="auth-password" name="password" type="password" required minlength="1" autocomplete="current-password" placeholder="At least 8 characters"><button id="show-auth-password" type="button" class="auth-eye" aria-label="Show password" aria-pressed="false">👁</button></div>
     <div id="auth-confirm-wrap" hidden><label for="auth-confirm">Confirm password</label><input id="auth-confirm" type="password" autocomplete="new-password" minlength="8" placeholder="Enter the same password again"></div>
     <p id="auth-form-help" class="auth-help">Welcome back! Sign in to see your saved settings.</p>
     <p class="status auth-status" id="login-status" role="status" aria-live="polite"></p>
@@ -1339,6 +1339,7 @@ function selectAuthMode(mode){
  $('auth-tab-signup').setAttribute('aria-selected',String(signup));
  $('auth-confirm-wrap').hidden=!signup;
  $('auth-confirm').required=signup;
+ $('auth-password').minLength=signup?8:1;
  $('auth-password').autocomplete=signup?'new-password':'current-password';
  $('auth-submit').textContent=signup?'Create Account ♡':'Sign In ♡';
  $('auth-form-help').textContent=signup?'Choose at least 8 characters. You may need to confirm your email before signing in.':'Welcome back! Sign in to restore your saved settings.';
@@ -1374,7 +1375,7 @@ $('login-form').onsubmit=async event=>{
  event.preventDefault();if(authBusy||!authReady())return;
  const email=authEmail();if(!email)return;
  const password=$('auth-password').value;
- const invalid=validatePasswords(password,authMode==='signup'?$('auth-confirm').value:undefined);
+ const invalid=authMode==='signup'?validatePasswords(password,$('auth-confirm').value):(!password?'Enter your password to sign in.':'');
  if(invalid){authMessage(invalid);return}
  setAuthBusy(true);authMessage(authMode==='signup'?'Creating your cozy account…':'Signing you in…');
  try{

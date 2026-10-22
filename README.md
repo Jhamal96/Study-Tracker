@@ -27,7 +27,7 @@ A sweet, minimal study + break interval timer, made for Whitney.
 - Daily completed-study count, with customizable round goal
 - PWA install support with custom flower icon and cached offline assets
 - No account necessary; local settings are saved automatically
-- Optional Supabase email sign-in to sync preferences between devices (cloud preferences use per-user Row Level Security)
+- **Cloud Sync now has Sign Up and Sign In tabs** with email/password authentication, confirmation-password checks, password recovery, and a retained **email sign-in link** option for existing accounts. Signed-in email-link users can set or change a password without creating a separate account. Supabase manages passwords; private preferences remain protected by per-user Row Level Security.
 
 ## Hosting
 - GitHub: standalone private repository `Jhamal96/Study-Tracker`, all app files located at repository root
@@ -35,6 +35,15 @@ A sweet, minimal study + break interval timer, made for Whitney.
 - Main custom domain: https://studytimer.ajdapp.org/ (Cloudflare Pages custom domain **active**, SSL validation active, and proxied CNAME confirmed)
 - Original Pages address remains available: https://study-tracker-cip.pages.dev/
 - Supabase: existing shared Supabase project, with dedicated `public.study_tracker_preferences` table and owner-only RLS policies.
+
+## Cloud account access
+Open **Settings → Cloud Sync** to get two clear options:
+- **Sign Up:** enter an email, create a password of eight or more characters, confirm it, and check email for verification if required by Supabase Auth.
+- **Sign In:** use your registered email and password. For the previous passwordless experience, select **Email me a sign-in link instead**.
+- **Forgot password?:** request a recovery email, then choose a new password using the secure link. Existing email-link users can also sign in using their usual email link and choose **Set or change password**; their account and saved preferences remain the same.
+- **Sign Out:** ends the session. No password is stored in the website's localStorage or cloud-preferences table; Supabase Auth handles credentials.
+
+This change only updates the website's account UI and Auth API calls. No new public database table or relaxed RLS policy was required. Password registration depends on the email provider/sign-up options in Supabase Authentication → Providers. Confirmation/reset/OTP links need the custom and original Pages URLs allowed under Authentication → URL Configuration.
 
 ## Cloud email sign-in
 The Supabase Auth URL Configuration needs `https://study-tracker-cip.pages.dev/**` and `https://studytimer.ajdapp.org/**` added to its redirect allowlist in the dashboard for email magic-link sign-ins to return to this website. Local-only use does not need this.

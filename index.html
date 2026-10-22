@@ -1317,17 +1317,161 @@ function scheduleSync(){if(!user)return;clearTimeout(saveTimer);saveTimer=setTim
 async function pullCloud(){if(!client||!user)return;const r=await client.from('study_tracker_preferences').select('*').eq('user_id',user.id).maybeSingle();if(r.error){$('login-status').textContent=r.error.message;return}if(!r.data){await pushCloud();return}
 const p=r.data;settings.focus=clamp(p.focus_minutes,1,240,25);settings.break=clamp(p.break_minutes,1,120,5);settings.rounds=clamp(p.rounds,1,20,4);settings.auto=!!p.auto_start;settings.chime=!!p.sound_enabled;settings.theme=THEMES.includes(p.theme)?p.theme:'rose';settings.chimeSound=CHIME_SOUNDS.includes(p.chime_sound)?p.chime_sound:'musicbox';settings.chimeDuration=CHIME_DURATIONS.includes(p.chime_duration)?p.chime_duration:3;
 if(!timer.running)timer.left=minutes();persist();renderSettings();$('login-status').textContent='Loaded your cloud settings ♡'}
-function accountUI(){$('login-form').classList.toggle('hidden',!!user);$('signed-in').classList.toggle('hidden',!user);$('sync-summary').textContent=user?'Signed in: '+user.email:'Not signed in';$('cloud-btn').textContent=user?'☁ Manage Sync':'☁ Open Cloud Sync';if(user)$('account-email').textContent='Signed in as '+user.email}
+
+let authMode='signin',passwordRecovery=false,authBusy=false;
+function authMessage(text){$('login-status').textContent=text}
+function authReady(){if(client)return true;authMessage('Cloud sign-in is unavailable. Timer settings are still saved on this device.');return false}
+function authEmail(){
+ const email=$('email').value.trim();
+ if(!email||!email.includes('@')||email.includes(' ')){authMessage('Please enter your email address ♡');$('email').focus();return null}
+ return email;
+}
+function validatePasswords(password,confirmation){
+ if(password.length<8)return 'Choose a password of at least 8 characters.';
+ if(confirmation!==undefined&&password!==confirmation)return 'The passwords do not match yet ♡';
+ return '';
+}
+function clearAuthPasswords(){for(const id of ['auth-password','auth-confirm','recovery-password','recovery-confirm','new-account-password','new-account-confirm'])$(id).value=''}
+function selectAuthMode(mode){
+ authMode=mode==='signup'?'signup':'signin';
+ const signup=authMode==='signup';
+ $('auth-tab-signin').setAttribute('aria-selected',String(!signup));
+ $('auth-tab-signup').setAttribute('aria-selected',String(signup));
+ $('auth-confirm-wrap').hidden=!signup;
+ $('auth-confirm').required=signup;
+ $('auth-password').autocomplete=signup?'new-password':'current-password';
+ $('auth-submit').textContent=signup?'Create Account ♡':'Sign In ♡';
+ $('auth-form-help').textContent=signup?'Choose at least 8 characters. You may need to confirm your email before signing in.':'Welcome back! Sign in to restore your saved settings.';
+ $('auth-forgot').hidden=signup;
+ $('auth-magic').textContent=signup?'Already registered? Email a sign-in link':'Email me a sign-in link instead';
+ $('auth-password').type='password';
+ $('show-auth-password').setAttribute('aria-pressed','false');
+ $('show-auth-password').setAttribute('aria-label','Show password');
+ clearAuthPasswords();authMessage('');
+}
+function accountUI(){
+ const signed=!!user&&!passwordRecovery;
+ $('login-form').classList.toggle('hidden',signed||passwordRecovery);
+ $('auth-method-tabs').hidden=signed||passwordRecovery;
+ $('signed-in').classList.toggle('hidden',!signed);
+ $('password-recovery-form').classList.toggle('hidden',!passwordRecovery);
+ $('dismiss').hidden=signed;
+ $('sync-summary').textContent=user?'Signed in: '+user.email:'Not signed in';
+ $('cloud-btn').textContent=user?'☁ Manage Sync':'☁ Sign Up / Sign In';
+ if(signed)$('account-email').textContent='Signed in as '+user.email+' ♡';
+}
+function authRedirect(){return location.origin+'/'}
+function setAuthBusy(state){authBusy=!!state;for(const id of ['auth-submit','auth-forgot','auth-magic','auth-tab-signin','auth-tab-signup'])$(id).disabled=!!state}
+$('auth-tab-signin').onclick=()=>selectAuthMode('signin');
+$('auth-tab-signup').onclick=()=>selectAuthMode('signup');
+$('show-auth-password').onclick=()=>{
+ const show=$('auth-password').type==='password';
+ $('auth-password').type=show?'text':'password';
+ $('show-auth-password').setAttribute('aria-pressed',String(show));
+ $('show-auth-password').setAttribute('aria-label',show?'Hide password':'Show password');
+};
+$('login-form').onsubmit=async event=>{
+ event.preventDefault();if(authBusy||!authReady())return;
+ const email=authEmail();if(!email)return;
+ const password=$('auth-password').value;
+ const invalid=validatePasswords(password,authMode==='signup'?$('auth-confirm').value:undefined);
+ if(invalid){authMessage(invalid);return}
+ setAuthBusy(true);authMessage(authMode==='signup'?'Creating your cozy account…':'Signing you in…');
+ try{
+  if(authMode==='signup'){
+   const {data,error}=await client.auth.signUp({email,password,options:{emailRedirectTo:authRedirect()}});
+   if(error){authMessage(error.message);return}
+   if(data?.session&&data.user){user=data.user;accountUI();authMessage('Account created and signed in ♡')}
+   else authMessage('Check your email for a confirmation link. Then return here to sign in ♡');
+  }else{
+   const {data,error}=await client.auth.signInWithPassword({email,password});
+   if(error){authMessage(error.message);return}
+   if(data?.user){user=data.user;accountUI()}
+   authMessage('Welcome back! Your settings are syncing ♡');
+  }
+ }catch(error){authMessage('Could not connect to cloud sign-in. '+(error?.message||'Please try again.'))}
+ finally{$('auth-password').value='';$('auth-confirm').value='';setAuthBusy(false)}
+};
+$('auth-magic').onclick=async()=>{
+ if(authBusy||!authReady())return;
+ const email=authEmail();if(!email)return;
+ setAuthBusy(true);authMessage('Sending your sign-in link…');
+ try{
+  const {error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:authRedirect(),shouldCreateUser:false}});
+  authMessage(error?error.message:'Check your email for your sign-in link ♡');
+ }catch(error){authMessage('Could not send the link. '+(error?.message||'Try again.'))}
+ finally{setAuthBusy(false)}
+};
+$('auth-forgot').onclick=async()=>{
+ if(authBusy||!authReady())return;
+ const email=authEmail();if(!email)return;
+ setAuthBusy(true);authMessage('Requesting password recovery…');
+ try{
+  const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:authRedirect()});
+  authMessage(error?error.message:'If this email has an account, a password reset link will arrive soon ♡');
+ }catch(error){authMessage('Could not request a reset. '+(error?.message||'Try again.'))}
+ finally{setAuthBusy(false)}
+};
+$('password-recovery-form').onsubmit=async event=>{
+ event.preventDefault();
+ if(!client){$('recovery-status').textContent='Cloud sign-in unavailable.';return}
+ const password=$('recovery-password').value;
+ const invalid=validatePasswords(password,$('recovery-confirm').value);
+ if(invalid){$('recovery-status').textContent=invalid;return}
+ $('recovery-submit').disabled=true;$('recovery-status').textContent='Updating your password…';
+ try{
+  const {error}=await client.auth.updateUser({password});
+  if(error){$('recovery-status').textContent=error.message;return}
+  passwordRecovery=false;clearAuthPasswords();accountUI();notice('Your new password is ready ♡');
+ }catch(error){$('recovery-status').textContent=error?.message||'Could not update your password.'}
+ finally{$('recovery-submit').disabled=false}
+};
+$('password-change-form').onsubmit=async event=>{
+ event.preventDefault();
+ if(!client){$('change-password-status').textContent='Cloud sign-in unavailable.';return}
+ const password=$('new-account-password').value;
+ const invalid=validatePasswords(password,$('new-account-confirm').value);
+ if(invalid){$('change-password-status').textContent=invalid;return}
+ $('change-password-submit').disabled=true;$('change-password-status').textContent='Saving your password…';
+ try{
+  const {error}=await client.auth.updateUser({password});
+  $('change-password-status').textContent=error?error.message:'Password saved! You can sign in with it next time ♡';
+  if(!error){$('new-account-password').value='';$('new-account-confirm').value=''}
+ }catch(error){$('change-password-status').textContent=error?.message||'Could not save password.'}
+ finally{$('change-password-submit').disabled=false}
+};
+
 function closeSettings(){$('settings-dialog').close()}
 $('custom-btn').onclick=()=>{renderSettings();$('custom-dialog').showModal()};
 $('custom-close').onclick=$('custom-done').onclick=()=>$('custom-dialog').close();
 $('settings-btn').onclick=()=>{accountUI();updateReminderUI();showUpdateBadge();selectSettingsTab('preferences');$('settings-dialog').showModal()};
 $('settings-close').onclick=$('settings-done').onclick=closeSettings;
 $('cloud-btn').onclick=()=>{accountUI();closeSettings();$('account').showModal()};
-$('dismiss').onclick=$('done').onclick=()=>{$('account').close();accountUI();updateReminderUI();$('settings-dialog').showModal()};
-$('login-form').onsubmit=async e=>{e.preventDefault();if(!client){$('login-status').textContent='Cloud login is unavailable. Local saving still works.';return}$('login-status').textContent='Sending your link…';const r=await client.auth.signInWithOtp({email:$('email').value.trim(),options:{emailRedirectTo:location.origin+'/'}});$('login-status').textContent=r.error?r.error.message:'Check your email for the sign-in link ♡'};
-$('sync-now').onclick=async()=>{await pushCloud();notice('Cloud sync checked ♡')};$('sign-out').onclick=async()=>{if(client)await client.auth.signOut();user=null;accountUI();notice('Signed out ♡')};
-async function initCloud(){if(!window.supabase?.createClient)return;try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);client.auth.onAuthStateChange((evt,sess)=>{const next=sess?.user||null,changed=!!next&&(!user||next.id!==user.id);user=next;accountUI();if(changed)setTimeout(pullCloud,0)});const r=await client.auth.getUser();if(r.data?.user&&(!user||user.id!==r.data.user.id)){user=r.data.user;accountUI();await pullCloud()}}catch(err){console.warn('Offline cloud syncing',err)}}
+function backToSettings(){clearAuthPasswords();$('account').close();accountUI();updateReminderUI();$('settings-dialog').showModal()}
+$('dismiss').onclick=$('done').onclick=$('auth-close').onclick=backToSettings;
+
+$('sync-now').onclick=async()=>{await pushCloud();notice('Cloud sync checked ♡')};$('sign-out').onclick=async()=>{if(client)await client.auth.signOut();user=null;passwordRecovery=false;clearAuthPasswords();selectAuthMode('signin');accountUI();notice('Signed out ♡')};
+async function initCloud(){
+ if(!window.supabase?.createClient)return;
+ try{
+  client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  client.auth.onAuthStateChange((event,session)=>{
+   const next=session?.user||null,changed=!!next&&(!user||next.id!==user.id);
+   user=next;
+   if(event==='PASSWORD_RECOVERY'){
+    passwordRecovery=true;
+    $('recovery-status').textContent='Please choose a new password ♡';
+    if(!$('account').open)$('account').showModal();
+   }
+   if(event==='SIGNED_OUT')passwordRecovery=false;
+   accountUI();
+   if(changed)setTimeout(pullCloud,0);
+  });
+  const {data,error}=await client.auth.getUser();
+  if(error)console.warn('Cloud auth session:',error.message);
+  if(data?.user&&(!user||data.user.id!==user.id)){user=data.user;accountUI();await pullCloud()}
+ }catch(error){console.warn('Offline cloud syncing',error)}
+}
 if(timer.running){timer.left=Math.max(0,Math.ceil((Number(timer.ends)-Date.now())/1000))}else timer.left=Math.min(timer.left,minutes());
 renderSettings();refreshAppearance();tick();persist();setInterval(tick,320);document.addEventListener('visibilitychange',tick);window.addEventListener('focus',tick);window.addEventListener('load',initCloud);
 setTimeout(launchOpeningExperience,380);

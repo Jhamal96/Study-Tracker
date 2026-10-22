@@ -51,6 +51,11 @@ final class NativeTimerSession {
         max(0, endDate.map { $0.timeIntervalSince(date) } ?? pausedRemaining)
     }
 
+    func updateAutoAdvance(_ enabled: Bool) {
+        autoAdvance = enabled
+        save()
+    }
+
     func start(at date: Date = .now) {
         guard endDate == nil else { return }
         endDate = date.addingTimeInterval(max(0, pausedRemaining))

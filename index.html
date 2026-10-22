@@ -598,7 +598,6 @@ const STUDY_RELEASES=[
 ];
 const STUDY_UPDATE_KEY='study-tracker-acknowledged-update-v1';
 let activeUpdateFingerprint=null,updateReturnToSettings=false;
-let updateLaunchWasAcknowledged=false;
 const latestStudyRelease=STUDY_RELEASES[0];
 const safeText=(value)=>String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function updateEntryHtml(release,isCurrent=false){
@@ -610,6 +609,13 @@ function updateAcknowledged(){
   // A changed HTML file means a new release even if the release notes ID
   // hasn't been updated yet. Offline launches use the last saved acknowledgement.
   return !activeUpdateFingerprint||!seen.fingerprint||seen.fingerprint===activeUpdateFingerprint;
+}
+function hasUnlistedChanges(){
+  const seen=read(STUDY_UPDATE_KEY,null);
+  return !!(seen&&seen.id===latestStudyRelease.id&&seen.fingerprint&&activeUpdateFingerprint&&seen.fingerprint!==activeUpdateFingerprint);
+}
+function pendingUpdateEntry(){
+  return '<article class="update-entry"><div class="update-entry-meta">New since your last visit</div><h4>A few more cozy improvements ✨</h4><ul><li>Study Tracker has changed since you last opened it. The most recent detailed release notes are listed below.</li></ul></article>';
 }
 function showUpdateBadge(){
   const unseen=!updateAcknowledged();
@@ -625,20 +631,18 @@ function selectSettingsTab(which){
   if(updates)renderUpdateHistory();
 }
 function renderUpdateHistory(){
-  $('updates-history').innerHTML=STUDY_RELEASES.map((release,i)=>updateEntryHtml(release,i===0)).join('');
+  $('updates-history').innerHTML=(hasUnlistedChanges()?pendingUpdateEntry():'')+STUDY_RELEASES.map((release,i)=>updateEntryHtml(release,i===0)).join('');
   showUpdateBadge();
 }
 function openUpdateDialog(fromSettings=false){
   updateReturnToSettings=fromSettings;
-  updateLaunchWasAcknowledged=false;
-  $('updates-dialog-list').innerHTML=STUDY_RELEASES.slice(0,2).map((release,i)=>updateEntryHtml(release,i===0)).join('');
+  $('updates-dialog-list').innerHTML=(hasUnlistedChanges()?pendingUpdateEntry():'')+STUDY_RELEASES.slice(0,2).map((release,i)=>updateEntryHtml(release,i===0)).join('');
   $('updates-acknowledge').textContent=updateAcknowledged()?'Lovely! Close ♡':'Got it! ♡';
   if(fromSettings&&$('settings-dialog').open)$('settings-dialog').close();
   if(!$('updates-dialog').open)$('updates-dialog').showModal();
 }
 $('updates-acknowledge').addEventListener('click',()=>{
   save(STUDY_UPDATE_KEY,{id:latestStudyRelease.id,fingerprint:activeUpdateFingerprint});
-  updateLaunchWasAcknowledged=true;
   showUpdateBadge();
   $('updates-dialog').close();
 });

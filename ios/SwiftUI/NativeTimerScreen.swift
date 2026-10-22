@@ -36,8 +36,10 @@ struct NativeTimerScreen: View {
                     }
 
                     VStack(alignment: .leading, spacing: 12) {
-                        Toggle("Automatically start next session", isOn: $session.autoAdvance)
-                            .onChange(of: session.autoAdvance) { _, _ in session.reset() }
+                        Toggle("Automatically start next session", isOn: Binding(
+                            get: { session.autoAdvance },
+                            set: { session.updateAutoAdvance($0) }
+                        ))
 
                         Stepper("Focus / work: \(workMinutes) min", value: $workMinutes, in: 1...240)
                         Stepper("Break: \(restMinutes) min", value: $restMinutes, in: 1...120)

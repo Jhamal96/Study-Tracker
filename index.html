@@ -283,6 +283,37 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 .float-quote small{display:block;color:var(--accent-dark);font-size:9px;margin:2px 0 0}
 #mini-float{width:260px}
 @media(max-width:700px){.inspiration-top{grid-template-columns:1fr;gap:10px;margin-bottom:15px}.inspiration-top .letter{min-height:105px;padding:13px 16px}.inspiration-top .letter h3{font-size:14px}.inspiration-top .letter>div:last-child p{display:none}}
+
+/* A cozy Updates tab and a once-per-release announcement. */
+.settings-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;background:var(--soft);border:1px solid var(--border);padding:5px;border-radius:15px;margin:0 0 17px}
+.settings-tabs button{border:0;border-radius:11px;background:transparent;padding:11px 10px;color:var(--muted);font-size:12px;font-weight:750;display:inline-flex;justify-content:center;align-items:center;gap:5px}
+.settings-tabs button[aria-selected="true"]{background:var(--panel);color:var(--accent-dark);box-shadow:0 3px 9px #00000009}
+.settings-tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.settings-tabs [hidden],#settings-panel-updates[hidden],#settings-panel-preferences[hidden],.updates-new-dot[hidden]{display:none!important}
+.updates-new-dot{width:7px;height:7px;border-radius:100%;background:var(--accent);display:inline-block;flex:none}
+.updates-section-intro{text-align:center;padding:17px 10px 15px}
+.updates-icon{font-size:30px;margin-bottom:6px}
+.updates-section-intro h3{font-size:17px}
+.updates-section-intro p{font-size:11px;line-height:1.6;color:var(--muted);margin:7px 0 0}
+.updates-history{display:grid;gap:10px;margin:0 0 14px}
+.update-entry{background:var(--bg);border:1px solid var(--border);padding:14px 15px;border-radius:16px}
+.update-entry .update-entry-meta{font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:750;color:var(--accent-dark);margin-bottom:5px}
+.update-entry h4{font-family:Quicksand,system-ui,sans-serif;margin:0 0 10px;font-size:15px;color:var(--ink)}
+.update-entry ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.update-entry li{font-size:11px;color:var(--muted);line-height:1.55}
+.updates-details-btn{width:100%;padding:12px;font-size:12px}
+#updates-dialog{width:min(460px,calc(100vw - 26px));padding:0;max-height:calc(100dvh - 26px);overflow-y:auto;overscroll-behavior:contain;border-radius:27px;background:var(--panel)}
+#updates-dialog::backdrop{background:#4937468a;backdrop-filter:blur(3px)}
+.updates-hero{text-align:center;background:linear-gradient(132deg,var(--soft),var(--panel));padding:23px 22px 17px}
+.updates-flower{width:65px;height:65px;display:grid;place-items:center;margin:0 auto 9px;background:var(--panel);border-radius:19px;font-size:33px}
+.updates-kicker{font-size:10px!important;letter-spacing:.15em;font-weight:800;color:var(--accent-dark)!important;text-transform:uppercase;margin:0 0 7px!important}
+.updates-hero h2{font-size:22px;line-height:1.3;margin:0}
+.updates-hero p:last-child{font-size:11px;color:var(--muted);margin:8px 0 0}
+.updates-dialog-content{padding:16px 22px 23px}
+.updates-dialog-list .update-entry{background:var(--bg);margin-bottom:11px}
+.updates-reassurance{font-size:11px!important;text-align:center;margin:8px 0 17px!important;line-height:1.6}
+.updates-acknowledge{width:100%}
+@media(max-width:600px){.updates-dialog-content{padding:14px 17px 20px}.updates-hero{padding:20px 15px 14px}.updates-entry{padding:12px}}
 </style>
 </head>
 <body data-theme="rose">
@@ -354,6 +385,11 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 <dialog id="settings-dialog" aria-labelledby="settings-heading">
   <div class="settings-top"><div><p class="eyebrow">your little space ♡</p><h2 id="settings-heading">Settings ✿</h2></div><button id="settings-close" class="settings-x" type="button" aria-label="Close settings">×</button></div>
   <p class="settings-intro">Make Study Tracker feel just right for you.</p>
+  <div class="settings-tabs" role="tablist" aria-label="Settings sections">
+    <button id="settings-tab-preferences" type="button" role="tab" aria-controls="settings-panel-preferences" aria-selected="true">⚙ Preferences</button>
+    <button id="settings-tab-updates" type="button" role="tab" aria-controls="settings-panel-updates" aria-selected="false">✨ Updates <span id="updates-new-dot" class="updates-new-dot" aria-label="New updates available" hidden></span></button>
+  </div>
+  <div id="settings-panel-preferences" role="tabpanel" aria-labelledby="settings-tab-preferences">
   <div class="settings-group">
     <h3>🌗 Appearance</h3>
     <div class="setting"><div class="setting-copy"><div class="control-label">Follow device appearance</div><div class="control-note">Study Tracker switches automatically between light and dark mode.</div></div><span class="appearance-pill" id="appearance-status" role="status">Automatic</span></div>
@@ -411,7 +447,21 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
     <p class="settings-hint">Use an email sign-in to sync your timer preferences between devices. Your settings also save on this device without signing in.</p>
     <div class="settings-sync-row"><span id="sync-summary" class="settings-sync-state">Not signed in</span><button id="cloud-btn" class="light-btn" type="button">☁ Open Cloud Sync</button></div>
   </div>
+  </div>
+  <div id="settings-panel-updates" role="tabpanel" aria-labelledby="settings-tab-updates" hidden>
+    <div class="updates-section-intro"><div class="updates-icon" aria-hidden="true">🎀</div><h3>Little updates, lovely changes ♡</h3><p>A collection of what's new in your cozy study space. You can revisit every update right here.</p></div>
+    <div id="updates-history" class="updates-history" aria-live="polite"></div>
+    <button id="updates-open-detail" class="light-btn updates-details-btn" type="button">💌 Open What's New</button>
+  </div>
   <button id="settings-done" class="main-btn settings-done" type="button">All done ♡</button>
+</dialog>
+<dialog id="updates-dialog" aria-labelledby="updates-title" aria-describedby="updates-subtitle">
+  <div class="updates-hero"><div class="updates-flower" aria-hidden="true">🎀</div><p class="updates-kicker">a little something new ♡</p><h2 id="updates-title">What's New in Study Tracker?</h2><p id="updates-subtitle">Some sweet little improvements for your study time.</p></div>
+  <div class="updates-dialog-content">
+    <div id="updates-dialog-list" class="updates-dialog-list"></div>
+    <p class="updates-reassurance">You're all caught up! Once you acknowledge this update, it won't pop up again unless something new changes. ♡</p>
+    <button id="updates-acknowledge" class="main-btn updates-acknowledge" type="button">Got it! ♡</button>
+  </div>
 </dialog>
 <dialog id="account"><h2>Save your cozy space ☁</h2><p>Your settings save on this device automatically. You can also sign in with an email link to securely sync settings between devices.</p>
 <form id="login-form"><input id="email" type="email" required autocomplete="email" placeholder="Your email address"><p class="status" id="login-status"></p><div class="dlg-actions"><button class="main-btn" type="submit">Send sign-in link</button><button id="dismiss" class="light-btn" type="button">Back to Settings</button></div></form>
@@ -528,6 +578,106 @@ function showOpeningNote(){
     $('timer-guide').showModal();
   }
 }
+
+/* Release notes live in the website source. When adding features, add the newest
+   entry here. The live HTML fingerprint also notices changes between releases. */
+const STUDY_RELEASES=[
+  {id:'2026-10-21-updates-center',date:'October 21, 2026',title:'A sweet new Updates Center 🎀',
+    notes:[
+      'A “What’s New” message now introduces each website update just once.',
+      'Find the Updates tab in Settings to revisit new features and earlier changes any time.',
+      'After tapping “Got it!”, that same update will not interrupt your next visit.'
+    ]},
+  {id:'2026-10-21-cozy-settings',date:'Recent improvements',title:'More comfort, color & encouragement 🌷',
+    notes:[
+      'Choose from six gentle completion sounds, with adjustable lengths and a preview button.',
+      'Enjoy nine pastel colors that match your device’s light or dark appearance.',
+      'Motivational and Gospel quotes now appear above the timer and inside floating timers.',
+      'Study and break timers can transition automatically, with ten cute Picture-in-Picture designs.'
+    ]}
+];
+const STUDY_UPDATE_KEY='study-tracker-acknowledged-update-v1';
+let activeUpdateFingerprint=null,updateReturnToSettings=false;
+let updateLaunchWasAcknowledged=false;
+const latestStudyRelease=STUDY_RELEASES[0];
+const safeText=(value)=>String(value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+function updateEntryHtml(release,isCurrent=false){
+  return '<article class="update-entry"><div class="update-entry-meta">'+safeText(release.date)+(isCurrent?' · Latest':'')+'</div><h4>'+safeText(release.title)+'</h4><ul>'+release.notes.map(note=>'<li>'+safeText(note)+'</li>').join('')+'</ul></article>';
+}
+function updateAcknowledged(){
+  const seen=read(STUDY_UPDATE_KEY,null);
+  if(!seen||seen.id!==latestStudyRelease.id)return false;
+  // A changed HTML file means a new release even if the release notes ID
+  // hasn't been updated yet. Offline launches use the last saved acknowledgement.
+  return !activeUpdateFingerprint||!seen.fingerprint||seen.fingerprint===activeUpdateFingerprint;
+}
+function showUpdateBadge(){
+  const unseen=!updateAcknowledged();
+  $('updates-new-dot').hidden=!unseen;
+  $('settings-tab-updates').setAttribute('aria-label',unseen?'Updates, new changes available':'Updates');
+}
+function selectSettingsTab(which){
+  const updates=which==='updates';
+  $('settings-panel-preferences').hidden=updates;
+  $('settings-panel-updates').hidden=!updates;
+  $('settings-tab-preferences').setAttribute('aria-selected',String(!updates));
+  $('settings-tab-updates').setAttribute('aria-selected',String(updates));
+  if(updates)renderUpdateHistory();
+}
+function renderUpdateHistory(){
+  $('updates-history').innerHTML=STUDY_RELEASES.map((release,i)=>updateEntryHtml(release,i===0)).join('');
+  showUpdateBadge();
+}
+function openUpdateDialog(fromSettings=false){
+  updateReturnToSettings=fromSettings;
+  updateLaunchWasAcknowledged=false;
+  $('updates-dialog-list').innerHTML=STUDY_RELEASES.slice(0,2).map((release,i)=>updateEntryHtml(release,i===0)).join('');
+  $('updates-acknowledge').textContent=updateAcknowledged()?'Lovely! Close ♡':'Got it! ♡';
+  if(fromSettings&&$('settings-dialog').open)$('settings-dialog').close();
+  if(!$('updates-dialog').open)$('updates-dialog').showModal();
+}
+$('updates-acknowledge').addEventListener('click',()=>{
+  save(STUDY_UPDATE_KEY,{id:latestStudyRelease.id,fingerprint:activeUpdateFingerprint});
+  updateLaunchWasAcknowledged=true;
+  showUpdateBadge();
+  $('updates-dialog').close();
+});
+$('updates-dialog').addEventListener('close',()=>{
+  if(updateReturnToSettings){
+    updateReturnToSettings=false;
+    $('settings-dialog').showModal();
+    selectSettingsTab('updates');
+  }else{
+    showOpeningNote();
+  }
+});
+$('settings-tab-preferences').addEventListener('click',()=>selectSettingsTab('preferences'));
+$('settings-tab-updates').addEventListener('click',()=>selectSettingsTab('updates'));
+$('updates-open-detail').addEventListener('click',()=>openUpdateDialog(true));
+function studyFingerprint(source){
+  let hash=2166136261;
+  // FNV-1a, a non-cryptographic content revision marker (not a security feature).
+  for(let i=0;i<source.length;i++){hash=Math.imul(hash^source.charCodeAt(i),16777619)}
+  return (hash>>>0).toString(36)+':'+source.length;
+}
+async function loadUpdateFingerprint(){
+  if(typeof fetch!=='function')return;
+  try{
+    const response=await fetch('/index.html',{cache:'no-store'});
+    if(!response.ok)return;
+    const content=await response.text();
+    activeUpdateFingerprint=studyFingerprint(content);
+  }catch(e){/* offline: use release ID instead, with no extra prompts */}
+}
+async function launchOpeningExperience(){
+  // Start from the deployed file whenever online; do not block opening
+  // indefinitely on weak connections.
+  await Promise.race([loadUpdateFingerprint(),new Promise(resolve=>setTimeout(resolve,1800))]);
+  showUpdateBadge();
+  if(!updateAcknowledged())openUpdateDialog();
+  else showOpeningNote();
+}
+
 let client=null,user=null,saveTimer,toastTimer,audio;
 let pipWin=null,pipWinInterval=null,pipCanvas=null,pipVideo=null,miniDrag=null;
 
@@ -1030,7 +1180,7 @@ const p=r.data;settings.focus=clamp(p.focus_minutes,1,240,25);settings.break=cla
 if(!timer.running)timer.left=minutes();persist();renderSettings();$('login-status').textContent='Loaded your cloud settings ♡'}
 function accountUI(){$('login-form').classList.toggle('hidden',!!user);$('signed-in').classList.toggle('hidden',!user);$('sync-summary').textContent=user?'Signed in: '+user.email:'Not signed in';$('cloud-btn').textContent=user?'☁ Manage Sync':'☁ Open Cloud Sync';if(user)$('account-email').textContent='Signed in as '+user.email}
 function closeSettings(){$('settings-dialog').close()}
-$('settings-btn').onclick=()=>{accountUI();updateReminderUI();$('settings-dialog').showModal()};
+$('settings-btn').onclick=()=>{accountUI();updateReminderUI();showUpdateBadge();selectSettingsTab('preferences');$('settings-dialog').showModal()};
 $('settings-close').onclick=$('settings-done').onclick=closeSettings;
 $('cloud-btn').onclick=()=>{accountUI();closeSettings();$('account').showModal()};
 $('dismiss').onclick=$('done').onclick=()=>{$('account').close();accountUI();updateReminderUI();$('settings-dialog').showModal()};
@@ -1039,7 +1189,7 @@ $('sync-now').onclick=async()=>{await pushCloud();notice('Cloud sync checked ♡
 async function initCloud(){if(!window.supabase?.createClient)return;try{client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);client.auth.onAuthStateChange((evt,sess)=>{const next=sess?.user||null,changed=!!next&&(!user||next.id!==user.id);user=next;accountUI();if(changed)setTimeout(pullCloud,0)});const r=await client.auth.getUser();if(r.data?.user&&(!user||user.id!==r.data.user.id)){user=r.data.user;accountUI();await pullCloud()}}catch(err){console.warn('Offline cloud syncing',err)}}
 if(timer.running){timer.left=Math.max(0,Math.ceil((Number(timer.ends)-Date.now())/1000))}else timer.left=Math.min(timer.left,minutes());
 renderSettings();refreshAppearance();tick();persist();setInterval(tick,320);document.addEventListener('visibilitychange',tick);window.addEventListener('focus',tick);window.addEventListener('load',initCloud);
-setTimeout(showOpeningNote,380);
+setTimeout(launchOpeningExperience,380);
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').then(r=>{serviceWorkerRegistration=r}).catch(err=>console.warn('Offline support:',err)));
 })();
 </script>

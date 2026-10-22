@@ -4,13 +4,14 @@ A sweet, minimal study + break interval timer, made for Whitney.
 
 ## Features
 - Adjustable study minutes (1–240), break minutes (1–120), and study rounds (1–20)
+- A compact **Custom** sliders icon beside the **Break Time** tab (with a hover/focus tooltip) opens the **Make it your own** dialog. This replaces the old sidebar customization card while retaining all six +/- controls, number inputs, automatic saving and secure optional cloud synchronization.
 - Start, pause, reset, skip, and **automatic study → break → study** cycling (enabled by default for new and existing visitors). Round-goal celebrations do not interrupt auto-cycling, and time missed while tabs are suspended is reconciled from stored timestamps.
 - Configurable, gently synthesized completion sounds: **Music box, Soft bells, Dreamy harp, Wind chimes, Cozy piano, Morning birds**. Choose **1, 2, 3, 5, or 8 seconds**, hear a preview, or turn chimes off. Preview works with automatic completion sound disabled.
 - Gentle chime and study/break browser notifications, with an enable/disable control and live **Send a test notification** button in Settings
 - Notification display uses the service worker first (with browser Notification fallback) and can open/focus the Study Tracker website when tapped
 - The three former homepage options—Browser Reminders, Welcome pop-up, How it works pop-up—are in the Settings modal; the Cloud Sync button and account controls are also accessible from Settings
 - **What's New** opens automatically for a new release and stops appearing after the visitor taps **Got it!**. The **Settings → Updates** tab keeps a permanent, readable list of improvements and can reopen the announcement at any time.
-- **Auto-start next timer**, **Gentle chime enable**, **Sound selection / duration / preview**, and **Color mood** are all available inside **Settings**; the home controls only show study minutes, break minutes, and round goals.
+- **Auto-start next timer**, **Gentle chime enable**, **Sound selection / duration / preview**, and **Color mood** are all available inside **Settings**; the study, break and round lengths have moved into the **Custom** pop-up beside Break Time.
 - Two independent, always-visible quote cards—motivational and Gospel/KJV—now appear **above the main timer**, and condensed versions remain **above the floating timer** in Document PiP, video PiP, and the in-page floating fallback.
 - Welcome pop-up showing both messages side by side in separate sections, including a “Don't show this again” option
 - How Study Tracker Works introductory pop-up appears above the quote pop-up on opening, explains study/break timings, auto-start, round goals, chimes, floating timer, and cloud sync

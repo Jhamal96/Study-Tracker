@@ -9,6 +9,7 @@ A sweet, minimal study + break interval timer, made for Whitney.
 - Gentle chime and study/break browser notifications, with an enable/disable control and live **Send a test notification** button in Settings
 - Notification display uses the service worker first (with browser Notification fallback) and can open/focus the Study Tracker website when tapped
 - The three former homepage options—Browser Reminders, Welcome pop-up, How it works pop-up—are in the Settings modal; the Cloud Sync button and account controls are also accessible from Settings
+- **What's New** opens automatically for a new release and stops appearing after the visitor taps **Got it!**. The **Settings → Updates** tab keeps a permanent, readable list of improvements and can reopen the announcement at any time.
 - **Auto-start next timer**, **Gentle chime enable**, **Sound selection / duration / preview**, and **Color mood** are all available inside **Settings**; the home controls only show study minutes, break minutes, and round goals.
 - Two independent, always-visible quote cards—motivational and Gospel/KJV—now appear **above the main timer**, and condensed versions remain **above the floating timer** in Document PiP, video PiP, and the in-page floating fallback.
 - Welcome pop-up showing both messages side by side in separate sections, including a “Don't show this again” option
@@ -66,3 +67,10 @@ Press the small overlapping-window icon beside **Next**:
 
 ## Cloud-synced sound and color choices
 The shared Supabase `public.study_tracker_preferences` table has an expanded nine-color theme constraint and owner-protected `chime_sound` and `chime_duration` columns. Legacy rows default to Music box and 3 seconds. These preferences sync with the signed-in account; sound playback still requires a browser/device allowing Web Audio.
+
+## Publishing future changes and update notes
+For every user-visible Study Tracker change, add a new entry to the front of `STUDY_RELEASES` in `index.html`. Give it a unique `id`, a readable release date/title, and concise `notes` explaining precisely what changed. The newest entry is shown in the update announcement and the Settings → Updates history.
+
+The site compares the deployed `index.html` content fingerprint with the last acknowledged revision on each online opening. When the site changes but no new release note has been added, it still shows a general “new improvements” announcement rather than falsely claiming older changes are new. Acknowledgement is saved in localStorage for that browser/device and is only reset when the newest release ID or the deployed HTML changes. Visitors can always reopen earlier notes through Settings → Updates, including after acknowledging the pop-up. Offline launches use the embedded release ID without a network request succeeding.
+
+To test a new update locally, clear only `study-tracker-acknowledged-update-v1` from localStorage (do not clear timer preferences), then reopen the site. Verify the introduction and quote pop-ups still work after the announcement is acknowledged.

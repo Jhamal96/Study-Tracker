@@ -969,6 +969,53 @@ function bell(preview=false){
  }catch(err){console.warn('Gentle chime unavailable',err);if(preview)notice('Audio preview is not available here.')}
 }
 /* Browser notifications. Service-worker display works where mobile direct Notification() does not. */
+
+const INAPP_REMINDER_KEY='study-tracker-inapp-reminders',HAPTIC_REMINDER_KEY='study-tracker-vibration-reminders';
+let inAppReminders=read(INAPP_REMINDER_KEY,true),hapticReminders=read(HAPTIC_REMINDER_KEY,true);
+let lastCompletionAlert=null,dismissedAlertUntil=0,reminderClearTimer=null;
+function isRecentCompletionAlert(){return !!(lastCompletionAlert&&lastCompletionAlert.until>Date.now()&&dismissedAlertUntil!==lastCompletionAlert.until)}
+function reminderDeviceHelp(){
+ const ua=navigator.userAgent||'';
+ const ios=/iPad|iPhone|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ const installed=!!(navigator.standalone||window.matchMedia?.('(display-mode: standalone)').matches);
+ if(ios&&!installed)return '📱 iPhone/iPad: In Safari tap Share → Add to Home Screen, then open the installed Study Tracker icon to enable device notifications. In-app alerts work while this page runs.';
+ if(ios)return '📱 iPhone/iPad Home Screen app: Tap Enable, allow notifications, and check Settings → Notifications if blocked. Closed-app reminders need separate push service.';
+ if(/Android/i.test(ua))return '🤖 Android: Enable site notifications and check browser/app permission and Android Settings → Notifications. You can also install from the browser menu.';
+ return '💻 Windows/Mac: Allow notifications in the browser and your system settings. Keep the timer open; the OS may suspend closed apps.';
+}
+function updateCompletionAlertViews(){
+ const show=isRecentCompletionAlert()&&inAppReminders;
+ $('reminder-banner').hidden=!show;$('mini-alert').hidden=!show;
+ if(show){
+  $('reminder-banner-title').textContent=lastCompletionAlert.title;
+  $('reminder-banner-message').textContent=lastCompletionAlert.body;
+  $('reminder-banner-symbol').textContent=/break|rest/i.test(lastCompletionAlert.title)?'☕':'🌷';
+  $('mini-alert').textContent=lastCompletionAlert.title+' · '+lastCompletionAlert.body;
+ }
+ if(hasDocumentPip()){
+  try{const target=pipWin.document.getElementById('pip-alert');
+    if(target){target.hidden=!show;if(show)target.textContent=lastCompletionAlert.title+' · '+lastCompletionAlert.body}
+  }catch(err){console.warn('Floating alert:',err)}
+ }
+}
+function showInAppReminder(title,body,preview=false){
+ if(!inAppReminders&&!preview)return;
+ lastCompletionAlert={title,body,until:Date.now()+12000};
+ dismissedAlertUntil=0;updateCompletionAlertViews();
+ clearTimeout(reminderClearTimer);
+ reminderClearTimer=setTimeout(()=>{updateCompletionAlertViews();if(isVideoPip())drawPipCanvas()},12020);
+ if(isVideoPip())drawPipCanvas();
+}
+function vibrateReminder(){
+ if(!hapticReminders||typeof navigator.vibrate!=='function')return;
+ try{navigator.vibrate([80,50,80])}catch(err){}
+}
+$('reminder-banner-dismiss').onclick=()=>{if(lastCompletionAlert)dismissedAlertUntil=lastCompletionAlert.until;updateCompletionAlertViews();if(isVideoPip())drawPipCanvas()};
+$('notify-in-app').checked=!!inAppReminders;
+$('notify-vibrate').checked=!!hapticReminders;
+$('notify-in-app').onchange=e=>{inAppReminders=!!e.target.checked;save(INAPP_REMINDER_KEY,inAppReminders);updateCompletionAlertViews()};
+$('notify-vibrate').onchange=e=>{hapticReminders=!!e.target.checked;save(HAPTIC_REMINDER_KEY,hapticReminders)};
+
 const REMINDER_KEY='study-tracker-reminders-enabled';
 let remindersEnabled=read(REMINDER_KEY,false);
 let serviceWorkerRegistration=null;
@@ -995,16 +1042,18 @@ async function getReminderWorker(){
   }catch(e){console.warn('Study Tracker service worker:',e);return null}
 }
 function updateReminderUI(){
-  const state=notificationCapability(),btn=$('notify'),tip=$('notify-status'),test=$('notify-test');
-  let text='';
-  if(state==='insecure'){btn.textContent='Unavailable';btn.disabled=true;text='Notifications require a secure HTTPS connection.'}
-  else if(state==='unsupported'){btn.textContent='Unavailable';btn.disabled=true;text='This browser does not offer website notifications. On iPhone, add Study Tracker to the Home Screen, open it there, and try again.'}
-  else if(state==='denied'){btn.textContent='Blocked';btn.disabled=true;text='Notifications are blocked in browser or device settings. Allow them for Study Tracker, then reopen the app.'}
-  else if(state==='default'){btn.textContent='Enable';btn.disabled=false;text='Tap Enable to let Study Tracker remind you when a study or break session ends. Your browser may ask permission.'}
-  else{btn.textContent=remindersEnabled?'Disable':'Enable';btn.disabled=false;text=remindersEnabled?'Reminders are on. You can send a test alert below.':'Permission is granted, but reminders are paused. Tap Enable to turn them on.'}
-  if(lastNotificationError)text+=' '+lastNotificationError;
-  tip.textContent=text;
-  test.hidden=!(state==='granted'&&remindersEnabled);
+ const state=notificationCapability(),btn=$('notify'),tip=$('notify-status');
+ let text='';
+ if(state==='insecure'){btn.textContent='Unavailable';btn.disabled=true;text='Device notifications require HTTPS. In-app reminders still work.'}
+ else if(state==='unsupported'){btn.textContent='Unavailable';btn.disabled=true;text='This browser cannot show system notifications. In-app alerts work while the page is running.'}
+ else if(state==='denied'){btn.textContent='Blocked';btn.disabled=true;text='Device notifications are blocked in browser or system settings. In-app alerts still work.'}
+ else if(state==='default'){btn.textContent='Enable';btn.disabled=false;text='Tap Enable to allow device notifications when study or break time ends.'}
+ else{btn.textContent=remindersEnabled?'Disable':'Enable';btn.disabled=false;text=remindersEnabled?'Device notifications enabled on this browser.':'Permission granted. Tap Enable to turn on device alerts.'}
+ if(lastNotificationError)text+=' '+lastNotificationError;
+ tip.textContent=text;
+ $('notify-install-help').textContent=reminderDeviceHelp();
+ $('notify-in-app').checked=!!inAppReminders;$('notify-vibrate').checked=!!hapticReminders;
+ $('notify-test').hidden=false;
 }
 async function sendReminder(title,body,{test=false}={}){
   if(notificationCapability()!=='granted'||!remindersEnabled)return false;
@@ -1029,7 +1078,7 @@ async function sendReminder(title,body,{test=false}={}){
     return false;
   }
 }
-function alertHidden(title,msg){void sendReminder(title,msg)}
+function alertHidden(title,msg){showInAppReminder(title,msg);vibrateReminder();void sendReminder(title,msg)}
 $('notify').onclick=async()=>{
   const state=notificationCapability();
   if(state==='granted'){
@@ -1055,8 +1104,10 @@ $('notify').onclick=async()=>{
   }catch(e){lastNotificationError='Permission could not be requested here.';updateReminderUI();notice('Unable to enable browser notifications.')}
 };
 $('notify-test').onclick=async()=>{
-  const ok=await sendReminder('Study Tracker is ready! 🌷','A little test reminder ♡ Your study and break alerts are enabled.',{test:true});
-  notice(ok?'Test notification sent ♡':'This device could not display the test notification.');
+ const title='Test reminder 🌷',message='Your timer is ready for study and break alerts ♡';
+ showInAppReminder(title,message,true);vibrateReminder();
+ const ok=await sendReminder(title,message,{test:true});
+ notice(ok?'In-app and device test sent ♡':'In-app test shown ♡ Enable device permission for system alerts.');
 };
 document.addEventListener('visibilitychange',()=>{if(!$('settings-dialog').open)return;updateReminderUI()});
 
@@ -1172,7 +1223,7 @@ function syncPipDisplay(){
   const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
   const label=timer.mode==='focus'?'🌷 Study time':'☕ Break time';
   $('mini-mode').textContent=label;$('mini-play').textContent=timer.running?'Ⅱ Pause':'▶ Start';
-  updateCuteFace(document,'mini',seconds,progress);updateFloatingQuotes(document,'mini');
+  updateCuteFace(document,'mini',seconds,progress);updateFloatingQuotes(document,'mini');updateCompletionAlertViews();
   if(hasDocumentPip()){
     try{
       const d=pipWin.document;

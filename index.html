@@ -375,6 +375,24 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 .auth-set-password summary{color:var(--accent-dark);font-size:12px;font-weight:750;cursor:pointer}
 .auth-set-password .auth-form{margin-top:13px}
 @media(max-width:600px){#account{padding:21px 17px 16px}.auth-intro{margin:9px 0 14px}}
+
+/* Completion alerts with useful fallbacks on mobile, desktop and floating timers. */
+.custom-chimes{margin:15px 0 0;padding:15px;border-radius:14px;background:var(--panel);border:1px solid var(--border)}
+.custom-chimes h3{font-size:14px;margin:0 0 11px}
+.custom-chimes .setting{flex-wrap:wrap}
+.custom-chimes .chime-choices select{background:var(--bg)}
+.custom-chimes .settings-hint{margin-bottom:0}
+.notify-device-help{background:var(--soft);padding:10px 12px;border-radius:11px;border:1px solid var(--border);line-height:1.65!important;margin:10px 0!important}
+.notify-limitation{font-size:10px!important;line-height:1.5!important;padding-top:7px;margin-bottom:0!important}
+.reminder-banner[hidden],.floating-reminder[hidden],.pip-reminder[hidden]{display:none!important}
+.reminder-banner{position:fixed;top:max(12px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);width:min(430px,calc(100vw - 20px));z-index:9500;display:flex;justify-content:space-between;gap:9px;padding:13px 13px;border-radius:18px;background:var(--panel);color:var(--ink);border:2px solid var(--accent);box-shadow:0 9px 30px #0003}
+.reminder-banner .reminder-content{display:flex;align-items:center;gap:11px;min-width:0}
+.reminder-banner .reminder-symbol{font-size:29px;flex:none}
+.reminder-banner strong{font-size:13px;color:var(--accent-dark)}
+.reminder-banner p{font-size:11px;margin:3px 0 0;line-height:1.4}
+#reminder-banner-dismiss{border:0;background:var(--soft);border-radius:100%;width:28px;height:28px;flex:none;align-self:flex-start;color:var(--accent-dark);font-weight:800;font-size:17px}
+.floating-reminder{padding:6px 8px;border:1px solid var(--accent);background:var(--soft);border-radius:10px;font-size:10px;font-weight:700;text-align:center;color:var(--accent-dark);line-height:1.35;margin:5px 0}
+@media(max-width:600px){.custom-chimes{margin:15px 0 0;padding:12px}.reminder-banner{top:max(8px,env(safe-area-inset-top));padding:11px;border-radius:14px}}
 </style>
 </head>
 <body data-theme="rose">
@@ -406,7 +424,8 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 
 </main><footer>Breathe in. Focus gently. Bloom beautifully. <span>♥</span></footer>
 </div>
-<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><div class="mini-head-actions"><button id="mini-style-toggle" class="cute-menu-button" type="button" aria-controls="mini-style-menu" aria-expanded="false" aria-label="Choose timer style">☰</button><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div></div><div class="float-quotes" aria-label="Words of encouragement"><div class="float-quote"><span>💌 Motivation</span><p id="mini-motivation"></p></div><div class="float-quote"><span>🕊️ Gospel</span><p id="mini-gospel"></p><small id="mini-gospel-ref"></small></div></div><div id="mini-visual" class="mini-cute-visual"></div>
+<div id="reminder-banner" class="reminder-banner" role="status" aria-live="polite" hidden><div class="reminder-content"><span id="reminder-banner-symbol" class="reminder-symbol" aria-hidden="true">🌷</span><div><strong id="reminder-banner-title">Study finished!</strong><p id="reminder-banner-message"></p></div></div><button id="reminder-banner-dismiss" type="button" aria-label="Dismiss reminder">×</button></div>
+<div id="mini-float" class="mini-float" hidden aria-label="Floating study timer"><div class="mini-head" id="mini-grip"><span id="mini-mode">🌷 Study time</span><div class="mini-head-actions"><button id="mini-style-toggle" class="cute-menu-button" type="button" aria-controls="mini-style-menu" aria-expanded="false" aria-label="Choose timer style">☰</button><button id="mini-close" type="button" aria-label="Close floating timer">×</button></div></div><div id="mini-alert" class="floating-reminder" role="status" hidden></div><div class="float-quotes" aria-label="Words of encouragement"><div class="float-quote"><span>💌 Motivation</span><p id="mini-motivation"></p></div><div class="float-quote"><span>🕊️ Gospel</span><p id="mini-gospel"></p><small id="mini-gospel-ref"></small></div></div><div id="mini-visual" class="mini-cute-visual"></div>
 <div id="mini-style-menu" class="cute-menu" hidden></div><div class="mini-actions"><button id="mini-play" type="button">▶ Start</button><button id="mini-next" type="button">Next →</button><button id="mini-back" type="button">View</button></div></div><div id="toast" class="toast" role="status"></div>
 <dialog id="welcome-dialog" aria-labelledby="welcome-title" aria-describedby="welcome-quote welcome-gospel">
   <div class="welcome-hero"><div class="welcome-flower" aria-hidden="true">🌷</div><p class="welcome-kicker">a little love for your study time</p><h2 id="welcome-title">You've got this, love! ♡</h2></div>
@@ -453,12 +472,23 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
     <button id="custom-close" type="button" class="custom-x" aria-label="Close customization">×</button>
   </div>
   <p id="custom-subtitle" class="hint">Choose what feels right for your study flow. Change your minutes anytime.</p>
-  <div class="custom-fields"><h2>Make it your own ✿</h2><p class="hint">Choose what feels right for your study flow. Change your minutes anytime.</p>
+  <div class="custom-fields">
 <div class="control"><div class="control-left"><div class="icon-tile">📚</div><div><div class="control-label">Study session</div><div class="control-note">Deep focus, no pressure</div></div></div><div class="stepper"><button type="button" data-step="focus:-1" aria-label="Shorter study timer">−</button><input type="number" id="focus-min" min="1" max="240" value="25" aria-label="Study duration in minutes"><span class="unit">min</span><button type="button" data-step="focus:1" aria-label="Longer study timer">+</button></div></div>
 <div class="control"><div class="control-left"><div class="icon-tile">🧸</div><div><div class="control-label">Break session</div><div class="control-note">Rest is productive, too</div></div></div><div class="stepper"><button type="button" data-step="break:-1" aria-label="Shorter break timer">−</button><input type="number" id="break-min" min="1" max="120" value="5" aria-label="Break duration in minutes"><span class="unit">min</span><button type="button" data-step="break:1" aria-label="Longer break timer">+</button></div></div>
 <div class="control"><div class="control-left"><div class="icon-tile">🪄</div><div><div class="control-label">Study rounds</div><div class="control-note">Set your little goal</div></div></div><div class="stepper"><button type="button" data-step="rounds:-1" aria-label="Fewer rounds">−</button><input type="number" id="rounds" min="1" max="20" value="4" aria-label="Study rounds"><span class="unit">x</span><button type="button" data-step="rounds:1" aria-label="More rounds">+</button></div></div>
 
-
+  <div class="settings-group custom-chimes">
+    <h3>🎵 Gentle chimes</h3>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Completion sound</div><div class="control-note">Play a soft sound when each interval finishes.</div></div><label class="toggle"><input id="chime" type="checkbox" checked aria-label="Enable gentle chime"><i></i></label></div>
+    <div class="chime-choices">
+      <label for="chime-sound">Sound</label>
+      <select id="chime-sound" aria-label="Chime sound"><option value="musicbox">🧸 Music box</option><option value="bells">🔔 Soft bells</option><option value="harp">🎶 Dreamy harp</option><option value="chimes">🎐 Wind chimes</option><option value="piano">🎹 Cozy piano</option><option value="birds">🐦 Morning birds</option></select>
+      <label for="chime-duration">How long?</label>
+      <select id="chime-duration" aria-label="Chime duration"><option value="1">1 second</option><option value="2">2 seconds</option><option value="3" selected>3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option></select>
+    </div>
+    <button id="chime-preview" type="button" class="light-btn chime-preview">♫ Preview selected chime</button>
+    <p class="settings-hint">Preview plays even when completion sounds are off. Device sound settings may restrict playback.</p>
+  </div>
 </div>
   <p class="custom-save-note">♡ Changes are saved automatically to your study space.</p>
   <button id="custom-done" class="main-btn custom-done" type="button">All set! ♡</button>
@@ -478,18 +508,6 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
   <div class="settings-group">
     <h3>⏱ Study flow</h3>
     <div class="setting"><div class="setting-copy"><div class="control-label">Auto-start next timer</div><div class="control-note">Start the break automatically, then the next study round.</div></div><label class="toggle"><input id="auto" type="checkbox" checked aria-label="Automatically start next timer"><i></i></label></div>
-  </div>
-  <div class="settings-group">
-    <h3>🎵 Gentle chimes</h3>
-    <div class="setting"><div class="setting-copy"><div class="control-label">Completion sound</div><div class="control-note">Play a soft sound when each interval finishes.</div></div><label class="toggle"><input id="chime" type="checkbox" checked aria-label="Enable gentle chime"><i></i></label></div>
-    <div class="chime-choices">
-      <label for="chime-sound">Sound</label>
-      <select id="chime-sound" aria-label="Chime sound"><option value="musicbox">🧸 Music box</option><option value="bells">🔔 Soft bells</option><option value="harp">🎶 Dreamy harp</option><option value="chimes">🎐 Wind chimes</option><option value="piano">🎹 Cozy piano</option><option value="birds">🐦 Morning birds</option></select>
-      <label for="chime-duration">How long?</label>
-      <select id="chime-duration" aria-label="Chime duration"><option value="1">1 second</option><option value="2">2 seconds</option><option value="3" selected>3 seconds</option><option value="5">5 seconds</option><option value="8">8 seconds</option></select>
-    </div>
-    <button id="chime-preview" type="button" class="light-btn chime-preview">♫ Preview selected chime</button>
-    <p class="settings-hint">Preview plays even when completion sounds are off. Device sound settings may restrict playback.</p>
   </div>
   <div class="settings-group">
     <h3>🎨 Color mood</h3>
@@ -514,9 +532,14 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
   </div>
   <div class="settings-group">
     <h3>🔔 Alerts & reminders</h3>
-    <div class="setting"><div class="setting-copy"><div class="control-label">Browser reminders</div><div class="control-note">Get an alert when study or break time ends</div></div><button class="pill" id="notify" type="button">Enable</button></div>
-    <p id="notify-status" class="settings-hint" role="status">Checking notification support…</p>
-    <button class="light-btn settings-test" id="notify-test" type="button" hidden>🔔 Send a test notification</button>
+    <p class="settings-hint">Stay informed when a study or break session finishes, on any device where Study Tracker is running.</p>
+    <div class="setting"><div class="setting-copy"><div class="control-label">In-app alerts</div><div class="control-note">Show a cute alert on the page and floating timer, even without system notification permission.</div></div><label class="toggle"><input id="notify-in-app" type="checkbox" checked aria-label="Show in-app timer alerts"><i></i></label></div>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Device notifications</div><div class="control-note">System notification for completed study and break sessions, when supported.</div></div><button class="pill" id="notify" type="button">Enable</button></div>
+    <p id="notify-status" class="settings-hint" role="status">Checking this device's notification support…</p>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Gentle vibration</div><div class="control-note">A short haptic nudge on supported Android devices.</div></div><label class="toggle"><input id="notify-vibrate" type="checkbox" checked aria-label="Vibrate on completed intervals"><i></i></label></div>
+    <p id="notify-install-help" class="settings-hint notify-device-help"></p>
+    <button class="light-btn settings-test" id="notify-test" type="button">🔔 Test alerts on this device</button>
+    <p class="settings-hint notify-limitation">When the app is fully closed or suspended by the operating system, scheduled alerts may not fire. Keep it open for live reminders. Background push delivery requires a separate service.</p>
   </div>
   <div class="settings-group">
     <h3>🌷 On opening Study Tracker</h3>
@@ -704,6 +727,13 @@ function showOpeningNote(){
 /* Release notes live in the website source. When adding features, add the newest
    entry here. The live HTML fingerprint also notices changes between releases. */
 const STUDY_RELEASES=[
+  {id:'2026-10-23-all-device-alerts',date:'October 23, 2026',title:'Reminders everywhere & cozy Custom chimes 🔔',
+    notes:[
+      'Gentle Chimes now lives at the bottom of the Custom timer pop-up, beside your study and break lengths.',
+      'In-app completion alerts now show on the main page and supported floating timer windows, even when system notifications are unavailable.',
+      'Get device-aware setup tips, an alert test, optional gentle vibration and system notification controls in Settings.',
+      'System notifications depend on browser and device permissions; background alerts require the app to stay active unless a future push service is configured.'
+    ]},
   {id:'2026-10-21-cloud-accounts',date:'October 21, 2026',title:'Your cloud account, your way ☁️',
     notes:[
       'Cloud Sync now has separate Sign Up and Sign In tabs, with secure email-and-password accounts.',

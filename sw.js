@@ -1,5 +1,5 @@
 /* Study Tracker offline support and reminder notification click handling. */
-const CACHE="study-tracker-v2";
+const CACHE="study-tracker-v3";
 const ASSETS=["/","/index.html","/manifest.webmanifest","/icon.svg"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting()));

@@ -7,11 +7,11 @@ A sweet, minimal study + break interval timer, made for Whitney.
 - A compact **Custom** sliders icon beside the **Break Time** tab (with a hover/focus tooltip) opens the **Make it your own** dialog. This replaces the old sidebar customization card while retaining all six +/- controls, number inputs, automatic saving and secure optional cloud synchronization.
 - Start, pause, reset, skip, and **automatic study → break → study** cycling (enabled by default for new and existing visitors). Round-goal celebrations do not interrupt auto-cycling, and time missed while tabs are suspended is reconciled from stored timestamps.
 - Configurable, gently synthesized completion sounds: **Music box, Soft bells, Dreamy harp, Wind chimes, Cozy piano, Morning birds**. Choose **1, 2, 3, 5, or 8 seconds**, hear a preview, or turn chimes off. Preview works with automatic completion sound disabled.
-- Gentle chime and study/break browser notifications, with an enable/disable control and live **Send a test notification** button in Settings
+- **Cross-device Alerts & Reminders in Settings:** on-screen alerts on the page and floating timers even without notification permission, optional short vibration on devices that support it, separate device-notification permission controls, a test alert, and step-by-step platform guidance for iPhone/iPad, Android, Windows, and Mac.
 - Notification display uses the service worker first (with browser Notification fallback) and can open/focus the Study Tracker website when tapped
 - The three former homepage options—Browser Reminders, Welcome pop-up, How it works pop-up—are in the Settings modal; the Cloud Sync button and account controls are also accessible from Settings
 - **What's New** opens automatically for a new release and stops appearing after the visitor taps **Got it!**. The **Settings → Updates** tab keeps a permanent, readable list of improvements and can reopen the announcement at any time.
-- **Auto-start next timer**, **Gentle chime enable**, **Sound selection / duration / preview**, and **Color mood** are all available inside **Settings**; the study, break and round lengths have moved into the **Custom** pop-up beside Break Time.
+- **Custom** (sliders icon beside Break Time) now contains study/break durations, study rounds, and **Gentle Chimes at the bottom** (enable/disable, six sounds, duration, and preview). **Settings** retains Auto-start, Color mood, and Alerts & Reminders.
 - Two independent, always-visible quote cards—motivational and Gospel/KJV—now appear **above the main timer**, and condensed versions remain **above the floating timer** in Document PiP, video PiP, and the in-page floating fallback.
 - Welcome pop-up showing both messages side by side in separate sections, including a “Don't show this again” option
 - How Study Tracker Works introductory pop-up appears above the quote pop-up on opening, explains study/break timings, auto-start, round goals, chimes, floating timer, and cloud sync
@@ -65,11 +65,14 @@ Press the small overlapping-window icon beside **Next**:
 - On some phones and in installed web apps, the operating system/browser may forbid floating the timer over the home screen or other apps. Genuine system-level Android overlay/PiP in those cases requires a separate native Android app.
 - The browser must keep the site open. Timer durations are still calculated from timestamps rather than counting every interval tick.
 
-## Important notification limitations
-- On desktop, grant permission in the browser and in the operating system. Test the alert from **Settings → Alerts & reminders → Send a test notification**.
-- On iPhone/iPad, website notifications are generally available only when the site is installed to the Home Screen and launched from its icon; the user must approve notifications in that installed app.
-- Session-end reminders work while the Study Tracker page is running. If the browser or operating system fully suspends or closes the website, the timer may not fire until reopened. This version does **not** implement server-pushed notifications to closed browsers.
-- If permission is denied or unsupported, the Settings panel explains what to do; the timer and the on-page transition messages continue working.
+## Alerts & reminders by device
+- Open **Settings → Alerts & reminders**. In-app alerts are enabled by default and show completion messages on the website and supported floating timers, even without OS notification permission. **Gentle vibration** is optional on Android/devices implementing the Vibration API; iOS Safari does not generally expose that API. Click **Test alerts on this device** to preview the on-screen banner and, when authorized, a system notification.
+- **Windows/Mac:** enable notifications for the browser/site and in system settings. Notification display favors `ServiceWorkerRegistration.showNotification`, with a browser notification fallback where available.
+- **Android:** allow notifications for the browser or installed PWA in Android settings and in the browser. The in-app alert remains available while the page runs. Browser video PiP has a temporary session-end label; interactive Document PiP or in-page floating timers also display an alert.
+- **iPhone/iPad:** open Study Tracker in Safari, **Share → Add to Home Screen**, launch the Home Screen web app, and enable notifications from its Settings. Apple's installed web apps can request system notification permission. On-screen alerts work in the open site even without native permission.
+- **Important limitation:** a timer implemented solely in an open website cannot guarantee a reminder after the operating system suspends or closes the page. Push notifications to a fully closed browser or phone, at exact timer completion, require a separate secure server scheduler and Web Push registration or a native mobile application. This release does not falsely claim to provide background Web Push.
+- If system permission is denied or unsupported, the Settings panel explains what to do. In-app banners, enabled chimes, and the current countdown continue to function without system notification permission.
+
 
 ## Migration
 - Standalone repository contains the current Study Tracker app. Cloudflare Pages `study-tracker` now connects to `Jhamal96/Study-Tracker` (`main`, project root `.`), retaining `https://study-tracker-cip.pages.dev/`.

@@ -1248,6 +1248,7 @@ async function openDocumentPip(){
   +'<div class="pip-top"><strong id="pip-mode">🌷 Study time</strong><button type="button" id="pip-style-toggle" class="cute-menu-button" aria-label="Choose timer style" aria-controls="pip-style-menu" aria-expanded="false">☰</button><div id="pip-style-menu" class="cute-menu" hidden></div></div>'
   +'<div id="pip-visual" class="pip-visual">'+cuteFaceMarkup('pip')+'</div>'
   +'<div id="pip-count" class="pip-count">A little focus goes a long way ♡</div>'
+  +'<div id="pip-alert" hidden style="font-size:10px;font-weight:700;color:var(--accent-dark);background:var(--soft);border:1px solid var(--accent);border-radius:11px;padding:7px 10px;text-align:center"></div>'
   +'<div class="pip-actions"><button type="button" id="pip-play">▶ Start</button><button type="button" id="pip-next">Next →</button><button type="button" id="pip-reset">↺ Reset</button></div>';
  setupCuteMenu(win.document,'pip');
  win.document.getElementById('pip-play').addEventListener('click',()=>{$('play').click();syncPipDisplay()});
@@ -1335,6 +1336,7 @@ function drawPipCanvas(){
  g.fillStyle=ink;g.font='800 68px system-ui';g.fillText(time,cx,cy+5);
  g.fillStyle=accent;g.font='600 17px system-ui';g.fillText(timer.mode==='focus'?'Study gently ♡':'Enjoy your break ♡',cx,cy+61);
  g.font='700 21px system-ui';g.fillText(timer.mode==='focus'?'✿ STUDY TIME':'☕ BREAK TIME',cx,123);
+ if(isRecentCompletionAlert()&&inAppReminders){g.fillStyle=accent;g.font='700 14px system-ui';g.fillText(lastCompletionAlert.title,cx,145,460)}
 }
 async function openVideoPip(){
 const supportsAPI=typeof HTMLVideoElement!=='undefined'&&('requestPictureInPicture' in HTMLVideoElement.prototype||'webkitSetPresentationMode' in HTMLVideoElement.prototype);

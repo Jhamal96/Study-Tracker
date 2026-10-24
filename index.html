@@ -393,8 +393,14 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
 #reminder-banner-dismiss{border:0;background:var(--soft);border-radius:100%;width:28px;height:28px;flex:none;align-self:flex-start;color:var(--accent-dark);font-weight:800;font-size:17px}
 .floating-reminder{padding:6px 8px;border:1px solid var(--accent);background:var(--soft);border-radius:10px;font-size:10px;font-weight:700;text-align:center;color:var(--accent-dark);line-height:1.35;margin:5px 0}
 @media(max-width:600px){.custom-chimes{margin:15px 0 0;padding:12px}.reminder-banner{top:max(8px,env(safe-area-inset-top));padding:11px;border-radius:14px}}
+
+/* Separate saved brightness from Study Timer's pastel color themes. */
+html[data-appearance="light"],html[data-appearance="light"] body{color-scheme:light;--bg:#fffaf9!important;--ink:#5b4c56!important;--muted:#82737c!important;--panel:#fff!important;--border:#eee1e6!important;--field:#fff6f9!important;--raised:#fff9fc!important;--soft:color-mix(in srgb,var(--accent) 12%,white)!important;--toggle-off:#dfced6!important;--accent-dark:color-mix(in srgb,var(--accent) 78%,#28121e)!important}
+html[data-appearance="dark"],html[data-appearance="dark"] body{color-scheme:dark;--bg:#17141c!important;--ink:#f9eff7!important;--muted:#bfaebd!important;--panel:#211d27!important;--border:#40323f!important;--field:#2b2430!important;--raised:#2c2631!important;--soft:color-mix(in srgb,var(--accent) 18%,#211d27)!important;--toggle-off:#544451!important;--accent-dark:color-mix(in srgb,var(--accent) 60%,#fff)!important}
+html[data-appearance="ultra-dark"],html[data-appearance="ultra-dark"] body{color-scheme:dark;--bg:#030304!important;--ink:#f7f5f7!important;--muted:#b4abb4!important;--panel:#0c0a0e!important;--border:#29242c!important;--field:#101014!important;--raised:#171318!important;--soft:color-mix(in srgb,var(--accent) 16%,#080609)!important;--toggle-off:#3d3640!important;--accent-dark:color-mix(in srgb,var(--accent) 60%,#fff)!important}
+html[data-appearance="dark"] .light-btn,html[data-appearance="ultra-dark"] .light-btn{background:var(--raised);color:var(--accent-dark);border-color:var(--border)}
 </style>
-</head>
+<script>(function(){const allowed=['system','light','dark','ultra-dark'];let choice='system';try{choice=localStorage.getItem('study_brightness_mode')||'system'}catch(e){}if(!allowed.includes(choice))choice='system';document.documentElement.dataset.appearance=choice;window.getStudyAppearanceMode=()=>document.documentElement.dataset.appearance;window.getStudyAppearanceDark=()=>{const m=window.getStudyAppearanceMode();return m==='dark'||m==='ultra-dark'||(m==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches)};window.setStudyAppearance=function(next){if(!allowed.includes(next))return;document.documentElement.dataset.appearance=next;try{localStorage.setItem('study_brightness_mode',next)}catch(e){}document.dispatchEvent(new Event('study-appearance-change'));};document.addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('study-appearance-select');if(el)el.value=choice});})();</script></head>
 <body data-theme="rose">
 <div class="wrap">
 <header><div class="brand"><div class="logo" aria-hidden="true">✿</div><div><strong>study tracker<span>.</span></strong><small>a cozy little focus space</small></div></div><button id="settings-btn" class="pill settings-trigger" type="button" aria-haspopup="dialog" aria-controls="settings-dialog">⚙ Settings</button></header>
@@ -503,7 +509,7 @@ footer{text-align:center;font-size:11px;padding:22px 0;color:var(--muted)}footer
   <div id="settings-panel-preferences" role="tabpanel" aria-labelledby="settings-tab-preferences">
   <div class="settings-group">
     <h3>🌗 Appearance</h3>
-    <div class="setting"><div class="setting-copy"><div class="control-label">Follow device appearance</div><div class="control-note">Study Tracker switches automatically between light and dark mode.</div></div><span class="appearance-pill" id="appearance-status" role="status">Automatic</span></div>
+    <div class="setting"><div class="setting-copy"><div class="control-label">Appearance mode</div><div class="control-note">Match your device or choose a brighter or darker look without losing your pastel color.</div></div><select id="study-appearance-select" aria-label="Appearance mode" onchange="setStudyAppearance(this.value)" style="border:1px solid var(--border);border-radius:12px;background:var(--panel);color:var(--ink);padding:9px 10px;min-width:126px;font-weight:700"><option value="system">💻 System</option><option value="light">☀️ Light</option><option value="dark">🌙 Dark</option><option value="ultra-dark">⬛ Ultra Dark</option></select><span class="appearance-pill" id="appearance-status" role="status">Automatic</span></div>
   </div>
   <div class="settings-group">
     <h3>⏱ Study flow</h3>
@@ -1123,11 +1129,11 @@ $('count').textContent=daily.count+' done today · goal '+settings.rounds;
 const dots=$('dots');dots.replaceChildren();for(let i=0;i<settings.rounds;i++){const e=document.createElement('span');e.className='dot'+((timer.roundCount>0&&timer.roundCount%settings.rounds===0)||i<timer.roundCount%settings.rounds?' done':'');dots.append(e)}
 document.title=(timer.running?str+' · ':'')+'Study Tracker ♡';syncPipDisplay()}
 function refreshAppearance(){
-  const dark=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
-  $('appearance-status').textContent=dark?'🌙 Dark mode':'☀ Light mode';
+ const choice=window.getStudyAppearanceMode();const dark=window.getStudyAppearanceDark();$('appearance-status').textContent=choice==='system'?'💻 System · '+(dark?'Dark':'Light'):choice==='ultra-dark'?'⬛ Ultra Dark':dark?'🌙 Dark':'☀ Light';
   if(hasDocumentPip())syncPipDisplay();
   if(isVideoPip())drawPipCanvas();
 }
+document.addEventListener('study-appearance-change',refreshAppearance);
 if(window.matchMedia){
   const appearanceQuery=window.matchMedia('(prefers-color-scheme: dark)');
   if(appearanceQuery.addEventListener)appearanceQuery.addEventListener('change',refreshAppearance);
@@ -1264,8 +1270,7 @@ function drawPipCanvas(){
  const g=pipCanvas.getContext('2d');if(!g)return;
  const palettes={"rose":["#fff3f7","#cf7494","#69475b","#fae0e9"],"lavender":["#f9f4ff","#987bc5","#58466c","#ebe0f6"],"sage":["#f3fff9","#78ac96","#3e6552","#dff5e9"],"peach":["#fffbf7","#ec987c","#bb6a51","#ffeadf"],"sky":["#f9fdff","#74acd9","#3d79ae","#e2f2ff"],"mint":["#f7fffc","#5ab9ad","#278277","#d9f7ed"],"buttercream":["#fffdf5","#d7a954","#936f2b","#fff1c8"],"lilac":["#fdfaff","#b994d7","#8856a8","#f1e5fc"],"coral":["#fffbfb","#e6818d","#b75662","#ffeaec"]};
  const darkPalettes={"rose":["#211d27","#d380a2","#f9eff7","#443344"],"lavender":["#211d2a","#b89be4","#f8f0ff","#42364e"],"sage":["#16241f","#91c6ab","#effbf5","#304d3e"],"peach":["#201916","#b16a50","#ffd0b4","#3c2b26"],"sky":["#171e2a","#487ba7","#b8e1ff","#29394b"],"mint":["#15231e","#3d9e90","#adf3e5","#234039"],"buttercream":["#221e14","#a77c30","#ffe9a7","#393321"],"lilac":["#1d1725","#9472ba","#e5caff","#32263c"],"coral":["#21171c","#bb6575","#ffbec6","#402a32"]};
- const dark=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
- const [bg,accent,ink,soft]=(dark?darkPalettes:palettes)[settings.theme]||(dark?darkPalettes.rose:palettes.rose);
+ const dark=window.getStudyAppearanceDark(); const [bg,accent,ink,soft]=(dark?darkPalettes:palettes)[settings.theme]||(dark?darkPalettes.rose:palettes.rose);
  const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
  const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
  const time=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');

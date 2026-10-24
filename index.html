@@ -736,7 +736,7 @@ const STUDY_RELEASES=[
   {id:'2026-10-24-float-timer',date:'October 24, 2026',title:'Float Timer & Android Picture-in-Picture 🪟',notes:[
     'The Float Timer button opens native Picture-in-Picture in the updated Android APK while a timer is running.',
     'Supported desktop browsers keep the interactive timer above other windows; other supported browsers can use video PiP.',
-    'If system PiP is unavailable, a message explains that the mini timer stays inside the page. iPhone/iPad support still needs device testing.'
+    'If system PiP is unavailable, a message explains that the mini timer stays inside the page. Installed iPhone/iPad websites cannot float the in-app mini timer above other apps. A separate native Apple test app is being prepared.'
   ]},
   {id:'2026-10-23-all-device-alerts',date:'October 23, 2026',title:'Reminders everywhere & cozy Custom chimes 🔔',
     notes:[
@@ -1220,7 +1220,7 @@ function hasDocumentPip(){return !!pipWin&&!pipWin.closed}
 function updatePipButton(){
 const open=hasDocumentPip()||isVideoPip()||!$('mini-float').hidden;
 $('pip').setAttribute('aria-pressed',String(open));
-$('pip').setAttribute('aria-label',open?'Close floating timer':'Open floating Picture-in-Picture timer');
+$('pip').setAttribute('aria-label',open?(!$('mini-float').hidden?'Close in-app timer':'Close floating timer'):'Open floating Picture-in-Picture timer');
 $('pip').title=open?'Close floating timer':'Floating timer (Picture-in-Picture)';
 }
 function updateFloatingQuotes(doc,prefix){
@@ -1233,7 +1233,7 @@ function syncPipDisplay(){
   const seconds=Math.max(0,Math.ceil(timer.running?(timer.ends-Date.now())/1000:timer.left));
   const progress=Math.max(0,Math.min(1,seconds/Math.max(1,minutes())));
   const label=timer.mode==='focus'?'🌷 Study time':'☕ Break time';
-  $('mini-mode').textContent=label;$('mini-play').textContent=timer.running?'Ⅱ Pause':'▶ Start';
+  $('mini-mode').textContent='In-app · '+label;$('mini-play').textContent=timer.running?'Ⅱ Pause':'▶ Start';
   updateCuteFace(document,'mini',seconds,progress);updateFloatingQuotes(document,'mini');updateCompletionAlertViews();
   if(hasDocumentPip()){
     try{
@@ -1394,7 +1394,11 @@ try{await openDocumentPip();return}catch(e){console.warn('Document Picture-in-Pi
 try{if(await openVideoPip())return}catch(e){console.warn('Video Picture-in-Picture unavailable:',e)}
 if(pipVideo&&!isVideoPip())pipVideo.pause();
 $('mini-float').hidden=false;updatePipButton();
-notice('This browser could not open system PiP. The mini timer stays inside this page. Try the Android APK or desktop Chrome/Edge for native floating support. iPhone/iPad video PiP needs device testing.');
+const appleTouch=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const help=document.querySelector('.pip-help');
+help.setAttribute('role','status');
+help.textContent=appleTouch?'This is an in-app mini timer. It cannot stay on the Home Screen or above other apps on this iPhone/iPad. A separately installed native Apple app is required for that PiP experience.':'System PiP could not open. This mini timer stays inside this page; try Chrome/Edge on desktop or the updated Android APK.';
+notice('In-app mini timer opened. See the message below the timer.');
 }
 $('pip').addEventListener('click',togglePip);
 $('mini-close').addEventListener('click',()=>{$('mini-float').hidden=true;updatePipButton()});

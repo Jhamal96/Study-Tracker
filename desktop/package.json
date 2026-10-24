@@ -57,6 +57,10 @@
       "category": "public.app-category.productivity",
       "artifactName": "Study-Timer-macOS.dmg"
     },
-    "icon": "icon.png"
+    "icon": "icon.png",
+    "dmg": {
+      "title": "Study Timer",
+      "backgroundColor": "#f7f4ec"
+    }
   }
 }

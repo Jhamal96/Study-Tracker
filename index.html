@@ -1233,6 +1233,12 @@ function syncPipDisplay(){
   if(hasDocumentPip()){
     try{
       const d=pipWin.document;
+      /* Keep the floating window aligned with the selected brightness and color mood. */
+      const source=getComputedStyle(document.body);
+      for(const variable of ['--accent','--accent-dark','--soft','--bg','--ink','--muted','--border','--panel','--field','--raised']){
+        const value=source.getPropertyValue(variable).trim();if(value)d.documentElement.style.setProperty(variable,value,'important');
+      }
+      d.documentElement.style.colorScheme=window.getStudyAppearanceDark()?'dark':'light';
       updateCuteFace(d,'pip',seconds,progress);updateFloatingQuotes(d,'pip');
       const mode=d.getElementById('pip-mode'),play=d.getElementById('pip-play'),count=d.getElementById('pip-count');
       if(mode)mode.textContent=label;

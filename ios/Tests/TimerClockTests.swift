@@ -26,4 +26,23 @@ final class TimerClockTests: XCTestCase {
         XCTAssertEqual(s.display(at: 1030).seconds, 0)
         XCTAssertEqual(s.display(at: 1030).title, "Kitt_305 · Lunch")
     }
+
+    func testOnlyLiveCountdownsCanArmAutomaticPiP() {
+        XCTAssertFalse(TimerSnapshot.idle.hasActiveCountdown(at: 900))
+        var s = TimerSnapshot(running: true, end: 1000, remaining: 999, mode: "focus", title: "Lunch", focusSeconds: 1500, breakSeconds: 300, autoStart: false, study: false)
+        XCTAssertTrue(s.hasActiveCountdown(at: 999))
+        XCTAssertFalse(s.hasActiveCountdown(at: 1000))
+        s.running = false
+        XCTAssertFalse(s.hasActiveCountdown(at: 900))
+    }
+
+    func testAutomaticPiPStaysEligibleAcrossStudyAutoStartPhases() {
+        var s = TimerSnapshot(running: true, end: 1000, remaining: 0, mode: "focus", title: "Study time", focusSeconds: 1500, breakSeconds: 300, autoStart: true, study: true)
+        XCTAssertTrue(s.hasActiveCountdown(at: 1000))
+        XCTAssertTrue(s.hasActiveCountdown(at: 1300))
+        XCTAssertTrue(s.hasActiveCountdown(at: 11800))
+        s.autoStart = false
+        XCTAssertFalse(s.hasActiveCountdown(at: 1000))
+    }
 }
+

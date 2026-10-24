@@ -10,6 +10,8 @@ final class TimerViewController: UIViewController, WKNavigationDelegate, WKUIDel
     private let preview = SampleBufferView()
     private let status = UILabel()
     private let floatButton = UIButton(type: .system)
+    private let automaticPiPSwitch = UISwitch()
+    private let automaticPiPKey = "ajd.nativeTimer.automaticPiP"
     private var snapshot = TimerSnapshot.idle
     private var lifecycleObservers: [NSObjectProtocol] = []
 
@@ -39,7 +41,19 @@ final class TimerViewController: UIViewController, WKNavigationDelegate, WKUIDel
         top.axis = .horizontal; top.spacing = 12; top.alignment = .center
         top.isLayoutMarginsRelativeArrangement = true
         top.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 6, leading: 14, bottom: 6, trailing: 14)
-        let stack = UIStackView(arrangedSubviews: [top, preview, web])
+        let automaticLabel = UILabel()
+        automaticLabel.text = "PiP on Home Screen"
+        automaticLabel.font = .preferredFont(forTextStyle: .subheadline)
+        automaticLabel.adjustsFontForContentSizeCategory = true
+        automaticPiPSwitch.isOn = UserDefaults.standard.object(forKey: automaticPiPKey) as? Bool ?? true
+        automaticPiPSwitch.accessibilityLabel = "Automatic Picture in Picture on Home Screen"
+        automaticPiPSwitch.accessibilityHint = "Float an active timer when you leave this app"
+        automaticPiPSwitch.addTarget(self, action: #selector(automaticPiPChanged), for: .valueChanged)
+        let automaticRow = UIStackView(arrangedSubviews: [automaticLabel, automaticPiPSwitch])
+        automaticRow.axis = .horizontal; automaticRow.spacing = 12; automaticRow.alignment = .center
+        automaticRow.isLayoutMarginsRelativeArrangement = true
+        automaticRow.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 14, bottom: 6, trailing: 14)
+        let stack = UIStackView(arrangedSubviews: [top, automaticRow, preview, web])
         stack.axis = .vertical; stack.spacing = 0
         stack.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(stack)
@@ -50,10 +64,12 @@ final class TimerViewController: UIViewController, WKNavigationDelegate, WKUIDel
             stack.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             preview.heightAnchor.constraint(equalToConstant: 112)
         ])
-        pip.attach(to: preview.displayLayer)
         pip.onStatus = { [weak self] message in self?.status.text = message }
+        pip.attach(to: preview.displayLayer)
+        pip.setAutomaticPiP(automaticPiPSwitch.isOn)
         lifecycleObservers.append(NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
             Task { @MainActor in
+                self?.pip.applicationDidBecomeActive()
                 self?.web.evaluateJavaScript("document.dispatchEvent(new Event('visibilitychange'));window.dispatchEvent(new Event('focus'));", completionHandler: nil)
             }
         })
@@ -61,11 +77,16 @@ final class TimerViewController: UIViewController, WKNavigationDelegate, WKUIDel
     }
 
     @objc private func startPiP() {
-        guard snapshot.running, snapshot.end > Date().timeIntervalSince1970 else {
+        guard snapshot.hasActiveCountdown(at: Date().timeIntervalSince1970) else {
             status.text = "Start a timer below, then tap Float Timer."
             return
         }
         pip.start()
+    }
+
+    @objc private func automaticPiPChanged() {
+        UserDefaults.standard.set(automaticPiPSwitch.isOn, forKey: automaticPiPKey)
+        pip.setAutomaticPiP(automaticPiPSwitch.isOn)
     }
 
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
@@ -150,3 +171,4 @@ private final class WeakTimerHandler: NSObject, WKScriptMessageHandler {
         target?.userContentController(userContentController, didReceive: message)
     }
 }
+

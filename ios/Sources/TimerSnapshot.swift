@@ -15,6 +15,10 @@ struct TimerSnapshot: Codable, Equatable {
 
     static let idle = TimerSnapshot(running: false, end: 0, remaining: 0, mode: "focus", title: "Start a timer", focusSeconds: 1500, breakSeconds: 300, autoStart: false, study: false)
 
+    func hasActiveCountdown(at now: Double) -> Bool {
+        running && end > 0 && !display(at: now).finished
+    }
+
     func display(at now: Double) -> (seconds: Int, title: String, finished: Bool) {
         guard running, end > 0 else { return (Int(max(0, remaining).rounded(.up)), title, false) }
         var deadline = end
@@ -34,3 +38,4 @@ struct TimerSnapshot: Codable, Equatable {
         return (seconds, label, seconds == 0)
     }
 }
+

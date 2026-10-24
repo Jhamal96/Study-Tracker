@@ -23,6 +23,9 @@ final class NativeTimerPiP: NSObject, AVPictureInPictureControllerDelegate, AVPi
     private var timeout: DispatchWorkItem?
     private var format: CMVideoFormatDescription?
     private var pool: CVPixelBufferPool?
+    private var automaticEnabled = true
+    private var automaticSuppressed = false
+    private var mediaSessionActive = false
     private let width = 640
     private let height = 360
 
@@ -38,7 +41,7 @@ final class NativeTimerPiP: NSObject, AVPictureInPictureControllerDelegate, AVPi
         controller = pip
         pip.delegate = self
         pip.requiresLinearPlayback = true
-        // PiP opens only after the user taps Float Timer.
+        // Arm automatic PiP only while an active countdown has a media session.
         pip.canStartPictureInPictureAutomaticallyFromInline = false
         possibility = pip.observe(\.isPictureInPicturePossible, options: [.new]) { [weak self] _, _ in
             Task { @MainActor in self?.startIfPossible() }
@@ -56,6 +59,7 @@ final class NativeTimerPiP: NSObject, AVPictureInPictureControllerDelegate, AVPi
         renderTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 guard let self else { return }
+                self.refreshAutomaticPiP()
                 if UIApplication.shared.applicationState == .active || self.controller?.isPictureInPictureActive == true {
                     self.render()
                 }
@@ -65,9 +69,82 @@ final class NativeTimerPiP: NSObject, AVPictureInPictureControllerDelegate, AVPi
 
     func update(_ snapshot: TimerSnapshot) {
         let changed = state.running != snapshot.running
+        if UIApplication.shared.applicationState == .active,
+           changed || state.end != snapshot.end {
+            automaticSuppressed = false
+        }
         state = snapshot
         render()
+        refreshAutomaticPiP()
         if changed { controller?.invalidatePlaybackState() }
+    }
+
+    func setAutomaticPiP(_ enabled: Bool) {
+        automaticEnabled = enabled
+        automaticSuppressed = false
+        refreshAutomaticPiP()
+        if !enabled, controller?.isPictureInPictureActive != true {
+            onStatus?("Automatic PiP is off. Use Float Timer to open PiP.")
+        }
+    }
+
+    func applicationDidBecomeActive() {
+        automaticSuppressed = false
+        refreshAutomaticPiP()
+    }
+
+    private func activateMediaSession() throws {
+        guard !mediaSessionActive else { return }
+        let audio = AVAudioSession.sharedInstance()
+        try audio.setCategory(.playback, mode: .moviePlayback, options: [.mixWithOthers])
+        try audio.setActive(true)
+        mediaSessionActive = true
+    }
+
+    private func releaseMediaSessionIfUnused() {
+        guard mediaSessionActive, !startRequested,
+              controller?.isPictureInPictureActive != true,
+              controller?.canStartPictureInPictureAutomaticallyFromInline != true else { return }
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        mediaSessionActive = false
+    }
+
+    private func refreshAutomaticPiP() {
+        guard let controller else { return }
+        let shouldArm = automaticEnabled && !automaticSuppressed
+            && state.hasActiveCountdown(at: Date().timeIntervalSince1970)
+        guard shouldArm else {
+            controller.canStartPictureInPictureAutomaticallyFromInline = false
+            releaseMediaSessionIfUnused()
+            return
+        }
+        do {
+            // Prepare while foregrounded; AVKit handles the Home Screen transition.
+            // Do not call startPictureInPicture from a background lifecycle callback.
+            if !mediaSessionActive {
+                guard UIApplication.shared.applicationState == .active else { return }
+                try activateMediaSession()
+            }
+            if !controller.canStartPictureInPictureAutomaticallyFromInline {
+                controller.canStartPictureInPictureAutomaticallyFromInline = true
+                if !controller.isPictureInPictureActive, !startRequested {
+                    onStatus?("Automatic PiP is armed. iOS can float this timer when you go Home.")
+                }
+            }
+        } catch {
+            automaticSuppressed = true
+            controller.canStartPictureInPictureAutomaticallyFromInline = false
+            releaseMediaSessionIfUnused()
+            onStatus?("Could not prepare automatic PiP: \(error.localizedDescription)")
+        }
+    }
+
+    private func cancelPendingStart() {
+        startRequested = false
+        timeout?.cancel()
+        automaticSuppressed = true
+        controller?.canStartPictureInPictureAutomaticallyFromInline = false
+        releaseMediaSessionIfUnused()
     }
 
     func start() {
@@ -75,11 +152,14 @@ final class NativeTimerPiP: NSObject, AVPictureInPictureControllerDelegate, AVPi
             onStatus?("System Picture-in-Picture is unavailable on this device.")
             return
         }
-        if controller.isPictureInPictureActive { controller.stopPictureInPicture(); return }
+        if controller.isPictureInPictureActive {
+            automaticSuppressed = true
+            controller.canStartPictureInPictureAutomaticallyFromInline = false
+            controller.stopPictureInPicture()
+            return
+        }
         do {
-            let audio = AVAudioSession.sharedInstance()
-            try audio.setCategory(.playback, mode: .moviePlayback, options: [.mixWithOthers])
-            try audio.setActive(true)
+            try activateMediaSession()
         } catch {
             onStatus?("Could not activate the PiP media session: \(error.localizedDescription)")
             return
@@ -90,7 +170,7 @@ final class NativeTimerPiP: NSObject, AVPictureInPictureControllerDelegate, AVPi
         timeout?.cancel()
         let work = DispatchWorkItem { [weak self] in
             guard let self, self.startRequested else { return }
-            self.startRequested = false
+            self.cancelPendingStart()
             self.onStatus?("iOS did not allow PiP to start. Keep the app visible and check Settings → General → Picture in Picture.")
         }
         timeout = work
@@ -146,11 +226,11 @@ final class NativeTimerPiP: NSObject, AVPictureInPictureControllerDelegate, AVPi
         onStatus?("System PiP is active. You can return to the Home Screen.")
     }
     func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        cancelPendingStart()
         onStatus?("PiP closed. The timer continues in the tracker.")
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
     func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, failedToStartPictureInPictureWithError error: Error) {
-        startRequested = false; timeout?.cancel()
+        cancelPendingStart()
         onStatus?("PiP could not start: \(error.localizedDescription)")
     }
     func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
@@ -170,3 +250,4 @@ final class NativeTimerPiP: NSObject, AVPictureInPictureControllerDelegate, AVPi
 
     deinit { renderTimer?.invalidate(); timeout?.cancel() }
 }
+

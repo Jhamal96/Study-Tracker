@@ -37,9 +37,9 @@ public class MainActivity extends Activity {
 
     private final Runnable tick = new Runnable() {
         @Override public void run() {
-            if (browser != null && pageReady && !inPip) {
+            if (browser != null && pageReady) {
                 browser.evaluateJavascript(
-                    "(function(){try{var t=JSON.parse(localStorage.getItem('study-tracker-clock')||'{}');return (t.running?'1':'0')+'|'+(Number(t.ends)||0)+'|'+(t.mode||'focus')}catch(e){return '0|0|focus'}})()",
+                    "(function(){try{document.dispatchEvent(new Event('visibilitychange'));var t=JSON.parse(localStorage.getItem('study-tracker-clock')||'{}');return (t.running?'1':'0')+'|'+(Number(t.ends)||0)+'|'+(t.mode||'focus')}catch(e){return '0|0|focus'}})()",
                     value -> { try {
                         Object v = new JSONTokener(value).nextValue();
                         String[] fields = String.valueOf(v).split("\\|", 3);
@@ -78,6 +78,7 @@ public class MainActivity extends Activity {
             @Override public void onPageFinished(WebView view, String url) {
                 Uri u = Uri.parse(url);
                 pageReady = "https".equalsIgnoreCase(u.getScheme()) && HOST.equalsIgnoreCase(u.getHost());
+                if (pageReady) view.evaluateJavascript("window.AJDNativePiP=true", null);
             }
         });
         root.addView(browser, new FrameLayout.LayoutParams(-1, -1));
@@ -90,6 +91,24 @@ public class MainActivity extends Activity {
     }
 
     private boolean route(Uri u) {
+        if ("ajdstudytimer".equalsIgnoreCase(u.getScheme())) {
+            Uri current = Uri.parse(browser.getUrl() == null ? "" : browser.getUrl());
+            if ("pip".equals(u.getHost()) && "https".equals(current.getScheme()) && HOST.equals(current.getHost())) {
+                try {
+                    long requestedEnd = Long.parseLong(u.getQueryParameter("ends"));
+                    long remaining = requestedEnd - System.currentTimeMillis();
+                    if (remaining > 0 && remaining <= 86400000L &&
+                        getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+                        endMs = requestedEnd; timerRunning = true;
+                        mode = "break".equals(u.getQueryParameter("mode")) ? "break" : "focus";
+                        pip.setState(mode, (remaining + 999L) / 1000L);
+                        updatePictureInPictureParams();
+                        enterPictureInPictureMode(new PictureInPictureParams.Builder().setAspectRatio(new Rational(10,6)).build());
+                    } else android.widget.Toast.makeText(this,"PiP requires a running timer and device support.",android.widget.Toast.LENGTH_LONG).show();
+                } catch (Exception e) { android.widget.Toast.makeText(this,"Unable to open PiP. Check Picture-in-Picture permission in Android Settings.",android.widget.Toast.LENGTH_LONG).show(); }
+            }
+            return true;
+        }
         if ("https".equalsIgnoreCase(u.getScheme()) && HOST.equalsIgnoreCase(u.getHost())) return false;
         if ("https".equalsIgnoreCase(u.getScheme())) {
             try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) {}

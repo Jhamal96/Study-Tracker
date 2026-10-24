@@ -424,7 +424,7 @@ html[data-appearance="dark"] .light-btn,html[data-appearance="ultra-dark"] .ligh
 </div>
 <div class="dial" role="timer" aria-label="Time remaining"><svg viewBox="0 0 320 320" aria-hidden="true"><circle class="track" cx="160" cy="160" r="140"/><circle id="progress" class="progress" cx="160" cy="160" r="140"/></svg><div class="dial-content"><div id="dial-emoji" class="dial-emoji">🌷</div><div id="clock" class="digits">25:00</div><div id="dial-caption" class="dial-caption">time to focus</div></div></div>
 <p id="encourage" class="encourage">You can do hard things. One minute at a time ✨</p>
-<div class="actions"><button id="reset" type="button" class="light-btn">↺ Reset</button><button id="play" type="button" class="main-btn">▶ Start</button><button id="skip" type="button" class="light-btn">Next →</button><button id="pip" type="button" class="light-btn pip-btn" title="Floating timer (Picture-in-Picture)" aria-label="Open floating Picture-in-Picture timer" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.2" y="3.5" width="19.6" height="16.5" rx="3"></rect><rect x="11.5" y="11.5" width="10.3" height="8.5" rx="1.8" fill="currentColor" stroke="var(--panel)"></rect></svg></button></div><p class="pip-help">Tap the little screen to keep your timer close ♡</p>
+<div class="actions"><button id="reset" type="button" class="light-btn">↺ Reset</button><button id="play" type="button" class="main-btn">▶ Start</button><button id="skip" type="button" class="light-btn">Next →</button><button id="pip" type="button" class="light-btn pip-btn" title="Floating timer (Picture-in-Picture)" aria-label="Open floating Picture-in-Picture timer" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.2" y="3.5" width="19.6" height="16.5" rx="3"></rect><rect x="11.5" y="11.5" width="10.3" height="8.5" rx="1.8" fill="currentColor" stroke="var(--panel)"></rect></svg></button></div><p class="pip-help">Tap the little screen for Float Timer. Supported devices keep it above other apps ♡</p>
 <div class="streak"><div class="streak-head"><span>Today's little wins ✨</span><span id="count">0 done today</span></div><div id="dots" class="dots"></div></div>
 </section>
 
@@ -733,6 +733,11 @@ function showOpeningNote(){
 /* Release notes live in the website source. When adding features, add the newest
    entry here. The live HTML fingerprint also notices changes between releases. */
 const STUDY_RELEASES=[
+  {id:'2026-10-24-float-timer',date:'October 24, 2026',title:'Float Timer & Android Picture-in-Picture 🪟',notes:[
+    'The Float Timer button opens native Picture-in-Picture in the updated Android APK while a timer is running.',
+    'Supported desktop browsers keep the interactive timer above other windows; other supported browsers can use video PiP.',
+    'If system PiP is unavailable, a message explains that the mini timer stays inside the page. iPhone/iPad support still needs device testing.'
+  ]},
   {id:'2026-10-23-all-device-alerts',date:'October 23, 2026',title:'Reminders everywhere & cozy Custom chimes 🔔',
     notes:[
       'Gentle Chimes now lives at the bottom of the Custom timer pop-up, beside your study and break lengths.',
@@ -1375,6 +1380,11 @@ if(document.pictureInPictureElement===pipVideo&&document.exitPictureInPicture){d
 if(pipVideo?.webkitPresentationMode==='picture-in-picture')try{pipVideo.webkitSetPresentationMode('inline')}catch{}
 }
 async function togglePip(){
+if(window.AJDNativePiP){
+ if(!timer.running){notice('Start your timer, then tap Float Timer.');return;}
+ location.href='ajdstudytimer://pip?ends='+encodeURIComponent(timer.ends)+'&mode='+encodeURIComponent(timer.mode);
+ return;
+}
 if(hasDocumentPip()){pipWin.close();updatePipButton();return}
 if(isVideoPip()){closeVideoPip();updatePipButton();return}
 if(!$('mini-float').hidden){$('mini-float').hidden=true;updatePipButton();return}
@@ -1384,7 +1394,7 @@ try{await openDocumentPip();return}catch(e){console.warn('Document Picture-in-Pi
 try{if(await openVideoPip())return}catch(e){console.warn('Video Picture-in-Picture unavailable:',e)}
 if(pipVideo&&!isVideoPip())pipVideo.pause();
 $('mini-float').hidden=false;updatePipButton();
-notice('Floating timer opened here. For an always-on-top timer, use a browser that supports Picture-in-Picture.');
+notice('This browser could not open system PiP. The mini timer stays inside this page. Try the Android APK or desktop Chrome/Edge for native floating support. iPhone/iPad video PiP needs device testing.');
 }
 $('pip').addEventListener('click',togglePip);
 $('mini-close').addEventListener('click',()=>{$('mini-float').hidden=true;updatePipButton()});

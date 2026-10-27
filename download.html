@@ -9,7 +9,55 @@
 body{margin:0;font:15px/1.6 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:radial-gradient(ellipse 70% 48% at 20% -12%,color-mix(in srgb,var(--accent2),transparent 84%),transparent),radial-gradient(ellipse 60% 30% at 96% 13%,color-mix(in srgb,var(--accent),transparent 88%),transparent),var(--bg)}
 a{color:inherit}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.wrap{max-width:1120px;margin:auto;padding:0 24px}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:25px 0}.logo{display:flex;align-items:center;gap:12px;text-decoration:none;font-weight:800;font-size:18px;letter-spacing:-.035em}.logo img{width:42px;height:42px;object-fit:contain;border-radius:12px}.navlink{font-size:13px;text-decoration:none;color:#d3def1;border:1px solid #37465e;border-radius:12px;padding:10px 14px}.hero{display:grid;grid-template-columns:1.12fr .88fr;align-items:center;gap:44px;padding:82px 0 52px}.eyebrow{font-size:11px;color:var(--accent);letter-spacing:.16em;text-transform:uppercase;font-weight:800}.hero h1{font-size:clamp(41px,6vw,75px);line-height:1.07;letter-spacing:-.065em;margin:17px 0 20px}.gradient{background:linear-gradient(105deg,var(--accent2),var(--accent));color:transparent;background-clip:text;-webkit-background-clip:text}.lead{max-width:570px;color:#bdcce0;font-size:18px;line-height:1.8;margin:0 0 27px}.device{display:flex;align-items:center;gap:13px;margin:17px 0 18px;padding:13px 16px;border-radius:14px;border:1px solid #3b4b64;background:#14233a;max-width:520px}.device small{display:block;color:#a8bad1;font-size:12px}.device strong{font-size:15px}.device-icon{font-size:26px;line-height:1}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:13px;text-decoration:none;font-weight:800;padding:14px 20px;min-height:52px;border:1px solid transparent;transition:transform .15s}.btn:hover{transform:translateY(-2px)}.primary{color:#07101c;background:linear-gradient(110deg,var(--accent2),var(--accent))}.secondary{background:#19273d;border-color:#3b4c63;color:#ecf2ff}.fine{color:#96a9c0;font-size:12px;max-width:600px;margin:15px 0}.preview{background:linear-gradient(150deg,#182942,#111827);border:1px solid #415470;border-radius:27px;box-shadow:0 26px 75px #0008;min-height:350px;padding:20px;transform:rotate(2deg)}.preview-head{display:flex;gap:7px;border-bottom:1px solid #34455e;padding-bottom:16px}.dot{width:11px;height:11px;border-radius:100%;background:#ff9b9b}.dot:nth-child(2){background:#ffdc98}.dot:nth-child(3){background:#8ee0bb}.app-preview{text-align:center;display:grid;place-items:center;padding:26px 12px;min-height:274px}.app-preview img{width:90px;height:90px;object-fit:contain;border-radius:24px;filter:drop-shadow(0 12px 20px #0005)}.app-preview h2{margin:14px 0 0;font-size:22px;letter-spacing:-.04em}.app-preview p{margin:2px;color:#adbad2;font-size:12px}.pill{font-size:11px;display:inline-block;border:1px solid #556784;border-radius:30px;padding:4px 11px;margin-top:16px;color:var(--accent)}h2.section-title{font-size:27px;letter-spacing:-.04em;margin:30px 0 6px}.section-desc{color:#afc1d6;margin:0 0 22px}.platforms{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}.platform{background:#121f32;border:1px solid #33435e;border-radius:15px;padding:17px 12px;min-height:99px;color:#dce6f7;text-align:left}.platform[aria-pressed=true]{background:#20304b;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.platform strong{display:block;margin-top:6px;font-size:15px}.platform small{display:block;color:#9db1ca;font-size:11px}.card{border:1px solid var(--line);border-radius:21px;background:var(--panel);padding:24px;margin-top:17px}.card h3{margin:0 0 8px;font-size:19px}.card p{color:#b2c3d8;margin:0 0 17px}.features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:35px 0 55px}.feature{padding:15px 18px;border-radius:13px;background:#111d30;border:1px solid #253950;color:#dae7f6}.feature span{color:var(--accent);margin-right:9px}.instructions{color:#bbcbdf;font-size:14px}.hidden{display:none!important}.footer{border-top:1px solid #263954;margin-top:45px;padding:22px 0 36px;display:flex;gap:15px;justify-content:space-between;color:#92a6c2;font-size:12px}.footer a{color:#d4e5fc}
 @media(max-width:850px){.hero{gap:20px;padding:52px 0 20px}.preview{min-height:300px}.platforms{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.wrap{padding:0 17px}.nav{padding:16px 0}.hero{grid-template-columns:1fr;padding:32px 0}.preview{max-width:420px;min-height:260px;transform:none}.hero h1{font-size:49px}.lead{font-size:16px}.platforms{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:1fr}.actions{flex-direction:column}.btn{width:100%}.footer{flex-direction:column}}
-</style></head><body><div class="wrap"><nav class="nav"><a class="logo" href="/"><img src="/icon.svg" alt="">AJD <span style="color:var(--accent)">Apps</span></a><a class="navlink" href="/">Open Study Timer ↗</a></nav>
+</style>
+<!-- AJD opening animation: decorative and never blocks the page. -->
+<style>
+:root{--ajd-open-bg:#fff8fa;--ajd-open-glow:#f2d5e2;--ajd-open-accent:#bb6b8d;--ajd-open-ink:#554353;}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]):not([data-appearance="light"]){--ajd-open-bg:#211720;--ajd-open-glow:#bb6b8d44;--ajd-open-ink:#f2f4f7;}
+}
+:root[data-theme="dark"],:root[data-appearance="dark"],:root.dark{--ajd-open-bg:#211720;--ajd-open-glow:#bb6b8d44;--ajd-open-ink:#f2f4f7;}
+:root[data-theme="ultra-dark"],:root[data-theme="ultra"],:root[data-appearance="ultra-dark"],:root.ultra-dark{--ajd-open-bg:#050505;--ajd-open-glow:#bb6b8d33;--ajd-open-ink:#f5f5f5;}
+.ajd-opening{display:none;}
+html.ajd-opening-enabled .ajd-opening{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 50% 36%,var(--ajd-open-glow),transparent 43%),var(--ajd-open-bg);color:var(--ajd-open-ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;animation:ajd-opening-exit 1.55s ease forwards;}
+.ajd-opening-inner{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:min(90vw,480px);padding:24px;animation:ajd-opening-rise .68s cubic-bezier(.2,.8,.2,1) both;}
+.ajd-opening-art{position:relative;display:grid;place-items:center;width:116px;height:116px;margin-bottom:22px;}
+.ajd-opening-art:before,.ajd-opening-art:after{content:"";position:absolute;inset:4px;border:1px solid var(--ajd-open-accent);border-radius:37%;opacity:.18;animation:ajd-opening-orbit 1.4s ease-out both;}
+.ajd-opening-art:after{inset:-6px;border-radius:42%;opacity:.10;animation-delay:.08s;}
+.ajd-opening-mark{position:relative;display:grid;place-items:center;width:86px;height:86px;border-radius:25px;background:var(--ajd-open-bg);box-shadow:0 14px 36px #0002;overflow:hidden;animation:ajd-opening-mark .8s cubic-bezier(.2,.8,.2,1) both;}
+.ajd-opening-fallback{font-weight:850;font-size:22px;letter-spacing:-.07em;color:var(--ajd-open-accent);}
+.ajd-opening-mark img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:var(--ajd-open-bg);}
+.ajd-opening-mark svg{width:50px;height:50px;stroke:var(--ajd-open-accent);}
+.ajd-opening-name{font-size:clamp(22px,5vw,31px);font-weight:800;line-height:1.12;letter-spacing:-.045em;}
+.ajd-opening-caption{margin-top:9px;opacity:.68;font-size:13px;line-height:1.4;}
+.ajd-opening-dots{display:flex;gap:6px;margin-top:21px;color:var(--ajd-open-accent);}
+.ajd-opening-dots i{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.34;animation:ajd-opening-dot .8s ease-in-out infinite alternate;}
+.ajd-opening-dots i:nth-child(2){animation-delay:.13s}.ajd-opening-dots i:nth-child(3){animation-delay:.26s}
+@keyframes ajd-opening-exit{0%,68%{opacity:1;visibility:visible}100%{opacity:0;visibility:hidden}}
+@keyframes ajd-opening-rise{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ajd-opening-mark{from{opacity:0;transform:scale(.87) rotate(-4deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes ajd-opening-orbit{from{opacity:0;transform:scale(.8) rotate(-12deg)}to{transform:scale(1) rotate(8deg)}}
+@keyframes ajd-opening-dot{to{opacity:1;transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce),print{html.ajd-opening-enabled .ajd-opening{display:none!important;}}
+</style>
+<script>
+(function(){
+  try {
+    if ((window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) || /Electron\//i.test(navigator.userAgent)) return;
+    if (document.referrer && new URL(document.referrer).origin === location.origin) return;
+    document.documentElement.classList.add('ajd-opening-enabled');
+  } catch (_) { /* The page works normally if the optional animation cannot start. */ }
+})();
+</script>
+
+</head><body>
+<div class="ajd-opening" aria-hidden="true"><div class="ajd-opening-inner">
+  <div class="ajd-opening-art"><div class="ajd-opening-mark"><span class="ajd-opening-fallback">S</span><img src="/icon.svg" alt="" onerror="this.style.display='none'"></div></div>
+  <div class="ajd-opening-name">Study Timer</div>
+  <div class="ajd-opening-caption">A little space to focus.</div>
+  <div class="ajd-opening-dots"><i></i><i></i><i></i></div>
+</div></div>
+<div class="wrap"><nav class="nav"><a class="logo" href="/"><img src="/icon.svg" alt="">AJD <span style="color:var(--accent)">Apps</span></a><a class="navlink" href="/">Open Study Timer ↗</a></nav>
 <main><section class="hero"><div><span class="eyebrow">AJD Apps · Desktop & mobile</span><h1>Take <span class="gradient">Study Timer</span><br>with you.</h1><p class="lead">Focus deeply. Rest gently. Make every study session count.</p>
 <div class="device" aria-live="polite"><span id="device-icon" class="device-icon">💻</span><div><small>Detected device</small><strong id="device-name">Checking your device…</strong></div></div>
 <div class="actions"><a id="recommended" class="btn primary" href="#choose">Choose a download ↓</a><a class="btn secondary" href="/">Use online ↗</a></div>

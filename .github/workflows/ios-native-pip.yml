@@ -1,0 +1,39 @@
+name: Validate native Apple PiP prototype
+on:
+  workflow_dispatch:
+  push:
+    paths: ['ios/**', '.github/workflows/ios-native-pip.yml']
+permissions:
+  contents: read
+concurrency:
+  group: native-apple-pip-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  compile:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install project generator
+        run: brew install xcodegen
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+      - name: Build both iOS apps without signing
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          xcodebuild -project AJDNativeTimers.xcodeproj -scheme StudyTimerApple -sdk iphonesimulator -configuration Debug -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+          xcodebuild -project AJDNativeTimers.xcodeproj -scheme BreakTrackerApple -sdk iphonesimulator -configuration Debug -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+      - name: Test timer calculations on iPad Simulator
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          DEVICE_ID=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; devices=json.load(sys.stdin)["devices"]; print(next(d["udid"] for group in devices.values() for d in group if "iPad" in d["name"]))')
+          xcodebuild -project AJDNativeTimers.xcodeproj -scheme StudyTimerApple -destination "platform=iOS Simulator,id=$DEVICE_ID" -derivedDataPath build CODE_SIGNING_ALLOWED=NO test
+      - name: Save simulator apps for developer inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: Native-Apple-PiP-Simulator-Apps
+          path: ios/build/Build/Products/Debug-iphonesimulator/*.app
+          retention-days: 14
